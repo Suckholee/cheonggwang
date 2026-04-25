@@ -1,0 +1,77 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+
+/**
+ * v1.8 admin-console · §5.2 — sticky 상단 nav.
+ *  - 현재 path에 따라 active 표시
+ *  - 로그아웃: POST /api/admin/logout → /admin/login으로 이동
+ */
+const TABS: { href: string; label: string; matcher: (p: string) => boolean }[] = [
+  { href: "/admin", label: "홈", matcher: (p) => p === "/admin" },
+  { href: "/admin/partners", label: "Partners", matcher: (p) => p.startsWith("/admin/partners") },
+  { href: "/admin/providers", label: "Providers", matcher: (p) => p.startsWith("/admin/providers") },
+  { href: "/admin/posts", label: "Posts", matcher: (p) => p.startsWith("/admin/posts") },
+];
+
+export default function AdminNav() {
+  const pathname = usePathname() ?? "/admin";
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+
+  async function logout() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await fetch("/api/admin/logout", { method: "POST" });
+    } finally {
+      router.push("/admin/login");
+      router.refresh();
+    }
+  }
+
+  return (
+    <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mx-auto flex max-w-6xl items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/admin"
+            className="text-sm font-bold tracking-tight text-[#2B66F6]"
+          >
+            청광 운영 콘솔
+          </Link>
+          <nav className="flex items-center gap-1 text-sm">
+            {TABS.map((tab) => {
+              const active = tab.matcher(pathname);
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className={`rounded-md px-3 py-1.5 transition ${
+                    active
+                      ? "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-200"
+                      : "text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+        <div className="flex items-center gap-3 text-xs text-zinc-500">
+          <span>admin</span>
+          <button
+            onClick={logout}
+            disabled={busy}
+            className="rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          >
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}

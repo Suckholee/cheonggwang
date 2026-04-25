@@ -101,6 +101,18 @@ export const partnerRepository = {
     return toPartner(doc.id, doc.data());
   },
 
+  /**
+   * v1.8 admin-console — 전체 partners 목록 (관리 화면용).
+   * status 필터는 호출자가 in-memory에서 수행 (작은 카운트 가정, partners ≤ 수백 건).
+   */
+  async listAll(limit = 200): Promise<Partner[]> {
+    const snap = await col()
+      .orderBy("issuedAt", "desc")
+      .limit(limit)
+      .get();
+    return snap.docs.map((d) => toPartner(d.id, d.data()));
+  },
+
   /** 운영진 발급 — CLI에서 호출. */
   async create(input: CreatePartnerInput): Promise<void> {
     const exists = await this.getByOwnerUid(input.ownerUid);

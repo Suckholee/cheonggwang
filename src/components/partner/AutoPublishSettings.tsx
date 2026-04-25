@@ -6,12 +6,19 @@ import type { AutoPublishConfig } from "@/types/partner";
 
 /**
  * v1.7 partner-promo · §7.4 — autoPublish 설정 UI.
- *  - PATCH /api/partner/settings
+ *  - 디폴트: PATCH /api/partner/settings (본인 partner 설정)
+ *  - v1.8 admin-console (C1 결의): endpoint·onSaved props 옵셔널 — admin이 다른 partner를 편집할 때 주입.
+ *    - endpoint 누락 시 `/api/partner/settings` (기존 호출자 호환)
+ *    - onSaved 호출 후 `router.refresh()`도 항상 실행 (admin 부모 페이지 갱신용)
  *  - 시간 picker는 15분 단위 (UI 강제, 서버는 분 단위 정수만 검증)
  */
 
 interface Props {
   initial: AutoPublishConfig;
+  /** v1.8: admin이 다른 partner 편집 시 PATCH 대상 endpoint. 미지정 시 본인 settings. */
+  endpoint?: string;
+  /** v1.8: 저장 성공 후 부모 컴포넌트가 행할 추가 액션 (예: 부모 페이지 데이터 refresh). */
+  onSaved?: () => void;
 }
 
 const WEEKDAY_KO = ["일", "월", "화", "수", "목", "금", "토"];
@@ -26,7 +33,11 @@ const TIME_OPTIONS: number[] = (() => {
   return arr;
 })();
 
-export default function AutoPublishSettings({ initial }: Props) {
+export default function AutoPublishSettings({
+  initial,
+  endpoint = "/api/partner/settings",
+  onSaved,
+}: Props) {
   const router = useRouter();
   const [enabled, setEnabled] = useState(initial.enabled);
   const [weekdays, setWeekdays] = useState<Set<number>>(
@@ -61,15 +72,29 @@ export default function AutoPublishSettings({ initial }: Props) {
     }
     setBusy(true);
     try {
-      const res = await fetch("/api/partner/settings", {
+      const res = await fetch(endpoint, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          enabled,
-          weekdays: Array.from(weekdays).sort((a, b) => a - b),
-          startMinute,
-          endMinute,
-          timezone: "Asia/Seoul",
+          // admin partners PATCH는 { autoPublish: {...} } 래핑 형식 — endpoint 별로 body 다름.
+          // 본인 settings는 평탄 (cycle #19 기존 형식). admin은 wrapper로 보냄.
+          ...(endpoint === "/api/partner/settings"
+            ? {
+                enabled,
+                weekdays: Array.from(weekdays).sort((a, b) => a - b),
+                startMinute,
+                endMinute,
+                timezone: "Asia/Seoul",
+              }
+            : {
+                autoPublish: {
+                  enabled,
+                  weekdays: Array.from(weekdays).sort((a, b) => a - b),
+                  startMinute,
+                  endMinute,
+                  timezone: "Asia/Seoul",
+                },
+              }),
         }),
       });
       const json = await res.json().catch(() => ({}));
@@ -79,6 +104,7 @@ export default function AutoPublishSettings({ initial }: Props) {
       }
       setInfo("저장되었습니다");
       router.refresh();
+      onSaved?.();
     } finally {
       setBusy(false);
     }

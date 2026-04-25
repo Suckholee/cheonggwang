@@ -244,6 +244,34 @@ export const providerRepository = {
       .update({ ...patch, updatedAt: FieldValue.serverTimestamp() });
   },
 
+  /**
+   * v1.8 admin-console — verified 토글.
+   * 기존 문서에 verified 필드가 없으면 toProvider가 false 폴백 (line 116) — 신규 setter는 update만.
+   */
+  async setVerified(id: string, verified: boolean): Promise<void> {
+    await col().doc(id).update({
+      verified,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  },
+
+  /** v1.8 admin-console — insured 토글. */
+  async setInsured(id: string, insured: boolean): Promise<void> {
+    await col().doc(id).update({
+      insured,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  },
+
+  /** v1.8 admin-console — 전체 목록 (관리 화면용). 최근 발급 순. */
+  async listAll(limit = 200): Promise<Provider[]> {
+    const snap = await col()
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get();
+    return snap.docs.map((d) => toProvider(d.id, d.data()));
+  },
+
   async create(
     data: Omit<Provider, "id" | "createdAt" | "updatedAt">,
   ): Promise<string> {

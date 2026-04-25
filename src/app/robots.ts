@@ -14,6 +14,8 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         allow: "/",
         disallow: [
           "/api/",
+          "/admin",
+          "/admin/",
           "/provider/",
           "/partner/",
           "/received/",
