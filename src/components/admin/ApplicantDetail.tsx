@@ -2,7 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { PartnerApplicant } from "@/types/partner-applicant";
+import type { PartnerApplicant, PartnerApplicantStatus } from "@/types/partner-applicant";
+import { QUOTE_CATEGORY_LABELS } from "@/domain/quote-category";
+
+const STATUS_LABEL: Record<PartnerApplicantStatus, string> = {
+  pending: "검토 중",
+  approved: "승인",
+  rejected: "거절",
+};
 
 /**
  * v1.9 partner-application · §6.4 — 신청자 상세 + 승인/거절 액션.
@@ -84,7 +91,7 @@ export default function ApplicantDetail({ applicant }: Props) {
           <dt className="text-zinc-500">연락처</dt>
           <dd>{applicant.phone ?? "-"}</dd>
           <dt className="text-zinc-500">카테고리</dt>
-          <dd>{applicant.category ?? "-"}</dd>
+          <dd>{applicant.category ? QUOTE_CATEGORY_LABELS[applicant.category] : "-"}</dd>
           <dt className="text-zinc-500">지역</dt>
           <dd>{applicant.regionLabel ?? "-"}</dd>
           <dt className="text-zinc-500">상태</dt>
@@ -98,7 +105,7 @@ export default function ApplicantDetail({ applicant }: Props) {
                     : "text-red-600"
               }
             >
-              {applicant.status}
+              {STATUS_LABEL[applicant.status]}
             </span>
           </dd>
           <dt className="text-zinc-500">신청</dt>
@@ -164,7 +171,7 @@ export default function ApplicantDetail({ applicant }: Props) {
         </div>
       ) : (
         <p className="rounded-md border border-zinc-200 bg-zinc-50 p-3 text-sm text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
-          이미 처리된 신청입니다 ({applicant.status}).
+          이미 처리된 신청입니다 ({STATUS_LABEL[applicant.status]}).
         </p>
       )}
 

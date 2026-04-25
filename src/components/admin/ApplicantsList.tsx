@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { PartnerApplicant } from "@/types/partner-applicant";
+import { QUOTE_CATEGORY_LABELS } from "@/domain/quote-category";
 
 /**
  * v1.9 partner-application · §6.3 — 대기 신청자 목록 (admin/partners 페이지 임베드).
@@ -45,7 +46,7 @@ export default function ApplicantsList({
               <td className="px-3 py-2 font-medium">{a.businessName}</td>
               <td className="px-3 py-2 text-xs text-zinc-500">{a.email}</td>
               <td className="px-3 py-2 text-xs text-zinc-500">
-                {a.category ?? "-"}
+                {a.category ? QUOTE_CATEGORY_LABELS[a.category] : "-"}
               </td>
               <td className="px-3 py-2 text-xs text-zinc-500">
                 {a.regionLabel ?? "-"}

@@ -6,15 +6,15 @@ import Link from "next/link";
 import type { Post, PostType, PublishStatus } from "@/types/post";
 
 const TYPE_LABEL: Record<PostType, string> = {
-  tip: "tip",
-  provider: "provider",
-  "partner-promo": "partner-promo",
+  tip: "꿀팁",
+  provider: "청명",
+  "partner-promo": "의뢰업체",
 };
 
 const STATUS_BADGE: Record<PublishStatus, string> = {
-  draft: "📝 draft",
-  published: "✅ published",
-  withdrawn: "🚫 withdrawn",
+  draft: "📝 작성 중",
+  published: "✅ 발행됨",
+  withdrawn: "🚫 철회됨",
 };
 
 function fmt(d: Date | null): string {
@@ -73,9 +73,9 @@ export default function PostsList({ posts: initial }: { posts: Post[] }) {
             className="ml-1 rounded border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-800"
           >
             <option value="all">전체</option>
-            <option value="tip">tip</option>
-            <option value="provider">provider</option>
-            <option value="partner-promo">partner-promo</option>
+            <option value="tip">꿀팁</option>
+            <option value="provider">청명</option>
+            <option value="partner-promo">의뢰업체</option>
           </select>
         </label>
         <label className="text-sm">
@@ -88,9 +88,9 @@ export default function PostsList({ posts: initial }: { posts: Post[] }) {
             className="ml-1 rounded border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-800"
           >
             <option value="all">전체</option>
-            <option value="draft">draft</option>
-            <option value="published">published</option>
-            <option value="withdrawn">withdrawn</option>
+            <option value="draft">작성 중</option>
+            <option value="published">발행됨</option>
+            <option value="withdrawn">철회됨</option>
           </select>
         </label>
         <span className="ml-auto text-xs text-zinc-500">{filtered.length}건</span>

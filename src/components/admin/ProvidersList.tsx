@@ -2,7 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import type { Provider } from "@/types/provider";
+import type { Provider, ProviderRegion } from "@/types/provider";
+import { QUOTE_CATEGORY_LABELS } from "@/domain/quote-category";
+
+function formatRegion(r: ProviderRegion): string {
+  const city = r.city ?? "";
+  const district = r.district ?? "";
+  return [city, district].filter(Boolean).join(" ");
+}
 
 /**
  * v1.8 admin-console · §5.6 — providers 목록 + verified·insured 토글.
@@ -67,8 +74,8 @@ export default function ProvidersList({ providers: initial }: Props) {
             <th className="px-3 py-2">매장명</th>
             <th className="px-3 py-2">카테고리</th>
             <th className="px-3 py-2">지역</th>
-            <th className="px-3 py-2 text-center">verified</th>
-            <th className="px-3 py-2 text-center">insured</th>
+            <th className="px-3 py-2 text-center">인증</th>
+            <th className="px-3 py-2 text-center">보험</th>
             <th className="px-3 py-2 text-right">평가</th>
           </tr>
         </thead>
@@ -77,11 +84,17 @@ export default function ProvidersList({ providers: initial }: Props) {
             <tr key={p.id}>
               <td className="px-3 py-2 font-medium">{p.companyName}</td>
               <td className="px-3 py-2 text-zinc-500">
-                {p.categories.slice(0, 3).join(", ")}
+                {p.categories
+                  .slice(0, 3)
+                  .map((c) => QUOTE_CATEGORY_LABELS[c] ?? c)
+                  .join(", ")}
                 {p.categories.length > 3 ? " ..." : ""}
               </td>
               <td className="px-3 py-2 text-zinc-500">
-                {p.regions.slice(0, 2).join(", ") || "-"}
+                {p.regions.length > 0
+                  ? p.regions.slice(0, 2).map(formatRegion).join(", ") +
+                    (p.regions.length > 2 ? " ..." : "")
+                  : "-"}
               </td>
               <td className="px-3 py-2 text-center">
                 <input
