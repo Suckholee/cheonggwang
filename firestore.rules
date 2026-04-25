@@ -165,6 +165,15 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ─── partnerApplicants (v1.9 · 의뢰업체 등록 신청) ────
+    // 본인 ownerUid + admin claim · write는 Admin SDK 독점 (server action).
+    match /partnerApplicants/{applicantId} {
+      allow read: if
+        (request.auth != null && request.auth.uid == resource.data.ownerUid)
+        || (request.auth != null && request.auth.token.admin == true);
+      allow write: if false;
+    }
+
     // ─── partners (v1.7 · 의뢰업체 마스터) ───────────────
     // 본인(ownerUid) read + admin claim · write는 Admin SDK 독점 (CLI + Route Handler).
     match /partners/{partnerId} {

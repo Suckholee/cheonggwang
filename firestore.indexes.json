@@ -250,6 +250,22 @@
       ]
     },
     {
+      "collectionGroup": "partnerApplicants",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "appliedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "partnerApplicants",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ownerUid", "order": "ASCENDING" },
+        { "fieldPath": "appliedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "storyScrapbook",
       "queryScope": "COLLECTION",
       "fields": [

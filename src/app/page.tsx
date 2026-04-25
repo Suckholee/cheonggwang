@@ -20,6 +20,7 @@ import { AveragePriceSection } from "@/components/client-dashboard/AveragePriceS
 import { TopProvidersSection } from "@/components/client-dashboard/TopProvidersSection";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { ProfileMenuButton } from "@/components/ui/ProfileMenuButton";
+import PartnerApplyCTA from "@/components/landing/PartnerApplyCTA";
 
 export const metadata = {
   title: "청광 — 청소 견적 마켓플레이스",
@@ -60,6 +61,8 @@ export default function MarketplaceHome() {
           </Suspense>
 
           <CommunityPreviewSection />
+
+          <PartnerApplyCTA />
 
           <Suspense fallback={<FooterSkeleton />}>
             <MarketplaceFooter />

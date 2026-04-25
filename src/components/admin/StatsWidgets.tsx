@@ -1,7 +1,8 @@
 import type { AdminStats } from "@/lib/admin/stats";
 
 /**
- * v1.8 admin-console · §5.2 — 대시보드 통계 카드 6개.
+ * v1.8 admin-console · §5.2 — 대시보드 통계 카드.
+ * v1.9 partner-application · H6 — 7번째 카드 "대기 신청" 추가.
  * Server Component — props로 stats 받음.
  */
 
@@ -85,6 +86,12 @@ export default function StatsWidgets({ stats }: Props) {
         value={String(partnersByStatus.suspended)}
         hint="향후 작성 차단"
         tone={partnersByStatus.suspended > 0 ? "warn" : "default"}
+      />
+      <Card
+        label="⏳ 대기 신청"
+        value={String(stats.pendingApplicantsCount)}
+        hint="검토 대기 중"
+        tone={stats.pendingApplicantsCount > 0 ? "warn" : "default"}
       />
     </div>
   );
