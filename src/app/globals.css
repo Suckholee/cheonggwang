@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /** v1.1b bottom-tab-nav · 하단 nav 고정 높이 */
+  --bottom-nav-height: 64px;
 }
 
 @theme inline {

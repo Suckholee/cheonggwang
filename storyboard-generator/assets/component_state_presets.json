@@ -1,0 +1,53 @@
+{
+  "input_basic":         {"kind": "input", "state": "basic",    "placeholder": "비밀번호"},
+  "input_focused":       {"kind": "input", "state": "focused",  "placeholder": "비밀번호"},
+  "input_typing_email":  {"kind": "input", "state": "typing",   "text": "germ"},
+  "input_typing_text":   {"kind": "input", "state": "typing",   "text": "텍스트 입력 중"},
+  "input_masked":        {"kind": "input", "state": "masked",   "text": "●●●m"},
+  "input_unmasked":      {"kind": "input", "state": "typing",   "text": "germweapon"},
+  "input_valid":         {"kind": "input", "state": "valid",    "text": "●●●●●●●●●●"},
+  "input_invalid":       {"kind": "input", "state": "invalid",  "text": "germweapon@gmail.com", "error": "이메일 또는 비밀번호를 다시 확인해주세요."},
+  "input_disabled":      {"kind": "input", "state": "disabled", "placeholder": "(비활성화)"},
+  "input_filled_locked": {"kind": "input", "state": "valid",    "text": "값 채워짐"},
+
+  "button_default":  {"kind": "button", "state": "default",  "label": "버튼"},
+  "button_disabled": {"kind": "button", "state": "disabled", "label": "버튼"},
+  "button_hover":    {"kind": "button", "state": "default",  "label": "버튼 (Hover)"},
+  "button_active":   {"kind": "button", "state": "default",  "label": "버튼 (Pressed)"},
+  "button_loading":  {"kind": "button", "state": "default",  "label": "● 로딩"},
+  "button_success":  {"kind": "button", "state": "default",  "label": "✓ 완료"},
+
+  "link_default": {"kind": "link", "label": "텍스트 링크"},
+  "link_hover":   {"kind": "link", "label": "텍스트 링크 (밑줄)"},
+  "link_visited": {"kind": "link", "label": "텍스트 링크 (방문)"},
+
+  "toggle_off": {"kind": "toggle", "state": "off"},
+  "toggle_on":  {"kind": "toggle", "state": "on"},
+
+  "checkbox_unchecked":     {"kind": "checkbox", "state": "off"},
+  "checkbox_checked":       {"kind": "checkbox", "state": "on"},
+  "checkbox_indeterminate": {"kind": "checkbox", "state": "indeterminate"},
+
+  "radio_unselected": {"kind": "radio", "state": "off"},
+  "radio_selected":   {"kind": "radio", "state": "on"},
+
+  "card_default":      {"kind": "card", "state": "default",  "label": "카드"},
+  "card_hover":        {"kind": "card", "state": "hover",    "label": "카드 (Hover)"},
+  "card_selected":     {"kind": "card", "state": "selected", "label": "카드 (Selected)"},
+  "list_item_unread":  {"kind": "card", "state": "default",  "label": "● 읽지 않음"},
+  "list_item_read":    {"kind": "card", "state": "default",  "label": "읽음"},
+
+  "modal_alert":   {"kind": "modal", "label": "알림 모달"},
+  "modal_confirm": {"kind": "modal", "label": "확인/취소 모달"},
+  "modal_input":   {"kind": "modal", "label": "입력 모달"},
+  "toast_info":    {"kind": "toast", "label": "안내 토스트"},
+  "toast_success": {"kind": "toast", "label": "성공 토스트"},
+  "toast_error":   {"kind": "toast", "label": "에러 토스트"},
+
+  "empty_default":     {"kind": "empty", "label": "빈 상태"},
+  "loading_skeleton":  {"kind": "loading", "label": "스켈레톤"},
+  "loading_spinner":   {"kind": "loading", "label": "● 로딩 중"},
+  "error_network":     {"kind": "error", "label": "네트워크 에러"},
+  "error_404":         {"kind": "error", "label": "404"},
+  "error_permission":  {"kind": "error", "label": "권한 거부"}
+}

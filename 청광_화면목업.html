@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>청광 · Screen Mockups v0.1</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Pretendard Variable"', 'Pretendard', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        brand:   { 50:'#EFF6FF', 100:'#DBEAFE', 500:'#2563EB', 600:'#1D4ED8', 700:'#1E40AF' },
+        success: { 100:'#D1FAE5', 500:'#10B981', 700:'#047857' },
+        warning: { 100:'#FEF3C7', 500:'#F59E0B' },
+        danger:  { 100:'#FEE2E2', 500:'#EF4444', 700:'#B91C1C' },
+        credit:  { 100:'#FEF3C7', 500:'#FBBF24', 700:'#B45309' },
+        ink: {
+          50:'#F9FAFB', 100:'#F3F4F6', 300:'#D1D5DB',
+          500:'#6B7280', 700:'#374151', 900:'#111827'
+        }
+      },
+      borderRadius: { xl:'16px', '2xl':'24px' },
+      boxShadow: {
+        card: '0 1px 2px rgba(17,24,39,0.04)',
+        pop:  '0 4px 12px rgba(17,24,39,0.08)',
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root { font-family: 'Pretendard Variable', system-ui, sans-serif; }
+  body { font-feature-settings: 'tnum' on, 'ss06' on; }
+  .num { font-variant-numeric: tabular-nums; }
+  /* Phone chrome */
+  .phone {
+    width: 390px; height: 780px;
+    border-radius: 44px;
+    background: #F9FAFB;
+    box-shadow:
+      0 0 0 10px #111827,
+      0 0 0 12px #1F2937,
+      0 30px 60px -15px rgba(17,24,39,0.25);
+    overflow: hidden;
+    position: relative;
+  }
+  .notch {
+    position: absolute; top: 12px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 28px;
+    background: #0A0A0A; border-radius: 999px; z-index: 40;
+  }
+  .statusbar {
+    padding: 14px 24px 4px; display:flex; align-items:center; justify-content:space-between;
+    font-size: 13px; font-weight: 600; color: #111827;
+  }
+  .screen {
+    height: 100%; overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .scroll { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .tabbar {
+    position: absolute; bottom: 0; left:0; right:0;
+    height: 72px; background: #fff; border-top: 1px solid #F3F4F6;
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    padding-bottom: 16px;
+  }
+  .tabitem { display: flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:#6B7280; font-size:11px; font-weight:500; }
+  .tabitem.active { color:#111827; font-weight:700; }
+  .dot { position:absolute; top:-2px; right:-6px; width:6px; height:6px; background:#EF4444; border-radius:999px; }
+  /* Layout */
+  .grid-mock { display:grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 48px; justify-items: center; }
+  .caption-block { max-width: 420px; }
+</style>
+</head>
+
+<body class="bg-ink-50 text-ink-900 min-h-screen">
+
+<!-- ============ HEADER ============ -->
+<header class="max-w-6xl mx-auto px-6 py-12">
+  <div class="flex items-baseline gap-3 mb-3">
+    <div class="text-3xl font-bold text-brand-500">청광</div>
+    <div class="text-sm text-ink-500">Cheonggwang · Design System in Action · v0.1</div>
+  </div>
+  <h1 class="text-4xl font-bold tracking-tight mb-4">핵심 8개 화면 목업</h1>
+  <p class="text-lg text-ink-500 leading-relaxed max-w-3xl">
+    디자인 정의서의 <b>7대 원칙</b>과 <b>8개 컴포넌트</b>, <b>토큰 v1</b>을 실제 화면에 적용했습니다.
+    의뢰인 사이드 4화면 · 고수(업체) 사이드 4화면 — 동일한 시스템에서 두 사용자 경험이 어떻게 갈라지는지 보여줍니다.
+  </p>
+  <div class="mt-6 flex flex-wrap gap-2 text-xs">
+    <span class="px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-semibold">Primary · #2563EB</span>
+    <span class="px-3 py-1.5 rounded-full bg-success-100 text-success-700 font-semibold">Success · #10B981</span>
+    <span class="px-3 py-1.5 rounded-full bg-danger-100 text-danger-700 font-semibold">Danger · #EF4444</span>
+    <span class="px-3 py-1.5 rounded-full bg-credit-100 text-credit-700 font-semibold">Credit · #FBBF24 (전용)</span>
+    <span class="px-3 py-1.5 rounded-full bg-ink-100 text-ink-700 font-semibold">Card radius · 16px</span>
+    <span class="px-3 py-1.5 rounded-full bg-ink-100 text-ink-700 font-semibold">Pretendard Variable</span>
+  </div>
+</header>
+
+<!-- ============ 의뢰인 섹션 ============ -->
+<section class="max-w-[1400px] mx-auto px-6 py-12">
+  <div class="mb-10">
+    <div class="text-xs font-bold text-brand-500 tracking-widest mb-2">CLIENT · 의뢰인</div>
+    <h2 class="text-3xl font-bold">의뢰인 앱 — 4개 핵심 화면</h2>
+    <p class="text-ink-500 mt-2">지역 선택 → AI 견적 요청 → 견적 비교 → 업체 상세</p>
+  </div>
+
+  <div class="grid-mock">
+
+    <!-- ===== SCREEN 1 · 의뢰인 홈 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-ink-50">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <div class="scroll">
+            <!-- 헤더 -->
+            <div class="px-5 pt-2 pb-3 flex items-center justify-between">
+              <button class="flex items-center gap-1 font-bold text-lg">
+                성남시 수정구
+                <i data-lucide="chevron-down" class="w-5 h-5 text-ink-500"></i>
+              </button>
+              <div class="flex items-center gap-4">
+                <div class="relative"><i data-lucide="bell" class="w-6 h-6 text-ink-700"></i><span class="dot"></span></div>
+                <i data-lucide="circle-user" class="w-6 h-6 text-ink-700"></i>
+              </div>
+            </div>
+
+            <!-- AI 견적 CTA (Primary) -->
+            <div class="px-5">
+              <button class="w-full bg-brand-500 text-white rounded-xl px-5 py-5 flex items-center gap-3 shadow-card">
+                <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center">
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <div class="text-left flex-1">
+                  <div class="font-bold text-base leading-tight">AI 견적 요청</div>
+                  <div class="text-xs text-brand-100 mt-0.5">30초 문답으로 최대 5개 업체 견적</div>
+                </div>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <!-- 5개 세그먼트 -->
+            <div class="px-5 mt-6">
+              <div class="text-sm font-semibold mb-3">청소 종류 선택</div>
+              <div class="grid grid-cols-5 gap-2">
+                <button class="flex flex-col items-center gap-1.5 py-3 bg-white rounded-xl">
+                  <span class="text-xl">🏠</span><span class="text-[11px] font-medium">가정집</span>
+                </button>
+                <button class="flex flex-col items-center gap-1.5 py-3 bg-white rounded-xl">
+                  <span class="text-xl">🏢</span><span class="text-[11px] font-medium">사무실</span>
+                </button>
+                <button class="flex flex-col items-center gap-1.5 py-3 bg-white rounded-xl">
+                  <span class="text-xl">🏘️</span><span class="text-[11px] font-medium">건물주</span>
+                </button>
+                <button class="flex flex-col items-center gap-1.5 py-3 bg-white rounded-xl">
+                  <span class="text-xl">🔄</span><span class="text-[11px] font-medium">정기</span>
+                </button>
+                <button class="flex flex-col items-center gap-1.5 py-3 bg-white rounded-xl">
+                  <span class="text-xl">⚠️</span><span class="text-[11px] font-medium">특수</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 평균가 가이드 -->
+            <div class="px-5 mt-6">
+              <div class="bg-white rounded-xl p-5 shadow-card">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="text-[11px] font-bold text-brand-500 tracking-wider">이번 주 평균가 · 성남시</div>
+                  <i data-lucide="trending-down" class="w-4 h-4 text-success-500"></i>
+                </div>
+                <div class="space-y-2.5">
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-sm text-ink-700">입주청소 25평</span>
+                    <span class="num font-bold text-ink-900">22~28만<span class="text-xs font-medium text-ink-500"> 원</span></span>
+                  </div>
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-sm text-ink-700">사무실 50평 정기</span>
+                    <span class="num font-bold text-ink-900">월 45~60만<span class="text-xs font-medium text-ink-500"> 원</span></span>
+                  </div>
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-sm text-ink-700">에어컨 분해청소</span>
+                    <span class="num font-bold text-ink-900">8~12만<span class="text-xs font-medium text-ink-500"> 원</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 실시간 예약 (소셜 프루프) -->
+            <div class="px-5 mt-5">
+              <div class="flex items-center gap-1.5 mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-danger-500 animate-pulse"></span>
+                <div class="text-xs font-bold text-ink-700">실시간 예약</div>
+              </div>
+              <div class="bg-white rounded-xl p-4 shadow-card space-y-2.5 text-xs text-ink-700">
+                <div><span class="text-ink-500">방금 전 · </span>분당 33평 이사청소 예약</div>
+                <div><span class="text-ink-500">2분 전 · </span>판교 사무실 정기 계약</div>
+                <div><span class="text-ink-500">4분 전 · </span>수정구 에어컨 청소 예약</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab bar -->
+          <div class="tabbar">
+            <div class="tabitem active"><i data-lucide="home" class="w-5 h-5"></i>홈</div>
+            <div class="tabitem"><i data-lucide="search" class="w-5 h-5"></i>찾기</div>
+            <div class="tabitem"><div class="relative"><i data-lucide="receipt" class="w-5 h-5"></i></div>견적함</div>
+            <div class="tabitem"><i data-lucide="message-circle" class="w-5 h-5"></i>채팅</div>
+            <div class="tabitem"><i data-lucide="user" class="w-5 h-5"></i>마이</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-brand-500 tracking-widest">01 · 의뢰인 홈</div>
+        <div class="font-bold text-lg mt-1">행동 → 안내 → 증거 순서</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">Primary CTA를 가장 위에 딱 하나. 평균가 가이드로 의사결정 조력, 실시간 예약 피드로 사회적 증거. 넛지 장치는 2개(평균가·실시간피드)로 제한.</p>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 2 · AI 견적 요청 Step 3 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-ink-50">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <!-- Header with progress -->
+          <div class="px-5 pt-2 pb-4">
+            <div class="flex items-center justify-between mb-3">
+              <button><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+              <span class="text-xs font-semibold text-ink-500 num">3 / 6</span>
+              <button class="text-sm text-ink-500">닫기</button>
+            </div>
+            <div class="w-full h-1 bg-ink-100 rounded-full overflow-hidden">
+              <div class="h-full bg-brand-500 rounded-full" style="width:50%"></div>
+            </div>
+          </div>
+
+          <div class="scroll px-5">
+            <h2 class="text-2xl font-bold leading-tight mb-1">현재 상태를 알려주세요</h2>
+            <p class="text-sm text-ink-500 mb-5">체크할수록 정확한 견적이 나와요</p>
+
+            <!-- Checklist -->
+            <div class="space-y-2.5">
+              <label class="flex items-center justify-between bg-white rounded-xl p-4 shadow-card">
+                <div class="flex items-center gap-3">
+                  <div class="w-6 h-6 rounded-md bg-brand-500 flex items-center justify-center">
+                    <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                  </div>
+                  <span class="text-sm font-medium">욕실 곰팡이 있음</span>
+                </div>
+                <span class="text-xs font-bold text-brand-500 num">+1.5만</span>
+              </label>
+
+              <label class="flex items-center justify-between bg-white rounded-xl p-4 shadow-card">
+                <div class="flex items-center gap-3">
+                  <div class="w-6 h-6 rounded-md bg-brand-500 flex items-center justify-center">
+                    <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                  </div>
+                  <span class="text-sm font-medium">주방 기름때 심함</span>
+                </div>
+                <span class="text-xs font-bold text-brand-500 num">+3만</span>
+              </label>
+
+              <label class="flex items-center justify-between bg-white rounded-xl p-4 shadow-card">
+                <div class="flex items-center gap-3">
+                  <div class="w-6 h-6 rounded-md bg-brand-500 flex items-center justify-center">
+                    <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                  </div>
+                  <span class="text-sm font-medium">반려동물 거주</span>
+                </div>
+                <span class="text-xs font-bold text-brand-500 num">+2만</span>
+              </label>
+
+              <label class="flex items-center justify-between bg-white rounded-xl p-4 border border-ink-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-6 h-6 rounded-md border-2 border-ink-300"></div>
+                  <span class="text-sm text-ink-700">흡연 이력 있음</span>
+                </div>
+                <span class="text-xs text-ink-500 num">+2만</span>
+              </label>
+
+              <label class="flex items-center justify-between bg-white rounded-xl p-4 border border-ink-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-6 h-6 rounded-md border-2 border-ink-300"></div>
+                  <span class="text-sm text-ink-700">베란다 확장 구조</span>
+                </div>
+                <span class="text-xs text-ink-500 num">+1만</span>
+              </label>
+
+              <label class="flex items-center justify-between bg-white rounded-xl p-4 border border-ink-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-6 h-6 rounded-md border-2 border-ink-300"></div>
+                  <span class="text-sm text-ink-700">에어컨 분해청소 포함</span>
+                </div>
+                <span class="text-xs text-ink-500 num">+6만</span>
+              </label>
+            </div>
+
+            <!-- Live estimate -->
+            <div class="mt-5 bg-brand-50 rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-bold text-brand-700">현재 예상 견적</div>
+                <div class="num text-2xl font-bold text-brand-700 mt-0.5">22.5~27만<span class="text-sm font-semibold"> 원</span></div>
+              </div>
+              <i data-lucide="calculator" class="w-8 h-8 text-brand-500"></i>
+            </div>
+          </div>
+
+          <!-- Fixed bottom -->
+          <div class="absolute bottom-0 left-0 right-0 px-5 py-4 bg-white border-t border-ink-100">
+            <button class="w-full bg-brand-500 text-white rounded-xl py-3.5 font-bold">다음</button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-brand-500 tracking-widest">02 · AI 견적 요청 · Step 3/6</div>
+        <div class="font-bold text-lg mt-1">체크리스트형 상태 진단</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">숨고의 자유 텍스트 대신 정형화된 체크리스트. 항목마다 실시간 가산 금액 노출 → 의뢰인·업체 간 "이건 포함 안 된다" 분쟁 원천 차단.</p>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 3 · 받은 견적 리스트 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-ink-50">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <!-- Header -->
+          <div class="px-5 pt-2 pb-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+              <h2 class="font-bold text-lg">받은 견적 <span class="text-brand-500 num">5</span></h2>
+            </div>
+            <button class="flex items-center gap-1 text-sm text-ink-700 font-semibold">
+              추천순 <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Request summary -->
+          <div class="mx-5 mb-3 p-3 bg-brand-50 rounded-xl text-xs text-brand-700">
+            입주청소 · 분당 33평 · 4/22(화) PM · <b>22.5~27만</b>
+          </div>
+
+          <div class="scroll px-5 space-y-3">
+            <!-- Card 1 · Recommended -->
+            <div class="bg-white rounded-xl p-4 shadow-card border border-brand-500">
+              <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-lg bg-brand-100 flex items-center justify-center text-xl">🧽</div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-1.5 mb-0.5">
+                    <span class="text-[10px] font-bold bg-brand-500 text-white px-2 py-0.5 rounded">추천</span>
+                    <span class="font-bold text-sm">깨끗한청소연구소</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-[11px] text-ink-500">
+                    <span class="num flex items-center gap-0.5"><i data-lucide="star" class="w-3 h-3 text-warning-500 fill-warning-500"></i>4.9 (312)</span>
+                    <span>·</span><span>활동 4년</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="num text-xl font-bold text-ink-900">24만</div>
+                  <div class="text-[10px] text-ink-500">세부내역 ▾</div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="text-[10px] px-2 py-0.5 rounded bg-success-100 text-success-700 font-semibold">보험</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-success-100 text-success-700 font-semibold">사업자</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-ink-100 text-ink-700 font-semibold">재계약률 68%</span>
+              </div>
+
+              <p class="text-xs text-ink-700 mt-3 leading-relaxed">"반려견 냄새 관련 언급하신 부분, 저희는 친환경 효소제로 특수 처리합니다. 별도 비용 없이 포함해서…"</p>
+
+              <div class="flex gap-2 mt-3">
+                <button class="flex-1 text-xs py-2.5 rounded-lg bg-ink-100 text-ink-700 font-semibold">프로필</button>
+                <button class="flex-1 text-xs py-2.5 rounded-lg bg-brand-500 text-white font-bold">채팅</button>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white rounded-xl p-4 shadow-card">
+              <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-lg bg-ink-100 flex items-center justify-center text-xl">🏠</div>
+                <div class="flex-1">
+                  <div class="font-bold text-sm">프로하우스클린</div>
+                  <div class="flex items-center gap-2 text-[11px] text-ink-500">
+                    <span class="num flex items-center gap-0.5"><i data-lucide="star" class="w-3 h-3 text-warning-500 fill-warning-500"></i>4.7 (89)</span>
+                    <span>·</span><span>응답 10분</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="num text-xl font-bold text-ink-900">21만</div>
+                  <div class="text-[10px] text-success-500 font-bold">최저가</div>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="text-[10px] px-2 py-0.5 rounded bg-success-100 text-success-700 font-semibold">보험</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-ink-100 text-ink-700 font-semibold">여성팀 가능</span>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white rounded-xl p-4 shadow-card">
+              <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-lg bg-ink-100 flex items-center justify-center text-xl">✨</div>
+                <div class="flex-1">
+                  <div class="font-bold text-sm">스파클클린팀</div>
+                  <div class="flex items-center gap-2 text-[11px] text-ink-500">
+                    <span class="num flex items-center gap-0.5"><i data-lucide="star" class="w-3 h-3 text-warning-500 fill-warning-500"></i>4.8 (204)</span>
+                    <span>·</span><span>재계약 72%</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="num text-xl font-bold text-ink-900">25만</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bg-white rounded-xl p-4 shadow-card">
+              <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-lg bg-ink-100 flex items-center justify-center text-xl">🧴</div>
+                <div class="flex-1">
+                  <div class="font-bold text-sm">에코클린주식회사</div>
+                  <div class="flex items-center gap-2 text-[11px] text-ink-500">
+                    <span class="num flex items-center gap-0.5"><i data-lucide="star" class="w-3 h-3 text-warning-500 fill-warning-500"></i>4.6 (57)</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="num text-xl font-bold text-ink-900">27만</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tabitem"><i data-lucide="home" class="w-5 h-5"></i>홈</div>
+            <div class="tabitem"><i data-lucide="search" class="w-5 h-5"></i>찾기</div>
+            <div class="tabitem active"><div class="relative"><i data-lucide="receipt" class="w-5 h-5"></i><span class="dot"></span></div>견적함</div>
+            <div class="tabitem"><i data-lucide="message-circle" class="w-5 h-5"></i>채팅</div>
+            <div class="tabitem"><i data-lucide="user" class="w-5 h-5"></i>마이</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-brand-500 tracking-widest">03 · 받은 견적 리스트</div>
+        <div class="font-bold text-lg mt-1">비교를 쉽게, 결정을 빠르게</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">'추천순' 알고리즘은 가격+리뷰+재계약률+응답속도의 가중 조합. 첫 번째 카드만 브랜드 보더로 시각적 차별화, '최저가' 같은 사실 기반 라벨로 비교축 명확히.</p>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 4 · 업체 상세 프로필 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-white">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <!-- Header -->
+          <div class="px-5 pt-2 pb-3 flex items-center justify-between">
+            <button><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <div class="flex gap-3">
+              <i data-lucide="share-2" class="w-5 h-5"></i>
+              <i data-lucide="bookmark" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="scroll">
+            <!-- Hero -->
+            <div class="px-5">
+              <div class="h-36 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 relative overflow-hidden flex items-end p-4">
+                <div class="absolute inset-0 opacity-20" style="background:radial-gradient(circle at 30% 30%, #fff 0%, transparent 60%)"></div>
+                <div class="relative text-white">
+                  <div class="text-[10px] font-bold opacity-90 tracking-wider">TEAM</div>
+                  <div class="text-xl font-bold">깨끗한청소연구소</div>
+                </div>
+              </div>
+
+              <!-- Meta -->
+              <div class="mt-4">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="num flex items-center gap-0.5 text-sm font-bold">
+                    <i data-lucide="star" class="w-4 h-4 text-warning-500 fill-warning-500"></i>4.9
+                  </span>
+                  <span class="text-xs text-ink-500 num">(312 리뷰)</span>
+                  <span class="text-xs text-ink-500">· 활동 4년차</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <span class="text-[10px] px-2 py-1 rounded bg-success-100 text-success-700 font-bold flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i>배상보험</span>
+                  <span class="text-[10px] px-2 py-1 rounded bg-success-100 text-success-700 font-bold flex items-center gap-1"><i data-lucide="briefcase" class="w-3 h-3"></i>사업자</span>
+                  <span class="text-[10px] px-2 py-1 rounded bg-success-100 text-success-700 font-bold flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i>4대보험</span>
+                  <span class="text-[10px] px-2 py-1 rounded bg-brand-100 text-brand-700 font-bold">여성팀 가능</span>
+                  <span class="text-[10px] px-2 py-1 rounded bg-brand-100 text-brand-700 font-bold">친환경 약품</span>
+                </div>
+              </div>
+
+              <!-- Core 3 stats -->
+              <div class="mt-5 bg-ink-50 rounded-xl p-4 grid grid-cols-3 gap-2">
+                <div class="text-center">
+                  <div class="num text-2xl font-bold text-ink-900">68<span class="text-sm">%</span></div>
+                  <div class="text-[10px] text-ink-500 mt-0.5">재계약률</div>
+                </div>
+                <div class="text-center border-l border-r border-ink-300/50">
+                  <div class="num text-2xl font-bold text-ink-900">12<span class="text-sm">분</span></div>
+                  <div class="text-[10px] text-ink-500 mt-0.5">평균 응답</div>
+                </div>
+                <div class="text-center">
+                  <div class="num text-2xl font-bold text-success-500">99<span class="text-sm">%</span></div>
+                  <div class="text-[10px] text-ink-500 mt-0.5">완료율</div>
+                </div>
+              </div>
+
+              <!-- Before After -->
+              <div class="mt-6">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-bold text-base">Before / After</h3>
+                  <span class="text-xs text-ink-500 num">43건 ></span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <div class="relative h-24 rounded-lg bg-ink-100 flex items-center justify-center text-3xl">🏚️</div>
+                    <div class="text-[10px] mt-1 text-ink-500 font-semibold">Before · 입주청소</div>
+                  </div>
+                  <div>
+                    <div class="relative h-24 rounded-lg bg-brand-100 flex items-center justify-center text-3xl">✨</div>
+                    <div class="text-[10px] mt-1 text-ink-500 font-semibold flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 text-success-500"></i>After · 위치인증</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 장비 / 약품 -->
+              <div class="mt-6">
+                <h3 class="font-bold text-base mb-2">사용 장비 · 약품</h3>
+                <div class="space-y-2 text-sm">
+                  <div class="flex items-center gap-2 text-ink-700"><i data-lucide="droplets" class="w-4 h-4 text-brand-500"></i>친환경 세제 (SEIB 인증)</div>
+                  <div class="flex items-center gap-2 text-ink-700"><i data-lucide="zap" class="w-4 h-4 text-brand-500"></i>업소용 고압 스팀기</div>
+                  <div class="flex items-center gap-2 text-ink-700"><i data-lucide="wind" class="w-4 h-4 text-brand-500"></i>HEPA 필터 업라이트 청소기</div>
+                </div>
+              </div>
+
+              <!-- 리뷰 -->
+              <div class="mt-6 pb-24">
+                <h3 class="font-bold text-base mb-2">실명 리뷰</h3>
+                <div class="bg-ink-50 rounded-xl p-4">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-sm font-bold">김O현</span>
+                    <span class="text-[10px] bg-success-500 text-white px-1.5 py-0.5 rounded font-bold">실명</span>
+                    <span class="num flex items-center gap-0.5 text-xs"><i data-lucide="star" class="w-3 h-3 text-warning-500 fill-warning-500"></i>5</span>
+                  </div>
+                  <p class="text-xs text-ink-700 leading-relaxed">"사진이 거의 광고랑 똑같습니다. 반려견 있어서 걱정했는데 냄새까지 다 잡아주셨어요. 다음에도 맡길 예정."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fixed bottom CTAs -->
+          <div class="absolute bottom-0 left-0 right-0 px-5 py-4 bg-white border-t border-ink-100 flex gap-2">
+            <button class="px-5 py-3 rounded-xl border border-ink-300 text-ink-700 font-semibold">채팅</button>
+            <button class="flex-1 bg-brand-500 text-white rounded-xl py-3 font-bold">24만 원 예약하기</button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-brand-500 tracking-widest">04 · 업체 상세 프로필</div>
+        <div class="font-bold text-lg mt-1">'주장'이 아닌 '증거'로 설득</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">핵심 3지표(재계약률·응답속도·완료율)를 가장 크게. 보험·사업자·4대보험 배지는 사실. 장비/약품 공개 — 숨고엔 없는 청소 특화 차별점.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 고수(업체) 섹션 ============ -->
+<section class="max-w-[1400px] mx-auto px-6 py-12 border-t border-ink-100 mt-12">
+  <div class="mb-10">
+    <div class="text-xs font-bold text-success-700 tracking-widest mb-2">PRO · 고수(업체)</div>
+    <h2 class="text-3xl font-bold">고수 앱 — 4개 핵심 화면</h2>
+    <p class="text-ink-500 mt-2">업무 먼저 순서 · 돈을 쓰기 전에 돈을 벌게 — 숨고 대비 핵심 차별화</p>
+  </div>
+
+  <div class="grid-mock">
+
+    <!-- ===== SCREEN 5 · 고수 홈 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-ink-50">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <!-- Header -->
+          <div class="px-5 pt-2 pb-3 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-ink-500">안녕하세요,</div>
+              <div class="font-bold text-lg">깨끗한청소연구소 님</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1 bg-credit-100 text-credit-700 px-2.5 py-1 rounded-full text-xs font-bold">
+                <div class="w-3.5 h-3.5 rounded-full bg-credit-500"></div>
+                <span class="num">24</span>
+              </div>
+              <div class="relative"><i data-lucide="bell" class="w-6 h-6"></i><span class="dot"></span></div>
+            </div>
+          </div>
+
+          <div class="scroll px-5 space-y-4">
+
+            <!-- 1. 오늘 일정 (업무 먼저!) -->
+            <div class="bg-white rounded-xl p-5 shadow-card">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold">오늘 일정</h3>
+                <span class="text-xs text-ink-500 num">4월 19일</span>
+              </div>
+              <div class="space-y-3">
+                <div class="flex gap-3 pb-3 border-b border-ink-100">
+                  <div class="text-center w-14 shrink-0">
+                    <div class="num text-lg font-bold text-brand-500">10:00</div>
+                    <div class="text-[10px] text-ink-500 num">~ 15:00</div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="text-sm font-semibold">분당 33평 입주청소</div>
+                    <div class="text-xs text-ink-500 mt-0.5">김지현 님 · 분당구 정자동</div>
+                  </div>
+                  <button class="text-[11px] px-2.5 py-1 rounded bg-brand-500 text-white font-bold">출발</button>
+                </div>
+                <div class="flex gap-3">
+                  <div class="text-center w-14 shrink-0">
+                    <div class="num text-lg font-bold text-ink-700">16:30</div>
+                    <div class="text-[10px] text-ink-500 num">~ 19:00</div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="text-sm font-semibold">강남 오피스 정기</div>
+                    <div class="text-xs text-ink-500 mt-0.5">네오랩 · 주 2회 · 정기</div>
+                  </div>
+                  <button class="text-[11px] px-2.5 py-1 rounded bg-ink-100 text-ink-700 font-semibold">상세</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. 받은 요청 -->
+            <div class="bg-white rounded-xl p-5 shadow-card">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold">받은 요청</h3>
+                <span class="text-xs text-brand-500 font-bold">전체 ></span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="text-center">
+                  <div class="num text-3xl font-bold text-ink-900">5</div>
+                  <div class="text-[11px] text-ink-500 mt-0.5">신규</div>
+                </div>
+                <div class="text-center border-l border-r border-ink-100">
+                  <div class="num text-3xl font-bold text-ink-900">3</div>
+                  <div class="text-[11px] text-ink-500 mt-0.5">진행중</div>
+                </div>
+                <div class="text-center">
+                  <div class="num text-3xl font-bold text-danger-500">1</div>
+                  <div class="text-[11px] text-ink-500 mt-0.5">마감 임박</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Credit ROI -->
+            <div class="bg-white rounded-xl p-5 shadow-card">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold">이번 달 크레딧 ROI</h3>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-success-100 text-success-700 font-bold">+0.4 MoM</span>
+              </div>
+              <div class="flex items-baseline gap-3">
+                <div class="num text-4xl font-bold text-success-500">3.8<span class="text-xl">배</span></div>
+                <div class="text-xs text-ink-500">크레딧 12개 사용 · 계약 4건</div>
+              </div>
+              <button class="w-full mt-3 bg-ink-100 text-ink-900 rounded-lg py-2.5 text-xs font-bold">크레딧 충전</button>
+            </div>
+
+            <!-- 4. 프로필 완성도 -->
+            <div class="bg-white rounded-xl p-5 shadow-card">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-sm">프로필 완성도</h3>
+                <span class="text-xs text-ink-500 num">2개 남음 ></span>
+              </div>
+              <div class="w-full h-2 bg-ink-100 rounded-full overflow-hidden mb-2">
+                <div class="h-full bg-brand-500 rounded-full" style="width:80%"></div>
+              </div>
+              <div class="num text-xs font-bold text-brand-500">80%</div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tabitem active"><i data-lucide="home" class="w-5 h-5"></i>홈</div>
+            <div class="tabitem"><div class="relative"><i data-lucide="inbox" class="w-5 h-5"></i><span class="dot"></span></div>요청</div>
+            <div class="tabitem"><i data-lucide="calendar" class="w-5 h-5"></i>일정</div>
+            <div class="tabitem"><i data-lucide="message-circle" class="w-5 h-5"></i>채팅</div>
+            <div class="tabitem"><i data-lucide="user" class="w-5 h-5"></i>내정보</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-success-700 tracking-widest">05 · 고수 홈</div>
+        <div class="font-bold text-lg mt-1">업무 먼저 순서 (청광 P1)</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">숨고와 정반대. 오늘 일정 → 받은 요청 → 크레딧 ROI → 프로필 완성도. "돈 써라"가 아니라 "얼마 벌었나". 크레딧은 우상단 배지로 조용히 존재.</p>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 6 · 의뢰 피드 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-ink-50">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <!-- Header -->
+          <div class="px-5 pt-2 pb-3">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-bold text-lg">받은 요청</h2>
+              <button class="flex items-center gap-1 text-sm"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>필터</button>
+            </div>
+            <div class="flex gap-2 -mx-1">
+              <button class="px-3 py-1.5 bg-brand-500 text-white rounded-full text-xs font-bold">추천 5</button>
+              <button class="px-3 py-1.5 bg-white text-ink-700 rounded-full text-xs font-semibold">신규 12</button>
+              <button class="px-3 py-1.5 bg-white text-ink-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 bg-danger-500 rounded-full"></span>긴급 2
+              </button>
+            </div>
+          </div>
+
+          <div class="scroll px-5 space-y-3">
+            <!-- Card 1 -->
+            <div class="bg-white rounded-xl p-4 shadow-card">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-bold bg-success-500 text-white px-2 py-0.5 rounded">매칭 94%</span>
+                  <span class="text-[10px] text-ink-500">마감 D-1</span>
+                </div>
+                <span class="text-[10px] text-ink-500 num">2분 전</span>
+              </div>
+              <div class="font-bold text-base mb-1">입주청소 · 분당 33평</div>
+              <div class="text-xs text-ink-500 mb-3">4/22(화) PM · 반려견 거주 · 사진 5장</div>
+
+              <div class="flex items-center justify-between py-3 border-t border-ink-100">
+                <div>
+                  <div class="text-[10px] text-ink-500">예상 견적</div>
+                  <div class="num text-lg font-bold">22~28만</div>
+                </div>
+                <button class="px-4 py-2.5 bg-brand-500 text-white rounded-lg text-sm font-bold flex items-center gap-1.5">
+                  견적 보내기
+                  <div class="flex items-center gap-0.5 bg-white/20 px-1.5 py-0.5 rounded">
+                    <div class="w-2.5 h-2.5 rounded-full bg-credit-500"></div>
+                    <span class="num text-[10px]">2</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white rounded-xl p-4 shadow-card">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-bold bg-brand-100 text-brand-700 px-2 py-0.5 rounded">매칭 87%</span>
+                <span class="text-[10px] text-ink-500 num">15분 전</span>
+              </div>
+              <div class="font-bold text-base mb-1">사무실 정기 · 강남 60평</div>
+              <div class="text-xs text-ink-500 mb-3">주 3회 · 신규 계약 · 세금계산서</div>
+
+              <div class="flex items-center justify-between py-3 border-t border-ink-100">
+                <div>
+                  <div class="text-[10px] text-ink-500">월 예상</div>
+                  <div class="num text-lg font-bold">60~80만</div>
+                </div>
+                <button class="px-4 py-2.5 bg-brand-500 text-white rounded-lg text-sm font-bold flex items-center gap-1.5">
+                  견적 보내기
+                  <div class="flex items-center gap-0.5 bg-white/20 px-1.5 py-0.5 rounded">
+                    <div class="w-2.5 h-2.5 rounded-full bg-credit-500"></div>
+                    <span class="num text-[10px]">3</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white rounded-xl p-4 shadow-card">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-bold bg-danger-500 text-white px-2 py-0.5 rounded animate-pulse">긴급</span>
+                  <span class="text-[10px] font-bold bg-brand-100 text-brand-700 px-2 py-0.5 rounded">매칭 91%</span>
+                </div>
+                <span class="text-[10px] text-ink-500 num">방금</span>
+              </div>
+              <div class="font-bold text-base mb-1">공사 후 특수청소</div>
+              <div class="text-xs text-ink-500 mb-3">성남 45평 · 오늘 저녁 · 분진</div>
+
+              <div class="flex items-center justify-between py-3 border-t border-ink-100">
+                <div>
+                  <div class="text-[10px] text-ink-500">예상 견적</div>
+                  <div class="num text-lg font-bold">50~70만</div>
+                </div>
+                <button class="px-4 py-2.5 bg-brand-500 text-white rounded-lg text-sm font-bold flex items-center gap-1.5">
+                  견적 보내기
+                  <div class="flex items-center gap-0.5 bg-white/20 px-1.5 py-0.5 rounded">
+                    <div class="w-2.5 h-2.5 rounded-full bg-credit-500"></div>
+                    <span class="num text-[10px]">4</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tabitem"><i data-lucide="home" class="w-5 h-5"></i>홈</div>
+            <div class="tabitem active"><div class="relative"><i data-lucide="inbox" class="w-5 h-5"></i><span class="dot"></span></div>요청</div>
+            <div class="tabitem"><i data-lucide="calendar" class="w-5 h-5"></i>일정</div>
+            <div class="tabitem"><i data-lucide="message-circle" class="w-5 h-5"></i>채팅</div>
+            <div class="tabitem"><i data-lucide="user" class="w-5 h-5"></i>내정보</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-success-700 tracking-widest">06 · 의뢰 피드</div>
+        <div class="font-bold text-lg mt-1">매칭률 우선 · 크레딧은 작게</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">매칭% 뱃지로 우선순위 시각화. 크레딧 비용은 버튼 우측 작은 칩으로만 노출 — 숨고처럼 "비용 먼저"가 아니라 "기회 먼저".</p>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 7 · 예약 확정 & 결제 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-white">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <div class="px-5 pt-2 pb-3 flex items-center">
+            <button><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h2 class="font-bold text-lg ml-2">예약 확정</h2>
+          </div>
+
+          <div class="scroll px-5 space-y-4">
+            <!-- 견적 요약 (체크리스트 반영) -->
+            <div class="bg-ink-50 rounded-xl p-4">
+              <div class="flex items-center gap-1.5 mb-3">
+                <i data-lucide="clipboard-check" class="w-4 h-4 text-brand-500"></i>
+                <h3 class="font-bold text-sm">견적 내역 (체크리스트 기반)</h3>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-ink-700">입주청소 33평 (기본)</span><span class="num font-bold">180,000</span></div>
+                <div class="flex justify-between"><span class="text-ink-700">욕실 곰팡이 제거</span><span class="num font-bold">+15,000</span></div>
+                <div class="flex justify-between"><span class="text-ink-700">주방 기름때 특수세정</span><span class="num font-bold">+30,000</span></div>
+                <div class="flex justify-between"><span class="text-ink-700">반려동물 냄새 제거</span><span class="num font-bold">+15,000</span></div>
+                <div class="h-px bg-ink-300 my-2"></div>
+                <div class="flex justify-between font-bold text-sm"><span>합계</span><span class="num text-brand-500">240,000 원</span></div>
+              </div>
+            </div>
+
+            <!-- 방문 일정 -->
+            <div>
+              <div class="text-xs font-bold text-ink-500 mb-2">방문 일정</div>
+              <div class="flex items-center gap-3 p-3 bg-white border border-ink-100 rounded-xl">
+                <i data-lucide="calendar" class="w-5 h-5 text-brand-500"></i>
+                <div class="flex-1">
+                  <div class="text-sm font-bold">4월 22일(화) 오후 2:00 ~ 7:00</div>
+                  <div class="text-[11px] text-ink-500">깨끗한청소연구소 · 2인 팀</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 결제 수단 -->
+            <div>
+              <div class="text-xs font-bold text-ink-500 mb-2">결제 수단</div>
+              <div class="grid grid-cols-4 gap-2">
+                <button class="border border-brand-500 bg-brand-50 rounded-xl py-3 text-[11px] font-bold text-brand-700">카카오페이</button>
+                <button class="border border-ink-100 rounded-xl py-3 text-[11px] font-semibold">네이버</button>
+                <button class="border border-ink-100 rounded-xl py-3 text-[11px] font-semibold">카드</button>
+                <button class="border border-ink-100 rounded-xl py-3 text-[11px] font-semibold">계좌</button>
+              </div>
+            </div>
+
+            <!-- 안심결제 -->
+            <div class="bg-success-100 border border-success-500/30 rounded-xl p-4 flex gap-3">
+              <i data-lucide="shield-check" class="w-5 h-5 text-success-700 shrink-0 mt-0.5"></i>
+              <div>
+                <div class="text-sm font-bold text-success-700">안심결제 (에스크로)</div>
+                <div class="text-[11px] text-success-700/80 mt-0.5 leading-relaxed">작업 완료 확인 후 업체에게 정산됩니다. 문제 발생 시 분쟁 신청 가능.</div>
+              </div>
+            </div>
+
+            <!-- B2B -->
+            <div class="flex items-center justify-between py-3 border-t border-ink-100">
+              <div>
+                <div class="text-sm font-semibold">세금계산서 발행</div>
+                <div class="text-[11px] text-ink-500">법인/사업자용</div>
+              </div>
+              <button class="w-11 h-6 bg-ink-300 rounded-full relative"><span class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-sm"></span></button>
+            </div>
+          </div>
+
+          <div class="absolute bottom-0 left-0 right-0 px-5 py-4 bg-white border-t border-ink-100">
+            <button class="w-full bg-brand-500 text-white rounded-xl py-3.5 font-bold flex items-center justify-center gap-2">
+              <span class="num">240,000 원</span> 결제하기
+            </button>
+            <div class="text-[10px] text-center text-ink-500 mt-2">취소·환불 정책에 동의하며 결제합니다</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-brand-500 tracking-widest">07 · 예약 확정 & 결제</div>
+        <div class="font-bold text-lg mt-1">체크리스트가 곧 계약서</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">위저드에서 체크한 항목이 금액 내역으로 그대로 이어짐 → 현장 분쟁 차단. 에스크로 결제를 초록 배너로 강조. B2B 토글은 원터치.</p>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 8 · 작업 완료 & 리뷰 ===== -->
+    <div class="caption-block">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen bg-ink-50">
+          <div class="statusbar num"><span>9:41</span><span class="flex gap-1.5 items-center"><i data-lucide="signal" class="w-3.5 h-3.5"></i><i data-lucide="wifi" class="w-3.5 h-3.5"></i><i data-lucide="battery-full" class="w-4 h-4"></i></span></div>
+
+          <div class="px-5 pt-2 pb-3 flex items-center">
+            <button><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+            <h2 class="font-bold text-lg ml-2">작업 완료</h2>
+          </div>
+
+          <div class="scroll px-5 space-y-5">
+            <!-- 완료 배너 -->
+            <div class="bg-success-500 rounded-2xl p-5 text-white relative overflow-hidden">
+              <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/10"></div>
+              <i data-lucide="check-circle-2" class="w-8 h-8 mb-2"></i>
+              <div class="text-sm font-bold opacity-90">작업이 완료되었습니다</div>
+              <div class="text-xl font-bold mt-1">분당 33평 입주청소</div>
+              <div class="text-xs opacity-80 mt-1 num">4월 22일 · 14:00 - 18:42</div>
+            </div>
+
+            <!-- Before / After 제출물 -->
+            <div>
+              <h3 class="font-bold text-sm mb-2">업체가 제출한 완료 사진</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <div class="h-28 bg-ink-100 rounded-xl flex items-center justify-center text-3xl">🏚️</div>
+                  <div class="text-[10px] text-ink-500 mt-1 font-semibold">Before · 주방</div>
+                </div>
+                <div>
+                  <div class="h-28 bg-brand-100 rounded-xl flex items-center justify-center text-3xl">✨</div>
+                  <div class="text-[10px] text-ink-500 mt-1 font-semibold">After · 주방</div>
+                </div>
+                <div>
+                  <div class="h-28 bg-ink-100 rounded-xl flex items-center justify-center text-3xl">🚿</div>
+                  <div class="text-[10px] text-ink-500 mt-1 font-semibold">Before · 화장실</div>
+                </div>
+                <div>
+                  <div class="h-28 bg-brand-100 rounded-xl flex items-center justify-center text-3xl">💎</div>
+                  <div class="text-[10px] text-ink-500 mt-1 font-semibold">After · 화장실</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 확인 액션 -->
+            <div class="bg-white rounded-xl p-5 shadow-card">
+              <h3 class="font-bold text-sm mb-3">결과를 확인해 주세요</h3>
+              <div class="space-y-2">
+                <button class="w-full p-3 bg-success-500 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  만족합니다 · 정산 진행
+                </button>
+                <button class="w-full p-3 bg-warning-100 text-warning-500 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                  재작업 요청
+                </button>
+                <button class="w-full p-3 bg-ink-100 text-ink-700 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                  <i data-lucide="flag" class="w-4 h-4"></i>
+                  분쟁 신청
+                </button>
+              </div>
+              <div class="text-[10px] text-ink-500 text-center mt-3 leading-relaxed">72시간 내 확인하지 않으면 자동 만족 처리됩니다.<br>24만 원은 에스크로에 안전하게 보관 중입니다.</div>
+            </div>
+
+            <!-- 간편 리뷰 프리뷰 -->
+            <div class="bg-white rounded-xl p-5 shadow-card">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold text-sm">리뷰 남기면 5% 쿠폰</h3>
+                <span class="text-[10px] bg-brand-500 text-white px-2 py-0.5 rounded font-bold">3단계 1분</span>
+              </div>
+              <div class="flex gap-1 mb-3">
+                <i data-lucide="star" class="w-7 h-7 text-warning-500 fill-warning-500"></i>
+                <i data-lucide="star" class="w-7 h-7 text-warning-500 fill-warning-500"></i>
+                <i data-lucide="star" class="w-7 h-7 text-warning-500 fill-warning-500"></i>
+                <i data-lucide="star" class="w-7 h-7 text-warning-500 fill-warning-500"></i>
+                <i data-lucide="star" class="w-7 h-7 text-warning-500 fill-warning-500"></i>
+              </div>
+              <div class="p-3 bg-ink-50 rounded-lg text-xs text-ink-500 italic">한줄평을 남겨주세요…</div>
+            </div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tabitem"><i data-lucide="home" class="w-5 h-5"></i>홈</div>
+            <div class="tabitem"><i data-lucide="search" class="w-5 h-5"></i>찾기</div>
+            <div class="tabitem active"><i data-lucide="receipt" class="w-5 h-5"></i>견적함</div>
+            <div class="tabitem"><i data-lucide="message-circle" class="w-5 h-5"></i>채팅</div>
+            <div class="tabitem"><i data-lucide="user" class="w-5 h-5"></i>마이</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5">
+        <div class="text-xs font-bold text-brand-500 tracking-widest">08 · 작업 완료 & 리뷰</div>
+        <div class="font-bold text-lg mt-1">증거 기반 종료 의례</div>
+        <p class="text-sm text-ink-500 mt-1 leading-relaxed">업체가 제출한 Before/After를 의뢰인이 확인 → 만족/재작업/분쟁 3선택. 에스크로 + 72시간 자동승인으로 양측 안전망. 리뷰는 '3단계 1분' 보상형.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ Footer ============ -->
+<footer class="max-w-6xl mx-auto px-6 py-16 mt-12 border-t border-ink-100">
+  <div class="text-xs text-ink-500 space-y-1">
+    <div>청광 · Cheonggwang · Screen Mockups v0.1</div>
+    <div>기반 문서: 청광_UX기획서.docx · 청광_디자인_정의서.md</div>
+    <div class="num">2026.04.19</div>
+  </div>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# v1.6 샘플 계정 비밀번호 덤프 (commit 금지)
+scripts/.sample-credentials.txt
+
+# bkit PDCA 런타임 상태 (cycle 진행 시 잦은 갱신 — 추적 불필요)
+.bkit/

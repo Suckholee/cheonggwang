@@ -1,0 +1,247 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── users ─────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      // create: 본인만, 청광 파트너 플래그는 초기에 true 설정 불가
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && (
+                      !('isCheonggwangPartner' in request.resource.data)
+                      || request.resource.data.isCheonggwangPartner == false
+                    );
+
+      // update: 본인이지만 protected 필드는 변경 금지.
+      // roles/providerId/contactPhone/email은 Server Action(Admin SDK)만 씀 — client direct write 차단 (defense-in-depth).
+      allow update: if request.auth != null
+                    && request.auth.uid == uid
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny([
+                           'isCheonggwangPartner',
+                           'partnerCleaningFrequency',
+                           'email',
+                           'roles',
+                           'providerId',
+                           'contactPhone'
+                         ]);
+
+      allow delete: if false;
+    }
+
+    // ─── pages ─────────────────────────────────────────────
+    match /pages/{pageId} {
+      allow read: if request.auth != null
+                  && resource.data.ownerUid == request.auth.uid;
+
+      allow create: if request.auth != null
+                    && request.resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.published == false;
+
+      allow update: if request.auth != null
+                    && resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.ownerUid == request.auth.uid;
+
+      allow delete: if request.auth != null
+                    && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // ─── slugs (공개 읽기, 쓰기는 Admin만) ─────────────────
+    match /slugs/{slug} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ─── trendKeywords (v1: 서버 전용) ─────────────────────
+    match /trendKeywords/{category} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ─── quoteTrendKeywords (v1.5a: 서버 전용 · Admin SDK 쓰기) ─
+    match /quoteTrendKeywords/{category} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ─── rateLimits (서버 전용) ────────────────────────────
+    match /rateLimits/{bucket} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ─── providers (공개 read, self-signup create, update/delete 차단) ─
+    // provider-signup v1.1에서 self-serve create 허용 (ownerUid 강제 + verified/insured false).
+    // update는 provider-profile-editor(v1.1) 에서 완화. delete는 영구 차단.
+    match /providers/{providerId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.isCheonggwangOwned == false
+                    && request.resource.data.verified == false
+                    && request.resource.data.insured == false
+                    && request.resource.data.categories.size() >= 1
+                    && request.resource.data.categories.size() <= 6;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ─── quoteRequests (owner read, owner create, server-only update) ─
+    // 서버 액션(Admin SDK)로 실제 작성. 아래 규칙은 defense-in-depth —
+    // Admin SDK는 rules를 bypass하므로, client direct write를 막는 역할.
+    // v1.1 quote-response: status 전이는 Server Action 독점.
+    match /quoteRequests/{requestId} {
+      allow read: if request.auth != null
+                  && resource.data.clientUid == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.clientUid == request.auth.uid
+                    && request.resource.data.status == 'submitted';
+      allow update: if false;   // M2: 서버 Admin SDK 독점 (status 전이)
+      allow delete: if false;
+    }
+
+    // ─── quotes (청명 견적서) ──────────────────────────────
+    // v1.1 quote-response. helper get()으로 user의 providerId 확인.
+    match /quotes/{quoteId} {
+      function myProviderId() {
+        return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.providerId;
+      }
+      allow read: if request.auth != null
+                  && (
+                    resource.data.providerId == myProviderId()
+                    || resource.data.clientUid == request.auth.uid
+                  );
+      allow create: if request.auth != null
+                    && request.resource.data.providerId == myProviderId()
+                    && request.resource.data.status == 'sent';
+      allow update: if false;   // 서버 Admin SDK만 (accept/reject는 v1.1b)
+      allow delete: if false;
+    }
+
+    // ─── providerResponses (청명 triage 상태) ─────────────
+    // v1.1 quote-response. composite id = `${providerId}_${requestId}`.
+    match /providerResponses/{docId} {
+      function myProviderId() {
+        return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.providerId;
+      }
+      allow read: if request.auth != null
+                  && resource.data.providerId == myProviderId();
+      allow create, update: if request.auth != null
+                            && request.resource.data.providerId == myProviderId()
+                            && request.resource.data.status in ['passed', 'quoted'];
+      allow delete: if false;
+    }
+
+    // ─── workCases (공개 read, Admin write) ──────────────
+    // v1.1b #2 provider-profile reader · Before/After 갤러리 데이터.
+    // write는 provider-profile-editor (v1.1b #3) 에서 Admin SDK 경유.
+    match /workCases/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ─── reviews (공개 read, Admin write) ────────────────
+    // v1.1b #2 provider-profile reader · 리뷰 데이터.
+    // write는 v2 review feature에서 Admin SDK 경유. 지금은 seed만.
+    match /reviews/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ─── posts (v1.4 #1 · AI 홍보 블로그) ────────────────
+    // v1.7 partner-promo: publishStatus 기반 read 분기.
+    //   published                 → 공개 (모든 사용자)
+    //   draft / withdrawn         → 작성자(providerOwnerUid) 본인 또는 admin claim 보유자만
+    //   레거시 문서(필드 없음)    → published로 간주 (R5)
+    // write는 Admin SDK 독점 (Server Actions / Route Handlers).
+    match /posts/{postId} {
+      allow read: if
+        !('publishStatus' in resource.data)
+        || resource.data.publishStatus == 'published'
+        || (request.auth != null && request.auth.uid == resource.data.providerOwnerUid)
+        || (request.auth != null && request.auth.token.admin == true);
+      allow write: if false;
+    }
+
+    // ─── partners (v1.7 · 의뢰업체 마스터) ───────────────
+    // 본인(ownerUid) read + admin claim · write는 Admin SDK 독점 (CLI + Route Handler).
+    match /partners/{partnerId} {
+      allow read: if
+        (request.auth != null && request.auth.uid == resource.data.ownerUid)
+        || (request.auth != null && request.auth.token.admin == true);
+      allow write: if false;
+
+      // partners/{partnerId}/events — 감사 로그 (auto-published, draft-saved, publish-toggled, status-changed, cleanup-failed)
+      match /events/{eventId} {
+        allow read: if
+          (request.auth != null
+            && request.auth.uid == get(/databases/$(database)/documents/partners/$(partnerId)).data.ownerUid)
+          || (request.auth != null && request.auth.token.admin == true);
+        allow write: if false;
+      }
+    }
+
+    // ─── storyScrapbook (v1.6 · 고객 스크랩북) ───────────
+    // 본인 아이템만 read · 쓰기는 Admin SDK 독점 (API + 크론).
+    match /storyScrapbook/{itemId} {
+      allow read: if request.auth != null
+                  && resource.data.ownerUid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // ─── bookings (v1.3 #1 · 일정 확정) ──────────────────
+    // participant only read · write는 Admin SDK 독점 (confirmBooking TX).
+    match /bookings/{bookingId} {
+      allow read: if request.auth != null
+                  && (
+                    resource.data.clientUid == request.auth.uid
+                    || resource.data.providerOwnerUid == request.auth.uid
+                  );
+      allow write: if false;
+    }
+
+    // ─── threads + messages (v1.2 #1 chat) ────────────────
+    // participant only read · write는 Admin SDK 독점 (Server Actions).
+    match /threads/{threadId} {
+      allow read: if request.auth != null
+                  && (
+                    resource.data.clientUid == request.auth.uid
+                    || resource.data.providerOwnerUid == request.auth.uid
+                  );
+      allow write: if false;
+
+      match /messages/{messageId} {
+        // Firestore는 동일 get()을 request 내 자동 캐싱 (1 read 과금).
+        allow read: if request.auth != null
+                    && request.auth.uid in [
+                      get(/databases/$(database)/documents/threads/$(threadId))
+                        .data.clientUid,
+                      get(/databases/$(database)/documents/threads/$(threadId))
+                        .data.providerOwnerUid
+                    ];
+        allow write: if false;
+      }
+    }
+
+    // ─── content-research-pipeline (서버 전용) ────────────
+    // 모두 Admin SDK(Firebase Functions)에서만 접근
+    match /researchJobs/{jobId} {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /researchSources/{category}/raw/{urlHash} {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /researchInsights/{category}/weekly/{weekKey} {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /templates/{category}/proposals/{weekKey} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}

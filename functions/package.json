@@ -1,0 +1,29 @@
+{
+  "name": "cheonggwang-functions",
+  "private": true,
+  "engines": {
+    "node": "22"
+  },
+  "main": "lib/research/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "^6.0.1",
+    "@google/generative-ai": "^0.24.1",
+    "rss-parser": "^3.13.0",
+    "sanitize-html": "^2.11.0",
+    "diff": "^5.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/sanitize-html": "^2.11.0",
+    "@types/diff": "^5.0.9"
+  }
+}
