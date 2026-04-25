@@ -59,12 +59,14 @@ export function isActiveTab(pathname: string, tab: TabDefinition): boolean {
   return pathname.startsWith(tab.href + "/");
 }
 
-/** nav를 숨겨야 하는 경로 (비로그인·법적 페이지) */
+/** nav를 숨겨야 하는 경로 (비로그인·법적·운영 콘솔 페이지) */
 const HIDDEN_PATTERNS: readonly RegExp[] = [
   /^\/login(\/|$)/,
   /^\/signup-provider(\/|$)/,
+  /^\/signup-partner(\/|$)/,
   /^\/terms(\/|$)/,
   /^\/privacy(\/|$)/,
+  /^\/admin(\/|$)/,
 ];
 
 export function isHiddenPath(pathname: string): boolean {
