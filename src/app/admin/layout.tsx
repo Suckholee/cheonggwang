@@ -35,7 +35,7 @@ export default function AdminLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div data-admin-shell className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <Suspense fallback={null}>
         <AdminNavSlot />
       </Suspense>

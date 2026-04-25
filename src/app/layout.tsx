@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -20,37 +19,35 @@ export const metadata: Metadata = {
   description: "청소 견적 마켓플레이스",
 };
 
-export default async function RootLayout({
+/**
+ * cacheComponents:true 환경에서 RootLayout을 async + headers()로 만들면
+ * 모든 페이지가 dynamic이 되어 /signup-partner/submitted 같은 SSG 페이지
+ * prerender가 깨진다 (Uncached data outside of <Suspense>).
+ *
+ * 대신 CSS `:has([data-admin-shell])` 셀렉터로 admin path 분기:
+ *   - admin/layout.tsx 최상위 div에 data-admin-shell 속성
+ *   - root wrap이 자식에 admin shell이 있으면 자동으로 max-w + overflow + bg 풀림
+ * BottomTabNav는 client component에서 이미 /admin 숨김 (cycle #22).
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "";
-  const isAdmin = pathname.startsWith("/admin");
-
   return (
     <html
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-zinc-100 dark:bg-black`}
     >
-      <body className="flex min-h-full flex-col items-center justify-center font-sans text-zinc-900 bg-zinc-100 dark:bg-black dark:text-zinc-50">
-        {isAdmin ? (
-          // admin 콘솔: 데스크탑 전제, 풀폭 + AdminBottomBar/AdminNav는 admin/layout.tsx에서 렌더
-          <div className="w-full min-h-screen bg-zinc-50 dark:bg-zinc-950">
+      <body className="flex min-h-full flex-col items-center justify-center font-sans text-zinc-900 bg-zinc-100 dark:bg-black dark:text-zinc-50 has-[[data-admin-shell]]:bg-zinc-50 has-[[data-admin-shell]]:dark:bg-zinc-950">
+        <div className="w-full max-w-[480px] bg-[#f5f6f8] dark:bg-zinc-950 min-h-screen relative flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.05)] overflow-hidden has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible">
+          <main className="flex-1 overflow-y-auto pb-[calc(var(--bottom-nav-height)+20px)] [&::-webkit-scrollbar]:hidden has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:pb-0">
             {children}
-          </div>
-        ) : (
-          // customer-facing: 480px 모바일 앱 wrap + BottomTabNav
-          <div className="w-full max-w-[480px] bg-[#f5f6f8] dark:bg-zinc-950 min-h-screen relative flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.05)] overflow-hidden">
-            <main className="flex-1 overflow-y-auto pb-[calc(var(--bottom-nav-height)+20px)] [&::-webkit-scrollbar]:hidden">
-              {children}
-            </main>
-            <Suspense fallback={null}>
-              <BottomTabNavServer />
-            </Suspense>
-          </div>
-        )}
+          </main>
+          <Suspense fallback={null}>
+            <BottomTabNavServer />
+          </Suspense>
+        </div>
       </body>
     </html>
   );
