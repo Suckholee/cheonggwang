@@ -3,7 +3,7 @@ import { ArrowRight, Store } from "lucide-react";
 
 /**
  * v1.9 partner-application · §6.1 — 홈 하단 의뢰업체 등록 CTA.
- * 첫 진입 사용자에게 "사업자라면 입점 신청" 경로 노출.
+ * 청광에서 청소를 맡기는 매장·사무실 운영자(고객) 대상 — 청소 의뢰 + 매장 홍보 두 가치 강조.
  */
 
 export default function PartnerApplyCTA() {
@@ -15,14 +15,14 @@ export default function PartnerApplyCTA() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2B66F6]/70">
-            For Business
+            매장·사무실 운영자라면
           </p>
           <p className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            청소 사업자이신가요? 의뢰업체로 등록 신청하세요
+            청소도 맡기고 광고도 맡기세요
           </p>
           <p className="mt-1 text-[13px] leading-5 text-zinc-600 dark:text-zinc-400">
-            홍보글 자동 발행, 고객 문의 직접 연결까지. 신청 후 운영팀 검토를 거쳐
-            승인됩니다.
+            정기 청소 의뢰부터 매장 홍보 콘텐츠 자동 발행까지, 한 계정에서 관리하세요.
+            의뢰업체로 등록하면 운영팀 검토 후 승인됩니다.
           </p>
         </div>
       </div>
