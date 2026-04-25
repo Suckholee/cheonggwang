@@ -5,14 +5,14 @@ import { postRepository } from "@/lib/firebase/post-repository";
 import PostsList from "@/components/admin/PostsList";
 
 export const metadata = {
-  title: "Posts · 청광 운영",
+  title: "게시글 · 청광 운영",
   robots: { index: false, follow: false },
 };
 
 export default function AdminPostsPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold">Posts (관리)</h1>
+      <h1 className="text-xl font-bold">게시글 관리</h1>
       <Suspense fallback={<ListSkeleton />}>
         <Body />
       </Suspense>

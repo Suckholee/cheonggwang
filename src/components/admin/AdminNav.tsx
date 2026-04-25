@@ -11,9 +11,9 @@ import { useState } from "react";
  */
 const TABS: { href: string; label: string; matcher: (p: string) => boolean }[] = [
   { href: "/admin", label: "홈", matcher: (p) => p === "/admin" },
-  { href: "/admin/partners", label: "Partners", matcher: (p) => p.startsWith("/admin/partners") },
-  { href: "/admin/providers", label: "Providers", matcher: (p) => p.startsWith("/admin/providers") },
-  { href: "/admin/posts", label: "Posts", matcher: (p) => p.startsWith("/admin/posts") },
+  { href: "/admin/partners", label: "의뢰업체", matcher: (p) => p.startsWith("/admin/partners") },
+  { href: "/admin/providers", label: "청명", matcher: (p) => p.startsWith("/admin/providers") },
+  { href: "/admin/posts", label: "게시글", matcher: (p) => p.startsWith("/admin/posts") },
 ];
 
 export default function AdminNav() {
@@ -62,7 +62,7 @@ export default function AdminNav() {
           </nav>
         </div>
         <div className="flex items-center gap-3 text-xs text-zinc-500">
-          <span>admin</span>
+          <span>관리자</span>
           <button
             onClick={logout}
             disabled={busy}

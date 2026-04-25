@@ -5,14 +5,14 @@ import { providerRepository } from "@/lib/firebase/provider-repository";
 import ProvidersList from "@/components/admin/ProvidersList";
 
 export const metadata = {
-  title: "Providers · 청광 운영",
+  title: "청명 · 청광 운영",
   robots: { index: false, follow: false },
 };
 
 export default function AdminProvidersPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold">청명 (Providers)</h1>
+      <h1 className="text-xl font-bold">청명</h1>
       <Suspense fallback={<ListSkeleton />}>
         <Body />
       </Suspense>

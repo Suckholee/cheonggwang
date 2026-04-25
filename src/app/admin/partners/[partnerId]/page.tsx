@@ -7,7 +7,7 @@ import { partnerRepository } from "@/lib/firebase/partner-repository";
 import PartnerEditor from "@/components/admin/PartnerEditor";
 
 export const metadata = {
-  title: "Partner 상세 · 청광 운영",
+  title: "의뢰업체 상세 · 청광 운영",
   robots: { index: false, follow: false },
 };
 

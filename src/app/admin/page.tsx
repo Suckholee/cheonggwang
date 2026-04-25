@@ -23,7 +23,7 @@ export default function AdminHomePage() {
         <StatsBody />
       </Suspense>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <QuickLink href="/admin/partners/new" label="새 partner 발급" emoji="➕" />
+        <QuickLink href="/admin/partners/new" label="새 의뢰업체 발급" emoji="➕" />
         <QuickLink href="/admin/posts" label="이상 글 관리" emoji="🚫" />
         <QuickLink href="/admin/providers" label="청명 자격 토글" emoji="✓" />
       </div>

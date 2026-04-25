@@ -8,7 +8,7 @@ import PartnersList from "@/components/admin/PartnersList";
 import ApplicantsList from "@/components/admin/ApplicantsList";
 
 export const metadata = {
-  title: "Partners · 청광 운영",
+  title: "의뢰업체 · 청광 운영",
   robots: { index: false, follow: false },
 };
 
@@ -16,7 +16,7 @@ export default function AdminPartnersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">의뢰업체 (Partners)</h1>
+        <h1 className="text-xl font-bold">의뢰업체</h1>
         <Link
           href="/admin/partners/new"
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"

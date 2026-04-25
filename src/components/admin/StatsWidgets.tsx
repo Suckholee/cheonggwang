@@ -63,9 +63,9 @@ export default function StatsWidgets({ stats }: Props) {
         }
       />
       <Card
-        label="Active Partners"
+        label="활성 의뢰업체"
         value={String(partnersByStatus.active)}
-        hint={`invited ${partnersByStatus.invited} · suspended ${partnersByStatus.suspended}`}
+        hint={`초대 ${partnersByStatus.invited} · 정지 ${partnersByStatus.suspended}`}
       />
       <Card
         label="Draft (partner-promo)"
@@ -82,7 +82,7 @@ export default function StatsWidgets({ stats }: Props) {
         hint="자동 발행 / 전체 발행"
       />
       <Card
-        label="Suspended Partners"
+        label="정지된 의뢰업체"
         value={String(partnersByStatus.suspended)}
         hint="향후 작성 차단"
         tone={partnersByStatus.suspended > 0 ? "warn" : "default"}
