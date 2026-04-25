@@ -68,7 +68,7 @@ export default function ProvidersList({ providers: initial }: Props) {
 
   return (
     <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-      <table className="w-full text-sm">
+      <table className="w-full min-w-[720px] text-sm">
         <thead className="bg-zinc-50 text-left text-xs text-zinc-500 dark:bg-zinc-800">
           <tr>
             <th className="px-3 py-2">매장명</th>

@@ -8,6 +8,11 @@ import { SESSION_COOKIE_NAME } from "@/domain/constants";
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // 모든 요청에 x-pathname 헤더 주입 — RootLayout이 admin 분기 시 사용 (모바일 480px wrap 우회).
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+
   const isProtected =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/editor") ||
@@ -17,10 +22,14 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/chat") ||
     pathname.startsWith("/stories");
 
-  if (!isProtected) return NextResponse.next();
+  if (!isProtected) {
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
 
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  if (session) return NextResponse.next();
+  if (session) {
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
 
   const url = request.nextUrl.clone();
   url.pathname = "/login";
@@ -32,13 +41,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // 정적 자산 제외한 전체 path — x-pathname 헤더 주입 위해
   matcher: [
-    "/dashboard/:path*",
-    "/editor/:path*",
-    "/quote/:path*",
-    "/provider/:path*",
-    "/received/:path*",
-    "/chat/:path*",
-    "/stories/:path*",
+    "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)",
   ],
 };

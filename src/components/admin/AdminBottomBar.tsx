@@ -82,7 +82,7 @@ export default function AdminBottomBar({ pendingApplicantsCount }: Props) {
   return (
     <nav
       aria-label="운영 콘솔 하단 단축"
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[480px] border-t border-zinc-100 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95"
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[480px] border-t border-zinc-100 bg-white/95 backdrop-blur md:hidden dark:border-zinc-800 dark:bg-zinc-950/95"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="flex h-[var(--bottom-nav-height)] justify-between px-2">
