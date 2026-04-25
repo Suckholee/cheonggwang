@@ -2,6 +2,96 @@
 
 ## Features
 
+### partner-issue-from-users — admin 회원 명단 클릭 발급 콘솔 (Marketplace v1.10 · #22 · 🎯 97% single-pass)
+
+- **완료일**: 2026-04-26
+- **Match Rate**: **97%** (Critical 0 · High 0 · Medium 0 · Low 3)
+- **PDCA 사이클**: #22 (Plan Plus → Design v0.2 post-validator → Do S1–S5 → Check 97% → Report → Archive)
+- **레벨**: Dynamic (Next.js 16 · Firebase Admin SDK · server actions · Firestore composite indexes)
+- **방향**: cycle #20 admin-console에서 만든 `/admin/partners/new`의 단일 이메일 검색 폼을 **3-탭 콘솔**로 전면 개편. 운영자가 회원 명단·신청자 명단을 보면서 카드 클릭으로 즉시 발급. cycle #20·#21 발급 API 변경 0건으로 회귀 위험 제거.
+- **경로**: [partner-issue-from-users/](./partner-issue-from-users/)
+
+**문서**
+- [Plan](./partner-issue-from-users/partner-issue-from-users.plan.md) (Plan Plus · YAGNI 7개 in-scope · Approach A 단일 페이지+모달)
+- [Design](./partner-issue-from-users/partner-issue-from-users.design.md) (v0.2 · validator 5 Critical + 8 High + 7 Medium + 5 Low 결의)
+- [Analysis](./partner-issue-from-users/partner-issue-from-users.analysis.md) (97% · Low 3건 documentation/UX deferral)
+- [Report](./partner-issue-from-users/partner-issue-from-users.report.md)
+
+**핵심 결정**
+- **API 변경 0건 (R1)** — cycle #20 `POST /api/admin/partners` + cycle #21 approve route 그대로 재활용. UI 레이어만 추가 → 회귀 위험 제거. PartnerIssueForm은 "이메일 검색" 폴백 탭에 그대로 wrap (외부 wrapper만 추가, 코드 변경 없음)
+- **3-탭 콘솔** — `[전체 명단] [신청자 명단] [이메일 검색]` 토글. role=tablist + aria-selected. 두 발급 경로(자율 가입 검토 vs admin-driven)를 한 화면에서 선택
+- **신청자 모달 read-only (R2)** — cycle #21 approve route는 신청서 그대로 변환이므로 admin 수정 입력 OOS. dl/dt preview + [승인하고 발급] 버튼만. 정보 수정 필요 시 cycle #21 `/admin/partners/applicants/[id]`에서 거절 후 재신청 안내
+- **server action 1회 = partners·applicants 각 1회 fetch (R3)** — `Promise.all([listAll(200), listPending(100)])` in-memory join. request-scope cache 명시적 OFF (v1 회원 수 ≤ 수백 가정). v2 React `cache()` 도입 검토
+- **Cursor encoding (R4)** — base64(`${primary}:${uid}`). sort='latest'은 createdAtMs, sort='name'은 displayName. lastIndexOf(":")로 split, displayName 빈 문자열일 때도 `idx === 0` valid (`if (idx < 0)`). uid는 Firebase Auth UID(alphanumeric)라 콜론 없음 보장
+- **dateRange + sort (R5)** — Firestore inequality + orderBy 호환성 회피 위해 dateRange 활성 시 sort='latest' 강제. zod superRefine + UI sort dropdown disabled로 이중 차단
+- **router.refresh + setReloadTick (R6)** — 발급 직후 둘 다 호출. server data와 client useEffect cache 양쪽 갱신. Plan에서는 router.refresh()만이었으나 design-validator H2 결의로 보강
+- **Firestore composite indexes 2건 사전 명시** — `users (roles array-contains + createdAt desc + __name__ desc)`, `users (roles array-contains + displayName asc + __name__ asc)`. firestore.indexes.json에 사전 추가 + `firebase deploy` 완료
+- **disabled 카드 키보드 접근성 (M3)** — `<button disabled>` + `tabIndex={-1}` + `aria-disabled="true"`. focus 안 잡힘
+- **dateRange UI client-side guard (M4)** — from > to 입력 시 [적용] disabled + 인라인 에러 텍스트. 서버 zod refine과 이중 검증
+
+**구조**
+- **6 신규** — types(1) · server actions(1) · components(4: IssuanceConsole·ClientUsersPanel·PendingApplicantsPanel·IssueModal)
+- **3 수정** — `user-repository.ts`(listClientsPage 메서드), `app/admin/partners/new/page.tsx`(IssuanceConsole 호스팅), `firestore.indexes.json`(composite 2건)
+- **재활용 (변경 없음)** — `partnerRepository.listAll`, `partnerApplicantRepository.listPending`, `POST /api/admin/partners`(cycle #20), `POST /api/admin/partners/applicants/[id]/approve`(cycle #21), `PartnerIssueForm.tsx`(cycle #20)
+
+**Gap 결의 흐름**
+- v0.1 → v0.2: design-validator 25건 (Critical 5 + High 8 + Medium 7 + Low 5) 모두 결의 후 Do 진입
+- Single-pass 97% — Iterate 페이즈 미실행 (Critical/High/Medium 0건, Low 3건은 모두 documentation 또는 v1.1 deferral)
+
+**Learnings**
+- **API 변경 0건의 가치** — UI 레이어 추가만으로 새 발급 흐름 구축. cycle #20·#21에서 검증된 TX·zod·error handling이 100% 그대로 보존됨. PR diff가 깔끔해서 코드 리뷰 부담 최소화
+- **Plan Plus + design-validator 2단계 일관성** — cycle #19 96% → cycle #21 99% → cycle #22 97%. 사이클이 누적될수록 첫 분석에서 결의 항목이 더 많아지지만(11→17→25) 결과 품질은 90%대 후반 유지
+- **request-scope cache 명시적 OFF의 정당성** — design 단계에서 "v1 회원 수 가정상 비용 미미"로 명시한 결정이 PR 리뷰에서 자체 검증 가능. v2 React `cache()` 도입 시 동일 결정 트레이드오프를 다시 평가 가능
+- **Cursor edge case 사전 발견** — design-validator가 displayName 빈 문자열 케이스(`if (idx < 0)`)를 design 단계에서 잡아냄. Do에서 발견했다면 데이터 마이그레이션 필요했을 것
+- **3-tab UX 효과** — cycle #21 "대기 신청" 섹션을 명시적 탭으로 노출 + 전체 명단 추가 + 폴백 탭 escape hatch. 운영자가 두 발급 경로를 시각적으로 구분 가능
+- **Followup**: G1 totalApprox 타입 필드 / G2 401 자동 redirect (v1.1) / G3 toast 라이브러리 / OQ1 substring 검색 (회원 1000+ 시) / OQ8 listPending 페이지네이션 / OQ9 displayName 빈 문자열 default fallback
+
+---
+
+### partner-application — 의뢰업체 공개 가입/심사 채널 (Marketplace v1.9 · #21 · 🎯 99% single-pass)
+
+- **완료일**: 2026-04-26
+- **Match Rate**: **99%** (Critical 0 · High 0 · Medium 0 · Low 1)
+- **PDCA 사이클**: #21 (Plan Plus → Design v0.2 post-validator → Do S1–S8 → Check 99% → Report → Archive)
+- **레벨**: Dynamic (Next.js 16 · Firebase Auth · Firestore Admin SDK TX · onSnapshot 실시간 알림)
+- **방향**: 운영자가 CLI로 직접 발급하던 partners를 **공개 가입 채널**로 전환. `/admin/partners/new`가 admin이 본 화면으로 보였던 cycle #20 직후의 자연스러운 후속 — 의뢰업체 사장님이 직접 가입 → 운영자 검토(승인/거절) → 승인 시 partners doc 자동 생성 흐름.
+- **경로**: [partner-application/](./partner-application/)
+
+**문서**
+- [Plan](./partner-application/partner-application.plan.md) (Plan Plus · 11 YAGNI 통과 · Approach A signup=가입 · 메일→onSnapshot 대체)
+- [Design](./partner-application/partner-application.design.md) (v0.2 · validator 3 Critical + 8 High + 4 Medium + 2 Low 결의)
+- [Analysis](./partner-application/partner-application.analysis.md) (99% · Low 1건 G1)
+- [Report](./partner-application/partner-application.report.md)
+
+**핵심 결정**
+- **외부 의존성 0** — 메일/SMS 알림 대신 onSnapshot 기반 in-app 실시간 알림. Resend·Sendgrid 등 인프라 의존성 회피, 외부 sender domain·SPF/DKIM·rate plan 모두 OOS
+- **client-first auth pattern (R1)** — `createUserWithEmailAndPassword` (client) + `getIdToken` → server action `submitPartnerApplication` (verifyIdToken + TX) → `createSessionCookie` 즉시 발급. cycle #18 provider-signup 검증 흐름 그대로 재사용
+- **synthetic email 차단 (R2/C2)** — `@cheonggwang.auth` 도메인은 admin/test 전용이라 가입 시 INVALID_INPUT
+- **TX 강화** — approve(`partners.create + applicants.update` 단일 TX) + reject(`status==='pending'` 검증 + update 단일 TX, C3 fix) 모두 race-safe single-transaction. `tx.get(query)` 패턴 활용
+- **rejected reopen (R14)** — 동일 ownerUid의 기존 doc을 `status·rejectReason·reviewedAt·reviewedBy·partnerId` reset + `appliedAt` 갱신. 신규 doc 생성 회피 → doc proliferation 방지
+- **rate-limit email key 단일 (R8/H8)** — `signup-partner:e:${email}` 3건/h. server action에서 IP 추출 어려워 v2로 분리 deferred (OQ-1)
+- **applicant 가드 분기 (R3)** — `requirePartnerPage`에 `applicant-pending`·`applicant-rejected` reason 추가, submitted 페이지로 redirect
+
+**구조**
+- **15 신규** — types(1) · domain schema(1) · repository(1) · server action(1) · auth pages(2) · auth components(2) · admin pages(1) · admin API routes(2) · admin components(2) · landing component(1) · home edit
+- **5 수정** — `app/page.tsx`(A3 CTA), `app/admin/partners/page.tsx`(B1 대기 신청), `lib/auth/require-partner.ts`(A4 redirect), `lib/admin/stats.ts`(H6 pendingCount), `components/admin/StatsWidgets.tsx`(7번째 카드)
+- **인프라 변경** — `firestore.rules` partnerApplicants 컬렉션(owner+admin read · write false), `firestore.indexes.json` 2건 (`(status,appliedAt)` admin, `(ownerUid,appliedAt)` client onSnapshot)
+- **신규 라우트** — `/signup-partner`, `/signup-partner/submitted`, `/admin/partners/applicants/[applicantId]`, `/api/admin/partners/applicants/[applicantId]/{approve,reject}`
+
+**Gap 결의 흐름**
+- v0.1 → v0.2: design-validator 3 Critical (C1 `clientDb` import / C2 synthetic 도메인 정정 / C3 reject TX wrap) + 8 High (H1 admin 파일 카운트 / H2 userSnap.exists / H3 tx.get(query) / H4 helper bypass + serverTimestamp / H5 partnerId back-link 필드 / H6 AdminStats 확장 / H7 7-card grid / H8 email-only rate-limit) + 4 Medium (M1 empty submitted state / M2 users.roles arrayUnion / M3 orphan Auth user 자동 복구 / M4 appendEvent best-effort) + 2 Low (L1 robots noindex / L3 event from:'invited')
+- single-pass 99% — Iterate 페이즈 미실행
+
+**Learnings**
+- **Plan Plus + Design Validator 결합 효과** — 첫 분석 99% (#19 96% → #21 99%, +3%p). Plan Plus의 YAGNI multiSelect로 11 항목으로 압축 → design-validator가 17건 결의로 사전 보강 → Do 단계에서 추가 발견 거의 없음
+- **외부 의존성 회피의 가치** — "메일 알림 = 사용자 편의" 1차 가정을 버리고 "onSnapshot 기반 in-app" 채택 → Resend SDK·도메인·SPF·rate plan·테스트 모두 회피 + 사용자 경험은 더 즉각적 (5초 자동 redirect는 오히려 메일보다 빠름)
+- **TX 패턴 강화** — cycle #20 admin-console에서는 reject가 단순 update였으나 cycle #21에서 design-validator C3 지적으로 reject도 TX wrap. "두 admin 동시 액션 race"가 실제로 일어날 수 있음을 사전 catch
+- **rejected reopen 패턴 (R14)** — 신규 doc 생성하지 않고 기존 doc reset. doc proliferation 방지 + reapplyCount 추적(v2)에 자연스러운 위치
+- **provider-signup 패턴 exact reuse** — `createUser → getIdToken → server action → sessionCookie` 흐름이 #18에서 검증된 그대로 #21에 적용. cycle 간 패턴 누적 효과 확인
+- **Followup**: G1 `setStatus` 헬퍼 v2 활용 명시 / OQ-1 IP rate-limit (v2 API 분리) / OQ-5 reapplyCount 추적 / L3 PartnerEvent type `'created-from-applicant'` 추가 (v2)
+
+---
+
 ### partner-promo — 의뢰업체(B2B 파트너) AI 보조 홍보글 게시 + 자동발행 윈도우 (Marketplace v1.7 · #19 · 🏁 100%)
 
 - **완료일**: 2026-04-25
