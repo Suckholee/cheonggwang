@@ -144,6 +144,8 @@ const PARTNERS = [
     regionLabel: "서울특별시 서초구",
     notes: "강남 코워킹스페이스 운영자. 주 3회 정기 청소 + 입주사 대상 매장 홍보.",
     days: 18,
+    logoUrl:
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&q=80&auto=format&fit=crop",
     profile: {
       description:
         "강남역 도보 5분 거리에 위치한 프리미엄 코워킹스페이스. " +
@@ -189,6 +191,8 @@ const PARTNERS = [
     regionLabel: "서울특별시 강서구",
     notes: "동네 안경원. 주 1회 정기 청소 + 신규 고객 유입 홍보 콘텐츠 운영.",
     days: 12,
+    logoUrl:
+      "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=400&q=80&auto=format&fit=crop",
     profile: {
       description:
         "강서구 화곡동에서 30년째 운영 중인 가족 2대 안경원입니다. " +
@@ -232,6 +236,8 @@ const PARTNERS = [
     regionLabel: "서울특별시 동작구",
     notes: "동물병원. 위생 특수청소 + 보호자 대상 정기 콘텐츠 발행.",
     days: 35,
+    logoUrl:
+      "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&q=80&auto=format&fit=crop",
     profile: {
       description:
         "동작구 사당역 도보 3분 거리에 위치한 종합 동물병원입니다. " +
@@ -398,7 +404,7 @@ async function seedPartners() {
     await ref.set({
       ownerUid,
       businessName: p.businessName,
-      logoUrl: null,
+      logoUrl: p.logoUrl ?? null,
       category: p.category,
       regionLabel: p.regionLabel,
       status: "active",

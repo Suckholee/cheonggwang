@@ -108,13 +108,14 @@ const workCasesSeed = [
   },
 ];
 
+// 청소 Before/After 더미 사진 (Unsplash 무료)
 const placeholderBefore = {
-  url: "https://placehold.co/600x400/e5e7eb/4b5563?text=Before",
+  url: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80&auto=format&fit=crop",
   path: "demo/before.png",
   order: 0,
 };
 const placeholderAfter = {
-  url: "https://placehold.co/600x400/dbeafe/1e40af?text=After",
+  url: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80&auto=format&fit=crop",
   path: "demo/after.png",
   order: 1,
 };
@@ -399,7 +400,7 @@ const promoPostsSeed = [
 
 이사 전 미리 체크하면 청소 업체와 더 정확한 견적 협의가 가능합니다. 청광에서 맞춤 견적을 받아보세요.`,
     coverImageUrl:
-      "https://placehold.co/600x400/dbeafe/1e40af?text=Move-in+Cleaning",
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80&auto=format&fit=crop",
     coverImageAlt: "입주청소 가이드 썸네일",
     daysAgo: 10,
   },
@@ -428,7 +429,7 @@ const promoPostsSeed = [
 
 연 1회 분해 청소를 받으시면 에어컨 수명이 평균 2-3년 늘어납니다. 청광에서 견적을 받아보세요.`,
     coverImageUrl:
-      "https://placehold.co/600x400/e5e7eb/4b5563?text=Aircon+Cleaning",
+      "https://images.unsplash.com/photo-1631545806609-f4dec9d9e60e?w=800&q=80&auto=format&fit=crop",
     coverImageAlt: "에어컨 청소 썸네일",
     daysAgo: 20,
   },
@@ -462,7 +463,7 @@ const promoPostsSeed = [
 
 청광에서 입주·이사·정기 청소 견적을 받아보세요. 첫 만남부터 단골이 되어드릴게요.`,
     coverImageUrl:
-      "https://placehold.co/600x400/fef3c7/92400e?text=Customer+Reviews",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80&auto=format&fit=crop",
     coverImageAlt: "단골 고객 후기 썸네일",
     daysAgo: 30,
   },
