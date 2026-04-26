@@ -2,10 +2,14 @@ import { z } from "zod";
 import { QUOTE_CATEGORIES } from "./quote-category";
 
 /**
- * v1.9 partner-application · §5.1 — Form schemas.
+ * v1.10 partner-application · §5.1 — Form schemas.
  *
- *  - Client form: email + password + business 정보 (password는 client-side Firebase Auth로 처리)
- *  - Server action input: idToken (client에서 createUserWithEmailAndPassword 후 getIdToken) + form data
+ *  v1.10 변경 (cycle #23): 회원가입 후 파트너 등록 흐름으로 단순화.
+ *    - 가입 페이지에서 이메일/비밀번호 직접 입력 X (client는 이미 로그인된 상태)
+ *    - 폼은 매장 정보만 입력
+ *    - server action은 currentUser.getIdToken() 으로 토큰 가져와 호출
+ *
+ *  Server action input: idToken + 매장 정보 (cycle #21 그대로 호환)
  */
 
 const businessSharedSchema = {
@@ -22,18 +26,10 @@ const businessSharedSchema = {
   intro: z.string().trim().max(500).optional(),
 };
 
-/** Client form (email + password + 매장 정보). */
-export const partnerApplicationFormSchema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(8).max(64),
-    passwordConfirm: z.string(),
-    ...businessSharedSchema,
-  })
-  .refine((d) => d.password === d.passwordConfirm, {
-    path: ["passwordConfirm"],
-    message: "비밀번호가 일치하지 않습니다",
-  });
+/** Client form — 매장 정보만 (인증은 진입 가드에서 보장). */
+export const partnerApplicationFormSchema = z.object({
+  ...businessSharedSchema,
+});
 
 export type PartnerApplicationFormInput = z.infer<
   typeof partnerApplicationFormSchema

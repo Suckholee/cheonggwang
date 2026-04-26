@@ -29,8 +29,11 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/dashboard";
+  // ?mode=signup 힌트 — /signup-partner 등 회원가입을 우선 유도하는 진입점에서 사용
+  const initialMode: Mode =
+    searchParams.get("mode") === "signup" ? "signup" : "login";
 
-  const [mode, setMode] = useState<Mode>("login");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);

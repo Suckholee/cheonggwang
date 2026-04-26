@@ -1,13 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createUserWithEmailAndPassword,
-  type AuthError,
-} from "firebase/auth";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { clientAuth } from "@/lib/firebase/client";
 import {
   partnerApplicationFormSchema,
@@ -21,15 +18,24 @@ import {
 import { submitPartnerApplication } from "@/app/actions/partner-application-actions";
 
 /**
- * v1.9 partner-application · §6.1 — 가입+신청 폼.
- *  - client-first 패턴: createUserWithEmailAndPassword → getIdToken → server action
- *  - real email 강제 (R2)
+ * v1.10 partner-application — 매장 정보만 입력 폼.
+ *
+ *  cycle #23 변경:
+ *    - 사용자가 이미 로그인된 client 상태 (페이지 진입 가드에서 보장)
+ *    - clientAuth.currentUser?.getIdToken() 으로 토큰 가져와 server action 호출
+ *    - server action(submitPartnerApplication)은 cycle #21 그대로 — verifyIdToken + applicants/users TX 머지
  */
 
 export function PartnerSignupForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(clientAuth, (u) => setUser(u));
+    return () => unsub();
+  }, []);
 
   const {
     register,
@@ -38,9 +44,6 @@ export function PartnerSignupForm() {
   } = useForm<PartnerApplicationFormInput>({
     resolver: zodResolver(partnerApplicationFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      passwordConfirm: "",
       businessName: "",
       phone: "",
       category: undefined,
@@ -52,32 +55,20 @@ export function PartnerSignupForm() {
   async function onSubmit(data: PartnerApplicationFormInput) {
     setSubmitError(null);
 
-    // 1. Firebase Auth 가입
-    let idToken: string;
-    try {
-      const cred = await createUserWithEmailAndPassword(
-        clientAuth,
-        data.email,
-        data.password,
-      );
-      idToken = await cred.user.getIdToken();
-    } catch (err) {
-      const authErr = err as AuthError;
-      if (authErr.code === "auth/email-already-in-use") {
-        setSubmitError(
-          "이미 가입된 이메일입니다. 로그인 후 신청을 다시 시도해 주세요.",
-        );
-      } else if (authErr.code === "auth/invalid-email") {
-        setSubmitError("올바른 이메일 형식이 아닙니다.");
-      } else if (authErr.code === "auth/weak-password") {
-        setSubmitError("비밀번호가 너무 약합니다 (최소 8자).");
-      } else {
-        setSubmitError(authErr.message ?? "가입 실패");
-      }
+    if (!user) {
+      setSubmitError("로그인 세션이 만료되었습니다. 다시 로그인해 주세요.");
+      router.push("/login?next=/signup-partner");
       return;
     }
 
-    // 2. server action — applicants doc 생성 + session cookie
+    let idToken: string;
+    try {
+      idToken = await user.getIdToken(/* forceRefresh */ true);
+    } catch {
+      setSubmitError("인증 정보를 가져오지 못했습니다. 다시 시도해 주세요.");
+      return;
+    }
+
     startTransition(async () => {
       const res = await submitPartnerApplication({
         idToken,
@@ -102,52 +93,13 @@ export function PartnerSignupForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="w-full max-w-md space-y-4"
     >
-      {/* Auth */}
-      <div>
-        <label className="mb-1 block text-sm font-medium">이메일*</label>
-        <input
-          type="email"
-          {...register("email")}
-          autoComplete="email"
-          className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {errors.email && (
-          <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
-        )}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="mb-1 block text-sm font-medium">비밀번호*</label>
-          <input
-            type="password"
-            {...register("password")}
-            autoComplete="new-password"
-            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-          />
-          {errors.password && (
-            <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
-          )}
+      {/* 현재 로그인 계정 표시 */}
+      {user ? (
+        <div className="rounded-md bg-zinc-50 px-3 py-2 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+          <span className="font-medium">로그인 계정:</span> {user.email}
         </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">비밀번호 확인*</label>
-          <input
-            type="password"
-            {...register("passwordConfirm")}
-            autoComplete="new-password"
-            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-          />
-          {errors.passwordConfirm && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.passwordConfirm.message}
-            </p>
-          )}
-        </div>
-      </div>
+      ) : null}
 
-      <div className="border-t border-zinc-200 pt-4 dark:border-zinc-800" />
-
-      {/* Business */}
       <div>
         <label className="mb-1 block text-sm font-medium">매장명*</label>
         <input
@@ -226,10 +178,10 @@ export function PartnerSignupForm() {
 
       <button
         type="submit"
-        disabled={isPending}
+        disabled={isPending || !user}
         className="w-full rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
       >
-        {isPending ? "신청 중…" : "신청 제출"}
+        {isPending ? "신청 중…" : "파트너 등록 신청"}
       </button>
 
       <p className="text-center text-xs text-zinc-500">
