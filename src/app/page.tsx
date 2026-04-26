@@ -37,6 +37,9 @@ export default function MarketplaceHome() {
         <main className="space-y-8">
           <HeroSection />
 
+          {/* v1.10 핵심 가치 — Hero 직후 노출. 매장·사무실 운영자에게 청소+광고 듀얼 가치 강조 */}
+          <PartnerApplyCTA />
+
           <Suspense fallback={<TodayCardSkeleton />}>
             <TodayCardSlot />
           </Suspense>
@@ -61,8 +64,6 @@ export default function MarketplaceHome() {
           </Suspense>
 
           <CommunityPreviewSection />
-
-          <PartnerApplyCTA />
 
           <Suspense fallback={<FooterSkeleton />}>
             <MarketplaceFooter />
