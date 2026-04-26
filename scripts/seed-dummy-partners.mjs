@@ -133,6 +133,7 @@ const APPLICANTS = [
 // --- partners (3명, active) ---
 // 이미 발급된 파트너 매장 (코워킹·안경원·펫샵 등)
 // [0..1] users[5..6]와 매칭, [2] 별도 fake
+// cycle #24: profile field 추가 — 실제 매장처럼 RAG 세팅 (자동 승인 상태)
 const PARTNERS = [
   {
     i: 0,
@@ -143,6 +144,40 @@ const PARTNERS = [
     regionLabel: "서울특별시 서초구",
     notes: "강남 코워킹스페이스 운영자. 주 3회 정기 청소 + 입주사 대상 매장 홍보.",
     days: 18,
+    profile: {
+      description:
+        "강남역 도보 5분 거리에 위치한 프리미엄 코워킹스페이스. " +
+        "1인 전용석·2인실·8인 미팅룸·오픈 라운지를 갖추고 있으며, 24시간 지문 보안 출입과 " +
+        "무제한 커피·차·간식이 제공됩니다. 스타트업·프리랜서·외국계 기업 지점 사무실로 " +
+        "현재 50개 이상의 입주사가 활용 중. 매주 화요일 입주사 상호 네트워킹 행사를 운영해 " +
+        "단순 사무실이 아닌 비즈니스 커뮤니티로 활동합니다.",
+      usps: [
+        "24시간 지문 보안 출입",
+        "무제한 커피·차·간식",
+        "강남역 도보 5분",
+        "회의실 무료 예약",
+        "주 1회 네트워킹 행사",
+      ],
+      priceItems: [
+        { name: "오픈 라운지 데스크 (월정액)", price: 250000 },
+        { name: "1인 전용석 (월정액)", price: 450000 },
+        { name: "2인 전용실 (월정액)", price: 800000 },
+        { name: "미팅룸 4인용 (시간당)", price: 15000 },
+        { name: "미팅룸 8인용 (시간당)", price: 30000 },
+      ],
+      photoUrls: [
+        "https://placehold.co/800x600/2B66F6/white?text=Coworking+Lounge",
+        "https://placehold.co/800x600/4285F4/white?text=Private+Desk",
+        "https://placehold.co/800x600/34A853/white?text=Meeting+Room",
+        "https://placehold.co/800x600/FBBC04/white?text=Cafe+Corner",
+      ],
+      photoAnalysisSummary:
+        "사진 1: 밝은 자연광이 들어오는 오픈 라운지, 협업·프리랜서 친화 (밝음·개방감·공유공간)\n" +
+        "사진 2: 1인 전용 데스크 부스, 소음 차단·모니터·스탠드 포함 (집중·전용·프리미엄)\n" +
+        "사진 3: 8인 미팅룸, 화이트보드·화상회의 카메라 (회의·발표·팀워크)\n" +
+        "사진 4: 라운지 카페 코너, 커피머신·간식 비치 (휴식·복지·커뮤니티)",
+      industry: "office",
+    },
   },
   {
     i: 1,
@@ -153,6 +188,38 @@ const PARTNERS = [
     regionLabel: "서울특별시 강서구",
     notes: "동네 안경원. 주 1회 정기 청소 + 신규 고객 유입 홍보 콘텐츠 운영.",
     days: 12,
+    profile: {
+      description:
+        "강서구 화곡동에서 30년째 운영 중인 가족 2대 안경원입니다. " +
+        "정밀 시력 검사부터 얼굴형 맞춤 프레임 추천, A/S까지 모든 과정을 사장님이 직접 진행합니다. " +
+        "명품 브랜드부터 합리적 가격대 국산 프레임까지 800종 이상 보유하고 있으며, " +
+        "블루라이트 차단 렌즈·다초점 렌즈·도수 선글라스 등 전문 분야가 강점입니다. " +
+        "보청기 상담도 함께 진행해 어르신 단골 손님이 많은 동네 매장입니다.",
+      usps: [
+        "30년 경력 베테랑 사장님",
+        "명품·국산 800종 보유",
+        "정밀 시력·검안 검사",
+        "당일 제작 가능",
+        "보청기 상담",
+      ],
+      priceItems: [
+        { name: "기본 시력 검사", price: 0 },
+        { name: "기본 렌즈 + 프레임 패키지", price: 89000 },
+        { name: "블루라이트 차단 렌즈", price: 45000 },
+        { name: "다초점 렌즈 (양쪽)", price: 350000 },
+        { name: "선글라스 (도수 포함)", price: 150000 },
+      ],
+      photoUrls: [
+        "https://placehold.co/800x600/F39C12/white?text=Optical+Store",
+        "https://placehold.co/800x600/E67E22/white?text=Eye+Test",
+        "https://placehold.co/800x600/D35400/white?text=Frame+Wall",
+      ],
+      photoAnalysisSummary:
+        "사진 1: 밝은 매장 내부, 프레임 디스플레이 벽면 (단정·전문성·다양성)\n" +
+        "사진 2: 정밀 검안 의자·자동 굴절 측정기 (정밀·진단·안정감)\n" +
+        "사진 3: 명품·국산 프레임 컬렉션 벽면 (선택지·트렌드·럭셔리)",
+      industry: "optical",
+    },
   },
   {
     i: 2,
@@ -163,6 +230,40 @@ const PARTNERS = [
     regionLabel: "서울특별시 동작구",
     notes: "동물병원. 위생 특수청소 + 보호자 대상 정기 콘텐츠 발행.",
     days: 35,
+    profile: {
+      description:
+        "동작구 사당역 도보 3분 거리에 위치한 종합 동물병원입니다. " +
+        "강아지·고양이 일반 진료·예방 접종부터 외과 수술·치과·피부과·심장 초음파까지 " +
+        "전문 분야 진료가 가능하며, 야간 당직 24시간 응급실을 운영합니다. " +
+        "보호자 대상 펫 케어 교육과 정기 검진 패키지도 운영해 5년 동안 12,000건 이상의 " +
+        "진료 사례를 누적했습니다. 따뜻한 분위기의 대기실과 반려동물 친화적인 진료 환경이 강점입니다.",
+      usps: [
+        "24시간 응급실 운영",
+        "외과 수술 전문",
+        "심장 초음파 검사",
+        "치과·피부과 진료",
+        "정기 검진 패키지",
+      ],
+      priceItems: [
+        { name: "기본 진료 + 백신 1회", price: 60000 },
+        { name: "강아지 5종 종합 백신", price: 120000 },
+        { name: "치과 스케일링 (전신마취 포함)", price: 280000 },
+        { name: "심장 초음파 검사", price: 180000 },
+        { name: "응급 야간 진료 (기본)", price: 100000 },
+      ],
+      photoUrls: [
+        "https://placehold.co/800x600/27AE60/white?text=Pet+Clinic",
+        "https://placehold.co/800x600/16A085/white?text=Examination",
+        "https://placehold.co/800x600/2ECC71/white?text=Care+Room",
+        "https://placehold.co/800x600/1ABC9C/white?text=24H+ER",
+      ],
+      photoAnalysisSummary:
+        "사진 1: 따뜻한 분위기의 대기실, 반려동물·보호자 친화적 (안정·신뢰·아늑함)\n" +
+        "사진 2: 진료실, 외과 수술 가능 장비·청결한 환경 (전문성·정밀·안전)\n" +
+        "사진 3: 입원실, 개별 케이지·야간 모니터링 (돌봄·24시간·안심)\n" +
+        "사진 4: 24시간 응급실 입구 안내 (긴급·접근성·신뢰)",
+      industry: "pet-clinic",
+    },
   },
 ];
 
@@ -262,7 +363,7 @@ async function seedApplicants() {
 }
 
 async function seedPartners() {
-  console.log("[seed] partners — 3명 active");
+  console.log("[seed] partners — 3명 active (cycle #24 profile RAG 포함)");
   for (const p of PARTNERS) {
     const ownerUid =
       p.ownerUidOverride ??
@@ -270,6 +371,27 @@ async function seedPartners() {
     if (!ownerUid) throw new Error("ownerUid 결정 불가");
     const id = `dummy-cycle22-partner-${p.i}`;
     const ref = db.collection("partners").doc(id);
+
+    // cycle #24: profile field를 status='auto-approved'로 즉시 RAG 가용
+    const profile = p.profile
+      ? {
+          description: p.profile.description,
+          usps: p.profile.usps,
+          priceItems: p.profile.priceItems,
+          photoUrls: p.profile.photoUrls,
+          photoAnalysisSummary: p.profile.photoAnalysisSummary,
+          industry: p.profile.industry,
+          status: "auto-approved",
+          suspended: false,
+          hygieneScore: 0.88,
+          version: 1,
+          updatedAt: FieldValue.serverTimestamp(),
+          reviewedBy: null,
+          reviewedAt: null,
+          rejectReason: null,
+        }
+      : undefined;
+
     await ref.set({
       ownerUid,
       businessName: p.businessName,
@@ -283,8 +405,27 @@ async function seedPartners() {
       notes: p.notes,
       updatedAt: FieldValue.serverTimestamp(),
       seedTag: SEED_TAG,
+      ...(profile ? { profile } : {}),
     });
-    console.log(`  ✓ partners/${id} (${p.businessName} → ownerUid=${ownerUid})`);
+    console.log(
+      `  ✓ partners/${id} (${p.businessName} → ownerUid=${ownerUid}${profile ? " · profile RAG seeded" : ""})`,
+    );
+
+    // cycle #24: ragHistory에 'profile-updated' 이벤트 1건 추가 (audit 자연스러움)
+    if (profile) {
+      await ref.collection("ragHistory").add({
+        type: "profile-updated",
+        actor: "partner",
+        actorUid: ownerUid,
+        payload: {
+          status: "auto-approved",
+          hygieneScore: 0.88,
+          version: 1,
+          source: "seed-dummy",
+        },
+        at: daysAgo(p.days - 1), // 발급 1일 후 등록한 것처럼
+      });
+    }
   }
 }
 
