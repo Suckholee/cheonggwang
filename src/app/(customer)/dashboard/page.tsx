@@ -6,6 +6,7 @@ import {
   verifySessionCookie,
 } from "@/lib/firebase/auth-admin";
 import { userRepository } from "@/lib/firebase/user-repository";
+import { partnerRepository } from "@/lib/firebase/partner-repository";
 
 export const metadata = {
   title: "청광",
@@ -14,6 +15,7 @@ export const metadata = {
 /**
  * `/dashboard`는 legacy promo-page 진입점이었음. Marketplace 전환 후 role-aware router로 변경:
  * - user.providerId 존재 → `/provider/profile` (청명 홈)
+ * - 파트너(매장 운영자) → `/partner/profile` (의뢰업체 콘솔)
  * - else → `/` (의뢰인 마켓플레이스 홈)
  * v1.1b에서 client-dashboard / provider-dashboard 정식 구현.
  */
@@ -40,5 +42,11 @@ async function RoleRouter(): Promise<null> {
   if (providerId) {
     redirect("/provider/profile");
   }
+
+  const partner = await partnerRepository.getByOwnerUid(uid);
+  if (partner) {
+    redirect("/partner/profile");
+  }
+
   redirect("/");
 }
