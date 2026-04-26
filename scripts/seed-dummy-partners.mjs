@@ -23,6 +23,7 @@
  */
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore, FieldValue, Timestamp } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 
 const b64 = process.env.FIREBASE_ADMIN_SA_BASE64;
 if (!b64) {
@@ -34,8 +35,10 @@ if (getApps().length === 0) {
   initializeApp({ credential: cert(sa), projectId: sa.project_id });
 }
 const db = getFirestore();
+const auth = getAuth();
 
 const SEED_TAG = "dummy-cycle22-partners";
+const DUMMY_PASSWORD = "cheonggwang2026!";
 
 // --- helper ---
 function daysAgo(n) {
@@ -175,6 +178,43 @@ function userDocId(i) {
   return `dummy-cycle22-user-${i}`;
 }
 
+/**
+ * Firebase Auth 더미 계정 시드 (cycle #23 시연용).
+ * users[0..9] 10명만 — applicant-only / partner-only는 firestore doc 없으므로 Auth도 없음.
+ * Idempotent: 이미 있으면 password·email·displayName update.
+ */
+async function seedAuth() {
+  console.log(`[seed] Firebase Auth — 10명 (password=${DUMMY_PASSWORD})`);
+  for (const u of USERS) {
+    const uid = userDocId(u.i);
+    try {
+      await auth.createUser({
+        uid,
+        email: u.email,
+        password: DUMMY_PASSWORD,
+        displayName: u.displayName,
+        emailVerified: true,
+      });
+      console.log(`  ✓ created ${uid} (${u.email})`);
+    } catch (e) {
+      if (
+        e.code === "auth/uid-already-exists" ||
+        e.code === "auth/email-already-exists"
+      ) {
+        await auth.updateUser(uid, {
+          email: u.email,
+          password: DUMMY_PASSWORD,
+          displayName: u.displayName,
+          emailVerified: true,
+        });
+        console.log(`  ↻ updated ${uid}`);
+      } else {
+        throw e;
+      }
+    }
+  }
+}
+
 async function seedUsers() {
   console.log("[seed] users — 10명");
   for (const u of USERS) {
@@ -253,6 +293,8 @@ async function main() {
   console.log(`Project: ${sa.project_id}`);
   console.log(`Tag: ${SEED_TAG}\n`);
 
+  await seedAuth();
+  console.log("");
   await seedUsers();
   console.log("");
   await seedApplicants();
