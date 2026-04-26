@@ -1,4 +1,5 @@
 import type { QuoteCategory } from "@/domain/quote-category";
+import type { PartnerProfile } from "./partner-profile";
 
 /**
  * v1.7 partner-promo — 청광 운영진이 인증한 B2B 파트너(의뢰업체) 마스터.
@@ -53,6 +54,8 @@ export interface Partner {
   /** 운영진 식별자 (CLI `--by` 인자 또는 OPERATOR_NAME env) */
   issuedBy: string;
   notes: string | null;
+  /** v1.11 partner-rag-system · cycle #24 — 매장 RAG 자료 (사장님 입력). */
+  profile?: PartnerProfile;
 }
 
 /**

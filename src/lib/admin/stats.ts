@@ -2,6 +2,7 @@ import "server-only";
 import { Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase/admin";
 import { partnerApplicantRepository } from "@/lib/firebase/partner-applicant-repository";
+import { partnerProfileRepository } from "@/lib/firebase/partner-profile-repository";
 
 /**
  * v1.8 admin-console · §3.7 — admin 대시보드 통계 집계.
@@ -31,6 +32,8 @@ export interface AdminStats {
   draftPartnerPromo: number;
   autoPublishedRatio72h: number | null;
   pendingApplicantsCount: number;
+  /** v1.11 cycle #24 — partner profile RAG pending-review 큐 카운트. */
+  pendingRagReviewCount: number;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -157,17 +160,30 @@ export async function autoPublishedRatioLast72h(): Promise<number | null> {
   }
 }
 
+/** v1.11 cycle #24 — admin export. AdminBottomBar 빨간 뱃지 등에서 직접 import. */
+export async function pendingRagReviewCount(): Promise<number> {
+  return partnerProfileRepository.pendingReviewCount();
+}
+
 /** 모든 위젯 한 번에 — Promise.all 병렬. */
 export async function loadAdminStats(): Promise<AdminStats> {
-  const [today, avgHygiene, byStatus, draftCount, autoRatio, pendingApplicants] =
-    await Promise.all([
-      countTodayPublishedPartnerPromo(),
-      avgHygieneScoreLast30d(),
-      partnersByStatusCount(),
-      draftPartnerPromoCount(),
-      autoPublishedRatioLast72h(),
-      partnerApplicantRepository.pendingCount(),
-    ]);
+  const [
+    today,
+    avgHygiene,
+    byStatus,
+    draftCount,
+    autoRatio,
+    pendingApplicants,
+    pendingRagReview,
+  ] = await Promise.all([
+    countTodayPublishedPartnerPromo(),
+    avgHygieneScoreLast30d(),
+    partnersByStatusCount(),
+    draftPartnerPromoCount(),
+    autoPublishedRatioLast72h(),
+    partnerApplicantRepository.pendingCount(),
+    partnerProfileRepository.pendingReviewCount(),
+  ]);
   return {
     todayPartnerPromoPublished: today,
     avgHygiene30d: avgHygiene,
@@ -175,5 +191,6 @@ export async function loadAdminStats(): Promise<AdminStats> {
     draftPartnerPromo: draftCount,
     autoPublishedRatio72h: autoRatio,
     pendingApplicantsCount: pendingApplicants,
+    pendingRagReviewCount: pendingRagReview,
   };
 }

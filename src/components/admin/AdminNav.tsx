@@ -14,6 +14,9 @@ const TABS: { href: string; label: string; matcher: (p: string) => boolean }[] =
   { href: "/admin/partners", label: "의뢰업체", matcher: (p) => p.startsWith("/admin/partners") },
   { href: "/admin/providers", label: "청명", matcher: (p) => p.startsWith("/admin/providers") },
   { href: "/admin/posts", label: "게시글", matcher: (p) => p.startsWith("/admin/posts") },
+  // v1.11 cycle #24
+  { href: "/admin/rag-review", label: "RAG 검토", matcher: (p) => p.startsWith("/admin/rag-review") },
+  { href: "/admin/content-templates", label: "템플릿", matcher: (p) => p.startsWith("/admin/content-templates") },
 ];
 
 export default function AdminNav() {

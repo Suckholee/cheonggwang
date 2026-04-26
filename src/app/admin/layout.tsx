@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import AdminNav from "@/components/admin/AdminNav";
 import AdminBottomBar from "@/components/admin/AdminBottomBar";
 import { partnerApplicantRepository } from "@/lib/firebase/partner-applicant-repository";
+import { partnerProfileRepository } from "@/lib/firebase/partner-profile-repository";
 import type { ReactNode } from "react";
 
 /**
@@ -58,13 +59,20 @@ async function AdminNavSlot() {
   return <AdminNav />;
 }
 
-/** 인증된 사용자에게만 하단 액션 바 표시 (대기 신청 카운트 동시 fetch). */
+/** 인증된 사용자에게만 하단 액션 바 표시. v1.11 cycle #24: pendingRagReviewCount 추가. */
 async function AdminBottomBarSlot() {
   await connection();
   const { isAdminAuthenticated } = await import("@/lib/auth/require-admin");
   const ok = await isAdminAuthenticated();
   if (!ok) return null;
-  const pendingApplicantsCount =
-    await partnerApplicantRepository.pendingCount();
-  return <AdminBottomBar pendingApplicantsCount={pendingApplicantsCount} />;
+  const [pendingApplicantsCount, pendingRagReviewCount] = await Promise.all([
+    partnerApplicantRepository.pendingCount(),
+    partnerProfileRepository.pendingReviewCount(),
+  ]);
+  return (
+    <AdminBottomBar
+      pendingApplicantsCount={pendingApplicantsCount}
+      pendingRagReviewCount={pendingRagReviewCount}
+    />
+  );
 }

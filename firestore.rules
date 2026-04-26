@@ -190,6 +190,27 @@ service cloud.firestore {
           || (request.auth != null && request.auth.token.admin == true);
         allow write: if false;
       }
+
+      // v1.11 cycle #24 · partners/{partnerId}/ragHistory — RAG audit log
+      // R6: append-only — 모든 write는 Admin SDK only (server action에서 호출).
+      match /ragHistory/{eventId} {
+        allow read: if request.auth != null && request.auth.token.admin == true;
+        allow create, update, delete: if false;
+      }
+    }
+
+    // v1.11 cycle #24 · contentTemplates — admin curated 컨텐츠 템플릿
+    // R7·C5: read는 server action 경유 (rules는 read=true), write는 Admin SDK only.
+    match /contentTemplates/{templateId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // v1.11 cycle #24 · reports — 신고 원본 (M4)
+    // admin only — 신고자 신원 보호 위해 client SDK 접근 차단.
+    match /reports/{reportId} {
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow write: if false;
     }
 
     // ─── storyScrapbook (v1.6 · 고객 스크랩북) ───────────

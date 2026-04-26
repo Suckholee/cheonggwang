@@ -93,6 +93,12 @@ export default function StatsWidgets({ stats }: Props) {
         hint="검토 대기 중"
         tone={stats.pendingApplicantsCount > 0 ? "warn" : "default"}
       />
+      <Card
+        label="📋 검토 대기 RAG"
+        value={String(stats.pendingRagReviewCount)}
+        hint="매장 자료 검토"
+        tone={stats.pendingRagReviewCount > 0 ? "warn" : "default"}
+      />
     </div>
   );
 }

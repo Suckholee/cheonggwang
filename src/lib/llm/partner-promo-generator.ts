@@ -55,7 +55,7 @@ const SAFETY_SETTINGS = [
 
 // ─── Vision ──────────────────────────────────────────────
 
-interface PhotoDescription {
+export interface PhotoDescription {
   caption: string;
   tags: string[];
 }
@@ -76,7 +76,8 @@ const visionSchema: Schema = {
   required: ["caption", "tags"],
 };
 
-async function fetchImageAsInline(
+/** v1.11 cycle #24 — partner-rag-context에서 재사용 */
+export async function fetchImageAsInline(
   url: string,
 ): Promise<{ mimeType: string; data: string }> {
   const res = await fetch(url);
@@ -92,7 +93,8 @@ async function fetchImageAsInline(
   return { mimeType, data: buf.toString("base64") };
 }
 
-async function describePhoto(url: string): Promise<PhotoDescription> {
+/** v1.11 cycle #24 — partner-rag-context에서 재사용 */
+export async function describePhoto(url: string): Promise<PhotoDescription> {
   if (!genAI)
     throw new AppError(
       "LLM_FAILURE",
@@ -164,6 +166,8 @@ function buildComposePrompt(args: {
   slogan: string | null;
   brandTone: BrandTone;
   styleRefs: Post[];
+  /** v1.11 cycle #24 — partner-rag-context 통합. 옵셔널 (호환). */
+  ragContextSection?: string;
 }): string {
   const photoBlock = args.visionDescs
     .map(
@@ -194,6 +198,10 @@ function buildComposePrompt(args: {
           .join("\n")}\n`
       : "";
 
+  const ragBlock = args.ragContextSection
+    ? `\n${args.ragContextSection}\n`
+    : "";
+
   return `[사진 설명]
 ${photoBlock}
 
@@ -202,7 +210,7 @@ ${photoBlock}
 ${keywordBlock}
 ${sloganBlock}
 - brandTone: ${args.brandTone}
-${styleBlock}
+${styleBlock}${ragBlock}
 위 사진 설명과 파트너 입력만 근거로 자연스러운 한국어 홍보 블로그 글을 쓰세요.
 규칙:
 - 사진에 없는 가격·전화번호·할인율을 지어내지 않습니다.
@@ -220,6 +228,8 @@ async function composeDraft(args: {
   slogan: string | null;
   brandTone: BrandTone;
   styleRefs: Post[];
+  /** v1.11 cycle #24 */
+  ragContextSection?: string;
 }): Promise<PartnerDraft> {
   if (!genAI)
     throw new AppError(
@@ -298,6 +308,9 @@ export interface PartnerPromoDraftResult {
 
 /**
  * Vision → RAG → Compose → Hygiene. **저장하지 않음** — 결과만 반환.
+ *
+ * v1.11 cycle #24 — partner profile + admin templates를 RAG context 1단으로 추가.
+ * 진입점/시그니처 변경 0건 (R1). input·output 모두 cycle #19 그대로.
  */
 export async function generatePartnerPromoDraft(
   input: GeneratePartnerPromoInput,
@@ -321,6 +334,22 @@ export async function generatePartnerPromoDraft(
     limit: 5,
   });
 
+  // v1.11 cycle #24 — partner profile + templates 통합 RAG context
+  // 동적 import로 cycle #19 코드 변경 영향 최소화
+  const { partnerProfileRepository } = await import(
+    "@/lib/firebase/partner-profile-repository"
+  );
+  const { getRagContext, buildRagContextSection } = await import(
+    "./partner-rag-context"
+  );
+  const profile = await partnerProfileRepository.getProfile(input.partnerId);
+  // visionTags·excludeOwnerUid는 안 넘김 — cycle #19 ragPosts를 이미 위에서 retrieve해서 중복 회피.
+  const ragContext = await getRagContext({
+    partnerId: input.partnerId,
+    profile,
+  });
+  const ragContextSection = buildRagContextSection(ragContext);
+
   // 3. Compose (RAG 실패/빈 결과면 fallback 재시도)
   let draft: PartnerDraft;
   try {
@@ -331,6 +360,7 @@ export async function generatePartnerPromoDraft(
       slogan: input.slogan,
       brandTone: input.brandTone,
       styleRefs: ragPosts,
+      ragContextSection,
     });
   } catch (e) {
     console.warn(
@@ -344,6 +374,7 @@ export async function generatePartnerPromoDraft(
       slogan: input.slogan,
       brandTone: input.brandTone,
       styleRefs: [],
+      ragContextSection: "",
     });
   }
 
@@ -355,13 +386,20 @@ export async function generatePartnerPromoDraft(
     { postType: "partner-promo" },
   );
 
+  // v1.11 cycle #24 — ragSourceIds = profile + templates + style (max 20)
+  // cycle #19 ragPosts는 generator가 이미 retrieve했으므로 여기서 합산.
+  const ragSourceIds = [
+    ...ragContext.ragSourceIds, // profile/{id}, template/{id}
+    ...ragPosts.map((p) => `post/${p.id}`),
+  ].slice(0, 20);
+
   return {
     title: draft.title,
     summary80: draft.summary80,
     bodyMarkdown: draft.bodyMarkdown,
     coverImageAlt: draft.coverImageAlt,
     visionTags: allTags,
-    ragSourceIds: ragPosts.map((p) => p.id),
+    ragSourceIds,
     hygieneScore: hygiene.score,
     passed: hygiene.passed,
     reasons: hygiene.reasons,

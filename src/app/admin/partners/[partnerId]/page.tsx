@@ -4,7 +4,9 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { requireAdminPage } from "@/lib/auth/require-admin";
 import { partnerRepository } from "@/lib/firebase/partner-repository";
+import { partnerProfileRepository } from "@/lib/firebase/partner-profile-repository";
 import PartnerEditor from "@/components/admin/PartnerEditor";
+import PartnerProfileEditor from "@/components/admin/PartnerProfileEditor";
 
 export const metadata = {
   title: "의뢰업체 상세 · 청광 운영",
@@ -34,10 +36,12 @@ async function Body({ params }: { params: Promise<{ partnerId: string }> }) {
   const { partnerId } = await params;
   const partner = await partnerRepository.getById(partnerId);
   if (!partner) notFound();
+  const profile = await partnerProfileRepository.getProfile(partnerId);
   return (
     <>
       <h1 className="text-xl font-bold">{partner.businessName}</h1>
       <PartnerEditor partner={partner} />
+      <PartnerProfileEditor partnerId={partnerId} profile={profile} />
     </>
   );
 }
