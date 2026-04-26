@@ -61,7 +61,7 @@ export default function PartnerApplyCTA() {
           href="/signup-partner"
           className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2B66F6] px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(43,102,246,0.32)] transition-colors hover:bg-[#1f57e6]"
         >
-          의뢰업체 등록 신청하기
+          파트너 등록 신청하기
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
         <p className="mt-2 text-center text-[11px] text-zinc-500">
