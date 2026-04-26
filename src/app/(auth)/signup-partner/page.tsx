@@ -4,7 +4,7 @@ import { PartnerSignupForm } from "@/components/auth/PartnerSignupForm";
 export const metadata = {
   title: "의뢰업체 등록 · 청광",
   description:
-    "매장 청소 의뢰부터 AI 자동 홍보까지, 한 계정에서 관리하는 청광 의뢰업체 등록.",
+    "매장 청소 의뢰부터 홍보글 자동 발행까지, 한 계정에서 관리하는 청광 파트너 등록.",
 };
 
 export default function SignupPartnerPage() {
@@ -24,7 +24,7 @@ export default function SignupPartnerPage() {
             🏢 의뢰업체 등록 신청
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            매장 청소 의뢰부터 AI 자동 홍보글까지,
+            매장 청소 의뢰부터 홍보글 자동 발행까지,
             <br />
             청광 한 계정에서 관리하세요
           </p>

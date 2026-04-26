@@ -24,7 +24,7 @@ export default function PartnerApplyCTA() {
           <span className="text-[#2B66F6]">광고도 맡기세요</span>
         </h2>
         <p className="mt-2 text-[13px] leading-5 text-zinc-700 dark:text-zinc-300">
-          청광 한 계정에서 정기 청소 의뢰와 AI 자동 홍보글 발행을 모두 관리합니다.
+          청광 한 계정에서 정기 청소 의뢰와 홍보글 자동 발행을 모두 관리합니다.
         </p>
 
         {/* 듀얼 가치 카드 */}
@@ -47,12 +47,12 @@ export default function PartnerApplyCTA() {
               <Sparkle className="h-4 w-4" aria-hidden />
             </div>
             <p className="text-[12px] font-bold text-zinc-900 dark:text-zinc-50">
-              AI 자동 홍보글
+              홍보글 자동 발행
             </p>
             <p className="mt-0.5 text-[11px] leading-4 text-zinc-500">
-              사진+키워드만으로
+              사진과 키워드로
               <br />
-              매장 홍보 자동
+              매장 홍보 작성
             </p>
           </div>
         </div>
