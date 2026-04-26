@@ -166,10 +166,11 @@ const PARTNERS = [
         { name: "미팅룸 8인용 (시간당)", price: 30000 },
       ],
       photoUrls: [
-        "https://placehold.co/800x600/2B66F6/white?text=Coworking+Lounge",
-        "https://placehold.co/800x600/4285F4/white?text=Private+Desk",
-        "https://placehold.co/800x600/34A853/white?text=Meeting+Room",
-        "https://placehold.co/800x600/FBBC04/white?text=Cafe+Corner",
+        // 코워킹스페이스: 모던 라운지·전용석·미팅룸·카페
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80&auto=format&fit=crop",
       ],
       photoAnalysisSummary:
         "사진 1: 밝은 자연광이 들어오는 오픈 라운지, 협업·프리랜서 친화 (밝음·개방감·공유공간)\n" +
@@ -210,9 +211,10 @@ const PARTNERS = [
         { name: "선글라스 (도수 포함)", price: 150000 },
       ],
       photoUrls: [
-        "https://placehold.co/800x600/F39C12/white?text=Optical+Store",
-        "https://placehold.co/800x600/E67E22/white?text=Eye+Test",
-        "https://placehold.co/800x600/D35400/white?text=Frame+Wall",
+        // 안경원: 매장 인테리어·프레임 컬렉션·검안기
+        "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1577803645773-f96470509666?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1582142306909-195724d33ffc?w=800&q=80&auto=format&fit=crop",
       ],
       photoAnalysisSummary:
         "사진 1: 밝은 매장 내부, 프레임 디스플레이 벽면 (단정·전문성·다양성)\n" +
@@ -252,10 +254,11 @@ const PARTNERS = [
         { name: "응급 야간 진료 (기본)", price: 100000 },
       ],
       photoUrls: [
-        "https://placehold.co/800x600/27AE60/white?text=Pet+Clinic",
-        "https://placehold.co/800x600/16A085/white?text=Examination",
-        "https://placehold.co/800x600/2ECC71/white?text=Care+Room",
-        "https://placehold.co/800x600/1ABC9C/white?text=24H+ER",
+        // 동물병원: 진료실·반려동물 진료·수의사·입원실
+        "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=800&q=80&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1612531048118-826dba2bee8e?w=800&q=80&auto=format&fit=crop",
       ],
       photoAnalysisSummary:
         "사진 1: 따뜻한 분위기의 대기실, 반려동물·보호자 친화적 (안정·신뢰·아늑함)\n" +
