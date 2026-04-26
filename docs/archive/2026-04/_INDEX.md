@@ -2,6 +2,57 @@
 
 ## Features
 
+### partner-rag-system — 매장 RAG 자료 + admin 컨텐츠 템플릿 (Marketplace v1.11 · #24 · 🎯 97% single-pass · 역대 최대)
+
+- **완료일**: 2026-04-26
+- **Match Rate**: **97%** (Critical 0 · High 0 · Medium 1 · Low 1)
+- **PDCA 사이클**: #24 (Plan Plus → Design v0.2 post-validator 25/25 → Do S1–S8 → Check 97% → Report → Archive)
+- **레벨**: Dynamic (Next.js 16 · Firebase Admin SDK · Gemini Vision 캐시 · 3-tier RAG context)
+- **방향**: cycle #19 partner-promo의 RAG가 "다른 글 anti-drift"만 사용하던 한계 → 매장 자체 정보(profile) + admin curated 컨텐츠 템플릿(industry별 블로그·카드뉴스) 통합. 사장님이 한 번 등록하면 후속 글마다 매장 톤·일관성 자동 반영. admin은 검토 큐·강제 토글·라이브러리 운영으로 거버넌스.
+- **경로**: [partner-rag-system/](./partner-rag-system/)
+
+**문서**
+- [Plan](./partner-rag-system/partner-rag-system.plan.md) (Plan Plus 4 phase · YAGNI 21 in-scope · admin 템플릿 사용자 추가 요구)
+- [Design](./partner-rag-system/partner-rag-system.design.md) (v0.2 · validator 5 Critical + 8 High + 7 Medium + 5 Low 결의 · score 76→95+)
+- [Analysis](./partner-rag-system/partner-rag-system.analysis.md) (97% · Medium 1 G2 / Low 1 G1 모두 documentation·operations)
+- [Report](./partner-rag-system/partner-rag-system.report.md)
+
+**핵심 결정**
+- **R1 cycle #19 진입점 변경 0건** — `composeDraft` 시그니처 그대로 (`ragContextSection?: string` 옵셔널만 추가). `generatePartnerPromoDraft` export 변경 0. dynamic import로 circular dependency 회피. 기존 호출자(`/api/partner/posts/route.ts`) 변경 0줄
+- **getRagContext 단일 entry (R2)** — partner profile + admin templates(industry/type 매칭) + cycle #19 anti-drift 3단을 단일 함수에 통합. cycle #19 자산(`retrievePartnerStyleReferences`, `describePhoto`, `hygieneGuard`) 100% 재사용
+- **profile.suspended 가드 (R3·R4)** — `partner-rag-context.ts:57-61` `status in ['auto-approved','approved'] AND !suspended` 정확. cycle #19 fallback compose 흐름 보존
+- **photoAnalysisSummary 캐시 (H2·H3)** — Vision API 비용 폭주 회피의 핵심 결정. profile photoUrls 변경 detect 시만 1회 분석 후 텍스트 1500자 요약 캐시. 글 발행마다는 텍스트만 prompt에 inject. 글당 Vision call은 cycle #19의 글 단건 사진(1~5장)만
+- **firestore.rules 더 엄격한 deviation (G1)** — design v0.2의 partial allowlist(`onlyProfileEditableFieldsChanged`) 대신 `partners write: if false` (Admin SDK only). 사장님이 status·suspended·hygieneScore·version 자가 수정 차단. R3·R6 보호 강화
+- **ragHistory append-only (R6)** — `firestore.rules` `allow create, update, delete: if false`. server action(Admin SDK)만 진입 가능. audit trail 무결성
+- **contentTemplates Admin SDK only write (R7)** — `allow read: if true; allow write: if false`. partner-promo generator는 read 가능, 사장님 직접 수정 불가
+- **photoUrls path validation (R8·H1)** — `decodeURIComponent` 후 regex 매칭으로 URL-encoded(`%2F`) 형식과 raw path 둘 다 처리. fake URL 차단
+- **AdminBottomBar 6탭 (H6)** — 5탭 → 6탭. font 9px / icon 16px / 한글 2-3자 라벨로 480px 모바일 폭 / 6 = 80px/tab 표시
+- **reporter anonymize (M4)** — ragHistory.actorUid는 SHA-256 hash, 원본 reporterUid는 admin-only `reports/{reportId}` collection. 사장님 view 가능성 대비 신원 보호
+- **24h rate-limit on report (H8)** — 동일 reporter가 동일 partner에 대해 24h 1회 cap. cycle #20 `checkAndIncrement` helper 재사용
+
+**구조 (역대 최대)**
+- **21 신규** — types(2) + domain(3) + repository(2) + LLM(1) + server-actions(2) + 사장님 UI(3) + admin UI(7) + helper(1: hash) + seed(1)
+- **8 수정** — types/partner.ts(profile field), llm/partner-promo-generator.ts(R1 진입점 보존), admin/layout.tsx, admin/partners/[id]/page.tsx, admin/AdminBottomBar.tsx(6탭), admin/AdminNav.tsx, admin/StatsWidgets.tsx(8카드), lib/admin/stats.ts
+- **인프라** — firestore.rules(ragHistory + contentTemplates + reports), firestore.indexes.json(contentTemplates composite), storage.rules(기존 wildcard로 profile 자동 매칭)
+- **시드** — scripts/seed-content-templates.mjs 12건 (cafe·restaurant·hair-salon·academy·office·pet-clinic·optical·bakery·other × blog/card-news 조합) — production firestore에 시드 완료
+- **신규 라우트** — `/partner/profile`, `/admin/rag-review`, `/admin/content-templates`
+- **LOC** — 4,469 insertions
+
+**Gap 결의 흐름**
+- v0.1 → v0.2: design-validator 25건 결의 (5 Critical + 8 High + 7 Medium + 5 Low). C1~C5 핵심 보안 invariant 모두 반영. H2·H3 photoAnalysisSummary 캐시 도입으로 Vision 비용 폭주 회피
+- v0.2 → final: G1 (firestore.rules) intentional deviation — design partial allowlist 대신 `if false`로 더 엄격한 보호. 단일 패스 97%
+
+**Learnings**
+- **R1 invariant의 누적 효과** — cycle #19 자산을 4 cycle 동안 진입점 변경 0건으로 재사용. dynamic import로 circular dependency 회피하면서 cycle #24의 RAG 통합을 cycle #19 호출자에게 투명하게 (호출자는 변경 없음). 회귀 위험 누적 차단
+- **photoAnalysisSummary 캐시 패턴** — "변경 detect 시만 비용 호출" 패턴이 generative AI 비용 통제에 효과적. JSON.stringify 비교로 photoUrls 배열 변경만 감지 → 단순 + 정확
+- **Plan Plus + design-validator 4 cycle 누적 일관성** — #19 96→100% / #21 99% / #22 97% / #24 97%. cycle 크기와 무관하게 90%대 후반 달성 (#24는 4,469 insertions로 역대 최대). 결의 항목 25건이 첫 분석에 100% 반영
+- **firestore.rules safer deviation 패턴** — design intent보다 더 엄격한 구현 채택은 acceptable deviation으로 archive에 명시. 향후 v2에 "partial allowlist 다시 도입"이 필요해질 시 명확한 트레이드오프 비교 가능
+- **getRagContext 단일 entry의 확장성** — 3단 RAG context를 한 함수에 통합. 향후 score-based ranking(O4) 도입 시 단일 변경점. retrievePartnerStyleReferences·describePhoto·hygieneGuard 모두 cycle #19 자산 그대로 재사용
+- **시드 스크립트 lower-bound 전략 (G2)** — 9업종 × 평균 1.3건 = 12건 lower-bound 충족 + admin이 `/admin/content-templates`에서 직접 등록. v2에 batch 시드 36건 풀 라이브러리 확장 또는 admin 운영 누적
+- **Followup**: G2 시드 36건 확장 / OQ8 React `cache(getRagContext)` / OQ10 신고 Slack 알림 / O1 PDF·MD 첨부 / O4 score-based RAG ranking / O6 다국어
+
+---
+
 ### partner-issue-from-users — admin 회원 명단 클릭 발급 콘솔 (Marketplace v1.10 · #22 · 🎯 97% single-pass)
 
 - **완료일**: 2026-04-26
