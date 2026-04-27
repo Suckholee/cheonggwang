@@ -37,7 +37,9 @@ export default function PartnerLayout({
               <PartnerNameLabel />
             </Suspense>
           </div>
-          <PartnerHeaderNav />
+          <Suspense fallback={<NavSkeleton />}>
+            <PartnerHeaderNav />
+          </Suspense>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
@@ -49,4 +51,17 @@ async function PartnerNameLabel() {
   await connection();
   const { partner } = await requirePartnerPage();
   return <span className="text-xs text-zinc-500">· {partner.businessName}</span>;
+}
+
+function NavSkeleton() {
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span
+          key={i}
+          className="h-7 w-14 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800"
+        />
+      ))}
+    </div>
+  );
 }
