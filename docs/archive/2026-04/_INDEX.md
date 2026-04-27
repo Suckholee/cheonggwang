@@ -2,6 +2,38 @@
 
 ## Features
 
+### partner-auto-series — Cloud Functions cron + 라운드 로빈 자동 발행 (Marketplace v1.13 · #26 · 🏆 97% · **6번 연속 single-pass**)
+
+- **완료일**: 2026-04-27
+- **Match Rate**: **97%** (Critical 0 · High 0 missing · Medium 0 · Low 0 · 1 acceptable divergence (H1 nanoid) + 4 post-design enhancements)
+- **PDCA 사이클**: #26 (Plan Plus → Design v0.2 post-validator 26/26 → Do S1–S18 → Check 97% → Report → Archive)
+- **Streak**: 🏆 **6사이클 연속 single-pass 90s%** (cycles #21~#26). Plan Plus + design-validator가 small/medium/large 모든 규모 + Cloud Functions 통합 영역까지 일관된 90s% 달성하는 mature PDCA 메소드로 6번 연속 검증
+- **레벨**: Dynamic (Next.js 16 · Firebase Cloud Functions v2 Scheduled Trigger · cross-package 통합)
+- **방향**: cycle #19 partner-promo의 AutoPublish 윈도우는 "사장님이 능동 작성 시 자동 발행"만 — 시간 맞춰 알아서 글 만드는 기능 없음. cycle #26은 Cloud Functions Scheduled Trigger로 매시간 09–18 KST cron → autoSeries.enabled=true partner의 ROTATION_POOL 10 slot(5 angle × 2 format) 라운드 로빈 → AI 자동 생성·발행. 사장님은 GO/STOP만, 매장 정보만 잘 채워두면 잠자는 동안에도 매장 마케팅 자율 운영
+- **경로**: [partner-auto-series/](./partner-auto-series/)
+
+**문서**
+- [Plan](./partner-auto-series/partner-auto-series.plan.md) (Plan Plus 4 phase · 자동 생성 + 자동 발행 완전 자율 · 시스템 기본 angle 풀 + 라운드 로빈)
+- [Design](./partner-auto-series/partner-auto-series.design.md) (v0.2 · validator 6 Critical + 8 High + 7 Medium + 5 Low 결의 · **Option A 코드 복제 채택**)
+- [Analysis](./partner-auto-series/partner-auto-series.analysis.md) (97% · R1~R7 모두 통과 · AC 17/17 · OQ 12/12)
+- [Report](./partner-auto-series/partner-auto-series.report.md)
+
+**핵심 결정**
+- **R1 cycle #19 generator 0줄 변경 (6번째 검증 통과)** — `src/lib/llm/partner-promo-generator.ts` 파일 무수정. Cloud Functions에서는 별도 복제본(`functions/src/auto-series/lib/generator.ts`) 사용. 5사이클 동안 라이브러리처럼 보존된 자산이 6번째에도 변경 0
+- **Option A 코드 복제 채택 (C1·C2 결의)** — functions/tsconfig 못 import + `import "server-only"` 마커 충돌 → functions/src/auto-series/lib/에 self-contained generator 구현. 코드 중복 trade-off는 CI lint(`scripts/check-auto-series-mirror.mjs`)로 동기화 보장
+- **lastIndex atomic transaction (R2)** — `db.runTransaction()` read→pickSlot→write 단일 단계. 동시 cron tick race 방지
+- **window double-check (R3)** — autoPublish + autoSeries.enabled 둘 다 만족 + recentlyPublishedInWindow 중복 방지(R4)
+- **skip-and-continue 정책 (R5·H2 결의)** — hygiene-fail/photo-missing 시 markWindowConsumed 호출(window 소비) + lastIndex 진행. transient error(LLM/Storage) 시 미호출(다음 hourly tick 재시도). Plan §6 risk-table의 lastIndex 정체 우려 차단
+- **seriesHistory append-only (R6)** — `firestore.rules` `update, delete: if false`. partners write `if false` 유지(R7) + server action zod 화이트리스트(enabled/brandTone)만 self-write 통로
+- **Cloud Functions production 배포** — `autoSeriesTick` (asia-northeast3, every 1 hours from 09:00 to 18:00 KST, retryCount=0). `defineSecret('GOOGLE_GENERATIVE_AI_API_KEY')` 명시 + IAM 권한 (Cloud Functions Developer/Cloud Run Builder/Artifact Registry Writer/Logs Writer) 부여
+- **AUTO_SERIES_ROTATION_POOL 10 slot** — usp/menu/review/event/story × blog/card-news. `((lastIndex+1) % 10 + 10) % 10` 음수-safe 라운드 로빈 (M3 결의 강화)
+- **자동 input은 partner.profile에서 derivation** — angle별 keyword 도출(usp→usps, menu→priceItems, review/event/story 고정 키) + photoUrls 라운드 로빈 offset. 사장님은 keyword 입력 0
+- **🤖 자동 배지 (transparency)** — PartnerPostCard에 isAutoSeries=true 시 우상단 "🤖 자동" 배지. 손님이 사람 작성 vs AI 자동 작성 구분 가능
+- **`/partner/series` GO/STOP UI** — photo-missing/autoPublish-OFF 가드 + brandTone 셀렉트 + 다음 발행 미리보기(요일·시각·angle·format) + 최근 20건 이력
+- **`/admin/auto-series` 모니터링** — 24h 통계(published/hygiene-fail/error/photo-missing 카운트 + 평균 hygiene) + partner별 lastTickAt·lastIndex·success/fail 테이블
+
+---
+
 ### partner-content-formats — blog·card-news multi-format + 카드 그리드 + 카드뉴스 시각 디자인 (Marketplace v1.12 · #25 · 🎯 97% · 5번 연속 single-pass)
 
 - **완료일**: 2026-04-27
