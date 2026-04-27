@@ -46,7 +46,18 @@ export const adminApp: App =
             : undefined),
       }));
 
-export const adminDb: Firestore = getFirestore(adminApp);
+export const adminDb: Firestore = (() => {
+  const db = getFirestore(adminApp);
+  // cycle #26 hotfix: undefined 필드를 Firestore가 거부하지 않고 무시하도록.
+  // cycle #25 generationMeta.cardNewsValidationFailed 같은 optional flag가 undefined일 때 안전.
+  // settings()는 초기화 직후 1회만 호출 가능 — 두 번째 호출 시 throw하므로 try/catch로 보호.
+  try {
+    db.settings({ ignoreUndefinedProperties: true });
+  } catch {
+    /* already configured */
+  }
+  return db;
+})();
 export const adminAuth: Auth = getAuth(adminApp);
 export const adminAppCheck: AppCheck = getAppCheck(adminApp);
 export const adminStorage: Storage = getStorage(adminApp);
