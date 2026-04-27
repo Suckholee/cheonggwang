@@ -17,6 +17,8 @@ const TABS: { href: string; label: string; matcher: (p: string) => boolean }[] =
   // v1.11 cycle #24
   { href: "/admin/rag-review", label: "RAG 검토", matcher: (p) => p.startsWith("/admin/rag-review") },
   { href: "/admin/content-templates", label: "템플릿", matcher: (p) => p.startsWith("/admin/content-templates") },
+  // v1.13 cycle #26
+  { href: "/admin/auto-series", label: "자동 시리즈", matcher: (p) => p.startsWith("/admin/auto-series") },
 ];
 
 export default function AdminNav() {

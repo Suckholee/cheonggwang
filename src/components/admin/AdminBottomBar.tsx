@@ -69,7 +69,8 @@ export default function AdminBottomBar({
       priority: 2,
       match: (p) =>
         p.startsWith("/admin/rag-review") ||
-        p.startsWith("/admin/content-templates"),
+        p.startsWith("/admin/content-templates") ||
+        p.startsWith("/admin/auto-series"),
       badge: pendingRagReviewCount > 0 ? pendingRagReviewCount : undefined,
     },
     {
