@@ -13,6 +13,7 @@ import {
   type PartnerStatus,
 } from "@/types/partner";
 import type { PartnerAutoSeries } from "@/types/auto-series";
+import type { PartnerProfile } from "@/types/partner-profile";
 import type { QuoteCategory } from "@/domain/quote-category";
 import { AppError } from "@/lib/errors";
 
@@ -65,6 +66,8 @@ function toPartner(id: string, d: DocumentData): Partner {
     issuedAt: tsToDate(d.issuedAt as Timestamp | undefined),
     issuedBy: String(d.issuedBy ?? ""),
     notes: (d.notes as string | null | undefined) ?? null,
+    // cycle #24 partner-rag-system — profile nested 매핑 (cycle #26 hotfix: 이전엔 누락)
+    profile: d.profile as PartnerProfile | undefined,
     // v1.13 cycle #26 — autoSeries optional 매핑
     autoSeries: toAutoSeries(d.autoSeries as DocumentData | undefined),
   };
