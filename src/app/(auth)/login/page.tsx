@@ -12,7 +12,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen flex-1 flex-col items-center bg-white px-5 pt-12 pb-6 dark:bg-zinc-950">
       <div className="flex w-full max-w-[480px] flex-col items-center gap-8">
         <div className="text-center mt-12 mb-4">
-          <h1 className="text-[36px] font-extrabold tracking-tight text-[#2B66F6] dark:text-[#5B8DF6]">
+          <h1 className="text-[36px] font-extrabold tracking-tight text-[#2563EB] dark:text-[#5B8DF6]">
             청광
           </h1>
           <p className="mt-2 text-[15px] font-medium text-zinc-500 dark:text-zinc-400">

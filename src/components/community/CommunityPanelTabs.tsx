@@ -28,7 +28,7 @@ export function CommunityPanelTabs({ active }: Props) {
             className={[
               "relative flex-1 rounded-[18px] px-3 py-2.5 text-center text-sm font-semibold transition-colors",
               isActive
-                ? "bg-[#edf4ff] text-[#2B66F6] shadow-sm dark:bg-zinc-800 dark:text-zinc-50"
+                ? "bg-[#edf4ff] text-[#2563EB] shadow-sm dark:bg-zinc-800 dark:text-zinc-50"
                 : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
             ].join(" ")}
           >

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { ExternalLink, LogOut, LayoutGrid, CheckCircle2 } from "lucide-react";
 import {
   SESSION_COOKIE_NAME,
   verifySessionCookie,
@@ -55,6 +56,7 @@ function EditorSkeleton() {
   );
 }
 
+
 async function EditorBody({
   searchParams,
 }: {
@@ -88,57 +90,71 @@ async function EditorBody({
       : [];
 
   return (
-    <>
-      <header className="mb-6 flex items-start justify-between">
-        <h1 className="text-2xl font-bold">청명 프로필 편집</h1>
+    <div className="space-y-8">
+      <header className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-black tracking-tight text-[#111827]">청명 프로필</h1>
+          <p className="text-[14px] font-medium text-[#6B7280]">매력적인 프로필로 더 많은 고객을 만나보세요</p>
+        </div>
         <form action={signOut}>
           <button
             type="submit"
-            className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-bold text-[#6B7280] transition-colors hover:bg-[#F3F4F6] hover:text-[#111827]"
           >
+            <LogOut className="h-4 w-4" />
             로그아웃
           </button>
         </form>
       </header>
 
-      <section className="mb-6 flex items-center justify-between rounded-[20px] border border-blue-100 bg-[#F0F4FF] px-5 py-4 dark:border-blue-900/50 dark:bg-blue-950/30">
-        <div className="min-w-0">
-          <p className="truncate text-[15px] font-bold text-zinc-900 dark:text-zinc-50">
-            🎉 {provider.companyName}
-          </p>
-          <p className="mt-0.5 text-[13px] font-medium text-zinc-500 dark:text-zinc-400">
-            프로필을 완성해 첫 견적을 받아보세요
+      <section className="flex items-center justify-between rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] p-5 shadow-lg shadow-blue-500/20 text-white">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-blue-200" />
+            <p className="text-[15px] font-bold tracking-tight">
+              {provider.companyName}
+            </p>
+          </div>
+          <p className="text-[12px] font-medium text-blue-100/80">
+            프로필 완성도가 높을수록 신뢰도가 올라갑니다
           </p>
         </div>
         <Link
           href={`/providers/${providerId}`}
-          className="shrink-0 text-[13px] font-bold text-[#2B66F6] hover:underline dark:text-[#5B8DF6]"
+          target="_blank"
+          className="flex items-center gap-1.5 rounded-xl bg-white/20 px-4 py-2 text-[13px] font-bold backdrop-blur-md transition-all hover:bg-white/30 active:scale-[0.98]"
         >
-          공개 프로필 →
+          <span>내 프로필 보기</span>
+          <ExternalLink className="h-3.5 w-3.5" />
         </Link>
       </section>
 
-      <ProfileEditorTabs currentTab={currentTab} />
+      <div className="chg-card">
+        <ProfileEditorTabs currentTab={currentTab} />
 
-      {currentTab === "basic" && <BasicInfoTab provider={provider} />}
-      {currentTab === "price" && <PriceBookTab provider={provider} />}
-      {currentTab === "portfolio" && <PortfolioTab workCases={workCases} />}
-      {currentTab === "promo" && <PromoTab provider={provider} />}
+        <div className="mt-6">
+          {currentTab === "basic" && <BasicInfoTab provider={provider} />}
+          {currentTab === "price" && <PriceBookTab provider={provider} />}
+          {currentTab === "portfolio" && <PortfolioTab workCases={workCases} />}
+          {currentTab === "promo" && <PromoTab provider={provider} />}
+        </div>
+      </div>
 
-      <div className="mt-12 flex justify-center gap-3">
+      <div className="flex flex-col sm:flex-row gap-4">
         <Link
           href="/provider/requests"
-          className="flex-1 text-center rounded-[16px] bg-zinc-900 px-4 py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
+          className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#111827] py-4 text-[15px] font-bold text-white transition-all hover:bg-[#1F2937] shadow-xl shadow-zinc-900/10 active:scale-[0.98]"
         >
-          받은 요청 보기 →
+          <LayoutGrid className="h-5 w-5" />
+          <span>전체 요청 확인하기</span>
         </Link>
         <Link
           href="/"
-          className="flex-1 text-center rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 text-[15px] font-bold text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          className="flex-1 flex items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white py-4 text-[15px] font-bold text-[#374151] transition-all hover:bg-[#F9FAFB] active:scale-[0.98]"
         >
           홈으로
         </Link>
       </div>
-    </>
+    </div>
   );
 }

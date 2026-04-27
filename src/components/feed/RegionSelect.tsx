@@ -23,7 +23,7 @@ export function RegionSelect() {
         value={current}
         onChange={handleChange}
         aria-label="지역 선택"
-        className="appearance-none font-bold rounded-[12px] border border-zinc-200 bg-white shadow-sm pl-3.5 pr-8 py-1.5 text-[14px] text-zinc-800 outline-none hover:bg-zinc-50 focus:border-[#2B66F6] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+        className="appearance-none font-bold rounded-[12px] border border-zinc-200 bg-white shadow-sm pl-3.5 pr-8 py-1.5 text-[14px] text-zinc-800 outline-none hover:bg-zinc-50 focus:border-[#2563EB] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
       >
         {REGION_PRESETS.map((p) => (
           <option key={p.label} value={p.value}>

@@ -12,9 +12,15 @@ export const metadata = { title: "설정 · 청광 파트너" };
  */
 export default function PartnerSettingsPage() {
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-xl font-bold">자동발행 설정</h1>
-      <div className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="mx-auto max-w-3xl space-y-8 px-4 pb-20">
+      <header className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight text-[#111827]">자동발행 설정</h1>
+        <p className="text-base text-[#6B7280]">
+          청광 AI가 초고를 자동으로 발행할 시간대와 요일을 설정할 수 있습니다.
+        </p>
+      </header>
+
+      <div className="chg-card">
         <Suspense fallback={<SettingsSkeleton />}>
           <SettingsBody />
         </Suspense>

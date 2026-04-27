@@ -86,7 +86,7 @@ export function PostFeedCard({ post }: Props) {
           </span>
           <span className="shrink-0">{formatRelativeTime(createdAtMs)}</span>
         </div>
-        <span className="self-start rounded-full bg-[#edf4ff] px-2.5 py-1 text-[10px] font-semibold text-[#2B66F6] dark:bg-zinc-800 dark:text-zinc-300">
+        <span className="self-start rounded-full bg-[#edf4ff] px-2.5 py-1 text-[10px] font-semibold text-[#2563EB] dark:bg-zinc-800 dark:text-zinc-300">
           {QUOTE_CATEGORY_EMOJIS[category]}{" "}
           {QUOTE_CATEGORY_LABELS[category]}
         </span>

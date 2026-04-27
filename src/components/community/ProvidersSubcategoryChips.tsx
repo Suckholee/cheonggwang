@@ -15,9 +15,9 @@ export function ProvidersSubcategoryChips({ active }: Props) {
   const chipCls =
     "inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors";
   const activeCls =
-    "border-[#2B66F6] bg-[#edf4ff] text-[#2B66F6] dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-200";
+    "border-[#2563EB] bg-[#edf4ff] text-[#2563EB] dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-200";
   const idleCls =
-    "border-[#dbe8fb] bg-white text-zinc-600 hover:border-[#bfd6fb] hover:text-[#2B66F6] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400";
+    "border-[#dbe8fb] bg-white text-zinc-600 hover:border-[#bfd6fb] hover:text-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400";
 
   return (
     <nav

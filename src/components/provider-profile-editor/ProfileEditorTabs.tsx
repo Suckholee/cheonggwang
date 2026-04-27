@@ -20,7 +20,7 @@ export function ProfileEditorTabs({ currentTab }: Props) {
     <nav
       role="tablist"
       aria-label="프로필 편집 탭"
-      className="mb-8 flex border-b border-zinc-200 dark:border-zinc-800"
+      className="mb-8 flex p-1.5 bg-[#F3F4F6] rounded-2xl"
     >
       {TABS.map((tab) => {
         const active = currentTab === tab.key;
@@ -30,16 +30,13 @@ export function ProfileEditorTabs({ currentTab }: Props) {
             role="tab"
             aria-selected={active}
             href={`/provider/profile?tab=${tab.key}`}
-            className={`relative flex-1 px-4 py-3.5 text-center text-[15px] transition-colors ${
+            className={`relative flex-1 px-3 py-2.5 text-center text-[14px] font-bold rounded-xl transition-all duration-200 ${
               active
-                ? "font-bold text-[#2B66F6] dark:text-[#5B8DF6]"
-                : "font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                ? "bg-white text-[#2563EB] shadow-sm"
+                : "text-[#6B7280] hover:text-[#111827] hover:bg-[#E5E7EB]/50"
             }`}
           >
             {tab.label}
-            {active && (
-              <div className="absolute bottom-0 left-0 h-[3px] w-full bg-[#2B66F6] rounded-t-sm dark:bg-[#5B8DF6]" />
-            )}
           </Link>
         );
       })}

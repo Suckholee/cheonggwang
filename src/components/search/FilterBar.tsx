@@ -21,7 +21,7 @@ export function FilterBar({ filters }: Props) {
       className="sticky top-0 z-10 mb-3 rounded-[24px] border border-[#dbe8fb] bg-white/92 px-4 py-4 shadow-[0_10px_28px_rgba(43,102,246,0.06)] backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/92"
     >
       <div className="mb-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2B66F6]/70">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70">
           Filter & Sort
         </p>
         <p className="mt-1 text-[13px] text-zinc-500 dark:text-zinc-400">

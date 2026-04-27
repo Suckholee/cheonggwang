@@ -7,6 +7,7 @@ import {
 } from "@/domain/promo-schemas";
 import { updatePromoSettings } from "@/app/actions/promo-actions";
 import type { Provider } from "@/types/provider";
+import { Settings2, Info, AlertCircle, CheckCircle2, Save } from "lucide-react";
 
 interface Props {
   provider: Provider;
@@ -35,6 +36,7 @@ export function PromoSettingsForm({ provider }: Props) {
       const result = await updatePromoSettings({ brandTone, slogan });
       if (result.ok) {
         setOk(true);
+        setTimeout(() => setOk(false), 3000);
       } else {
         setError(result.message);
       }
@@ -42,71 +44,92 @@ export function PromoSettingsForm({ provider }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
-      <h3 className="mb-3 text-base font-bold">사전 정보</h3>
-      <p className="mb-4 text-xs text-zinc-500">
-        AI가 블로그 포스트를 작성할 때 참고하는 정보입니다 (1회 설정).
-      </p>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="brandTone"
-            className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-          >
+    <section className="rounded-2xl border border-[#F3F4F6] bg-white p-6 shadow-sm">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#6B7280]">
+          <Settings2 className="h-4 w-4" />
+          <span>홍보 엔진 설정</span>
+        </div>
+      </div>
+
+      <div className="mb-6 flex gap-2 rounded-lg bg-[#F9FAFB] p-3 text-[12px] text-[#6B7280]">
+        <Info className="h-4 w-4 shrink-0 text-[#2563EB]" />
+        <p>
+          AI가 서비스 홍보 포스트를 작성할 때 가장 중요하게 참고하는 정보입니다.
+          브랜드의 색깔이 드러나도록 설정해 주세요.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-1.5">
+          <label htmlFor="brandTone" className="text-[12px] font-semibold text-[#4B5563]">
             브랜드 톤
           </label>
-          <select
-            id="brandTone"
-            value={brandTone}
-            onChange={(e) =>
-              setBrandTone(e.target.value as typeof brandTone)
-            }
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-          >
-            {BRAND_TONES.map((t) => (
-              <option key={t} value={t}>
-                {TONE_LABELS[t]}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              id="brandTone"
+              value={brandTone}
+              onChange={(e) => setBrandTone(e.target.value as typeof brandTone)}
+              className="w-full appearance-none rounded-xl border border-[#D1D5DB] bg-white px-4 py-2.5 text-[14px] focus:border-[#2563EB] focus:outline-none focus:ring-4 focus:ring-[#DBEAFE] transition-all"
+            >
+              {BRAND_TONES.map((t) => (
+                <option key={t} value={t}>
+                  {TONE_LABELS[t]}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div>
-          <label
-            htmlFor="slogan"
-            className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            슬로건 <span className="text-zinc-500">(40자)</span>
+
+        <div className="space-y-1.5">
+          <label htmlFor="slogan" className="text-[12px] font-semibold text-[#4B5563]">
+            한 줄 슬로건 <span className="font-normal text-[#9CA3AF]">(최대 40자)</span>
           </label>
-          <input
-            id="slogan"
-            type="text"
-            value={slogan}
-            maxLength={40}
-            onChange={(e) => setSlogan(e.target.value)}
-            placeholder="예: 강남에서 4년간 믿고 맡기는 청소"
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-          />
-          <p className="mt-1 text-right text-[11px] text-zinc-400">
-            {slogan.length} / 40
-          </p>
+          <div className="relative">
+            <input
+              id="slogan"
+              type="text"
+              value={slogan}
+              maxLength={40}
+              onChange={(e) => setSlogan(e.target.value)}
+              placeholder="예: 강남에서 4년간 믿고 맡기는 청소"
+              className="w-full rounded-xl border border-[#D1D5DB] bg-white px-4 py-2.5 text-[14px] focus:border-[#2563EB] focus:outline-none focus:ring-4 focus:ring-[#DBEAFE] transition-all"
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#9CA3AF]">
+              {slogan.length}/40
+            </div>
+          </div>
         </div>
-        {error && (
-          <p className="rounded bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/50 dark:text-red-300">
-            {error}
-          </p>
-        )}
-        {ok && (
-          <p className="rounded bg-emerald-50 px-3 py-2 text-xs text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
-            저장되었습니다
-          </p>
-        )}
-        <button
-          type="submit"
-          disabled={isPending || slogan.trim().length === 0}
-          className="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {isPending ? "저장 중..." : "사전 정보 저장"}
-        </button>
+
+        <div className="space-y-4">
+          {error && (
+            <div className="flex items-center gap-2 rounded-xl bg-[#FEF2F2] px-4 py-3 text-[13px] font-medium text-[#991B1B]">
+              <AlertCircle className="h-4 w-4" />
+              <span>{error}</span>
+            </div>
+          )}
+          {ok && (
+            <div className="flex items-center gap-2 rounded-xl bg-[#ECFDF5] px-4 py-3 text-[13px] font-medium text-[#065F46]">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>설정이 저장되었습니다.</span>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isPending || slogan.trim().length === 0}
+            className={`flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] py-4 text-[15px] font-bold text-white transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50 ${
+              isPending ? "cursor-wait" : ""
+            }`}
+          >
+            {isPending ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            ) : (
+              <Save className="h-5 w-5" />
+            )}
+            <span>{isPending ? "저장 중..." : "설정 저장하기"}</span>
+          </button>
+        </div>
       </form>
     </section>
   );

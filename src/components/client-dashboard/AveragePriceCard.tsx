@@ -61,7 +61,7 @@ export function AveragePriceCard({ summary }: Props) {
         </span>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-zinc-400">바로 견적 시작</span>
-          <span className="font-semibold text-[#2B66F6] dark:text-indigo-400">
+          <span className="font-semibold text-[#2563EB] dark:text-indigo-400">
           견적 →
           </span>
         </div>

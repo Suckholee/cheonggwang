@@ -33,7 +33,7 @@ export function QuoteStepper({ status, compact = false }: Props) {
         
         let bgColor = "bg-zinc-100 dark:bg-zinc-800 text-zinc-300";
         if (isDone) {
-          bgColor = isLastStep ? "bg-[#23C16B] text-white" : "bg-[#2B66F6] text-white";
+          bgColor = isLastStep ? "bg-[#23C16B] text-white" : "bg-[#2563EB] text-white";
         }
 
         return (
@@ -55,7 +55,7 @@ export function QuoteStepper({ status, compact = false }: Props) {
                 <span
                   className={`${lineBase} absolute left-1/2 w-full ${
                     i < currentIdx
-                      ? "bg-[#2B66F6]"
+                      ? "bg-[#2563EB]"
                       : "bg-zinc-100 dark:bg-zinc-800"
                   }`}
                   style={{ zIndex: 0 }}
@@ -65,7 +65,7 @@ export function QuoteStepper({ status, compact = false }: Props) {
             <span
               className={`text-[11px] font-bold ${
                 isCurrent && !isLastStep
-                  ? "text-[#2B66F6]"
+                  ? "text-[#2563EB]"
                   : isCurrent && isLastStep
                   ? "text-[#23C16B]"
                   : isDone

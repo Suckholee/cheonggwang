@@ -83,7 +83,7 @@ function HomeHeader() {
         <div className="flex items-center gap-3">
           <BrandLogo />
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2B66F6]/70">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2563EB]/70">
               Cheonggwang
             </p>
             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -101,9 +101,9 @@ function HeroSection() {
   return (
     <section className="relative overflow-hidden rounded-[28px] border border-[#d8e6ff] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-6 shadow-[0_16px_40px_rgba(43,102,246,0.10)]">
       <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-[#7fb4ff]/20 blur-2xl" />
-      <div className="absolute -bottom-16 left-0 h-32 w-32 rounded-full bg-[#2B66F6]/10 blur-2xl" />
+      <div className="absolute -bottom-16 left-0 h-32 w-32 rounded-full bg-[#2563EB]/10 blur-2xl" />
       <div className="relative">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#2B66F6]">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#2563EB]">
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           믿고 맡길 수 있는 청소 연결
         </div>
@@ -120,7 +120,7 @@ function HeroSection() {
         <div className="mt-5 flex gap-2">
           <Link
             href="/quote/new"
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#2B66F6] px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(43,102,246,0.28)] transition-colors hover:bg-[#1f57e6]"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(43,102,246,0.28)] transition-colors hover:bg-[#1D4ED8]"
           >
             견적 받기
             <ArrowRight className="h-4 w-4" aria-hidden />
@@ -208,7 +208,7 @@ function CommunityPreviewSection() {
               href={item.href}
               className="flex items-start gap-3 rounded-[22px] border border-zinc-200/80 bg-[#f9fbff] p-4 transition-colors hover:bg-[#f3f8ff] dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
             >
-              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#d9e9ff] text-[#2B66F6]">
+              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#d9e9ff] text-[#2563EB]">
                 <Icon className="h-5 w-5" aria-hidden />
               </div>
               <div className="min-w-0 flex-1">
@@ -248,7 +248,7 @@ function StickyHomeCta() {
         </Link>
         <Link
           href="/quote/new"
-          className="flex-[1.25] rounded-[18px] bg-[#2B66F6] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1f57e6]"
+          className="flex-[1.25] rounded-[18px] bg-[#2563EB] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1D4ED8]"
         >
           견적 요청
         </Link>
@@ -268,7 +268,7 @@ function HomeSectionHeader({
 }) {
   return (
     <div className="mb-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2B66F6]/70">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70">
         {eyebrow}
       </p>
       <h2 className="mt-1 text-[22px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
@@ -292,7 +292,7 @@ async function MarketplaceFooter() {
   return (
     <footer className="rounded-[28px] border border-zinc-200 bg-white p-5 text-sm shadow-[0_10px_28px_rgba(15,23,42,0.05)] dark:border-zinc-800 dark:bg-zinc-950">
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e7f0ff] text-[#2B66F6]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e7f0ff] text-[#2563EB]">
           <Sparkles className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
@@ -306,7 +306,7 @@ async function MarketplaceFooter() {
       </div>
       <Link
         href="/discover"
-        className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#2B66F6] hover:text-[#1f57e6]"
+        className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#2563EB] hover:text-[#1D4ED8]"
       >
         홍보 피드 둘러보기
         <ArrowRight className="h-4 w-4" aria-hidden />
@@ -346,7 +346,7 @@ async function TodayCardSlot() {
     return (
       <section className="rounded-[26px] border border-zinc-200 bg-white p-5 shadow-[0_10px_28px_rgba(15,23,42,0.05)] dark:border-zinc-800 dark:bg-zinc-950">
         <div className="mb-4 flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#e8f1ff] text-[#2B66F6]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#e8f1ff] text-[#2563EB]">
             <FileText className="h-5 w-5" aria-hidden />
           </div>
           <div>
@@ -361,7 +361,7 @@ async function TodayCardSlot() {
         <div className="flex gap-2">
           <Link
             href="/quote/new"
-            className="flex-1 rounded-2xl bg-[#2B66F6] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1f57e6]"
+            className="flex-1 rounded-2xl bg-[#2563EB] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1D4ED8]"
           >
             + 새 견적 요청
           </Link>

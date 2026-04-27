@@ -150,7 +150,7 @@ export default function SampleAccountsPage() {
       <section className="mb-4 rounded-[20px] border border-[#dbe8fb] bg-white p-4 text-[13px] leading-6 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
         <div className="flex items-start gap-2">
           <Info
-            className="mt-0.5 h-4 w-4 shrink-0 text-[#2B66F6]"
+            className="mt-0.5 h-4 w-4 shrink-0 text-[#2563EB]"
             aria-hidden
           />
           <div>
@@ -226,7 +226,7 @@ async function Body() {
                   </div>
                   {p.rating !== null && (
                     <div className="shrink-0 text-right text-[11px] text-zinc-500">
-                      <span className="font-semibold text-[#2B66F6]">
+                      <span className="font-semibold text-[#2563EB]">
                         ★ {p.rating}
                       </span>
                       {p.reviewCount !== null && (
@@ -239,7 +239,7 @@ async function Body() {
                   {p.categories.map((c) => (
                     <span
                       key={c}
-                      className="inline-flex items-center gap-1 rounded-full bg-[#edf4ff] px-2 py-0.5 font-medium text-[#2B66F6] dark:bg-indigo-950/40 dark:text-indigo-300"
+                      className="inline-flex items-center gap-1 rounded-full bg-[#edf4ff] px-2 py-0.5 font-medium text-[#2563EB] dark:bg-indigo-950/40 dark:text-indigo-300"
                     >
                       {QUOTE_CATEGORY_EMOJIS[c]} {QUOTE_CATEGORY_LABELS[c]}
                     </span>
@@ -313,7 +313,7 @@ async function Body() {
                 </div>
                 {c.persona?.goal && (
                   <p className="mt-2 rounded-[12px] bg-[#f4f9ff] px-3 py-2 text-[12px] leading-5 text-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
-                    <span className="font-semibold text-[#2B66F6]">
+                    <span className="font-semibold text-[#2563EB]">
                       청소 목적 ·{" "}
                     </span>
                     {c.persona.goal}
@@ -323,7 +323,7 @@ async function Body() {
                   {c.persona?.interestedCategories?.map((cat) => (
                     <span
                       key={cat}
-                      className="inline-flex items-center gap-1 rounded-full bg-[#edf4ff] px-2 py-0.5 font-medium text-[#2B66F6] dark:bg-indigo-950/40 dark:text-indigo-300"
+                      className="inline-flex items-center gap-1 rounded-full bg-[#edf4ff] px-2 py-0.5 font-medium text-[#2563EB] dark:bg-indigo-950/40 dark:text-indigo-300"
                     >
                       {QUOTE_CATEGORY_EMOJIS[cat]}
                       {QUOTE_CATEGORY_LABELS[cat]}

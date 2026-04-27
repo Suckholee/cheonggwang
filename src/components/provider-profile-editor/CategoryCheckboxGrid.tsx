@@ -37,7 +37,7 @@ export function CategoryCheckboxGrid({ value, onChange, error }: Props) {
               key={category}
               className={`flex cursor-pointer items-center gap-2.5 rounded-[12px] border px-4 py-3.5 text-[15px] font-medium transition-all ${
                 checked
-                  ? "border-[#2B66F6] bg-[#F0F4FF] text-[#2B66F6] dark:border-[#5B8DF6] dark:bg-[#2B66F6]/20 dark:text-[#5B8DF6]"
+                  ? "border-[#2563EB] bg-[#F0F4FF] text-[#2563EB] dark:border-[#5B8DF6] dark:bg-[#2563EB]/20 dark:text-[#5B8DF6]"
                   : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300"
               }`}
             >
@@ -50,7 +50,7 @@ export function CategoryCheckboxGrid({ value, onChange, error }: Props) {
               <div
                 className={`flex h-[18px] w-[18px] items-center justify-center rounded-[4px] border ${
                   checked
-                    ? "border-[#2B66F6] bg-[#2B66F6] dark:border-[#5B8DF6] dark:bg-[#5B8DF6]"
+                    ? "border-[#2563EB] bg-[#2563EB] dark:border-[#5B8DF6] dark:bg-[#5B8DF6]"
                     : "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900"
                 }`}
               >

@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-5 py-8 dark:bg-zinc-950">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-extrabold tracking-tight text-[#2B66F6] dark:text-[#5B8DF6]">
+        <h1 className="text-2xl font-extrabold tracking-tight text-[#2563EB] dark:text-[#5B8DF6]">
           청광 운영 콘솔
         </h1>
         <p className="mt-2 text-sm text-zinc-500">운영자 전용</p>

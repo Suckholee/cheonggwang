@@ -115,7 +115,7 @@ export function ProviderSearchCard({ provider }: Props) {
             <span
               key={c}
               aria-label={QUOTE_CATEGORY_LABELS[c]}
-              className="rounded-full bg-[#edf4ff] px-2 py-0.5 text-[#2B66F6] dark:bg-zinc-800 dark:text-zinc-300"
+              className="rounded-full bg-[#edf4ff] px-2 py-0.5 text-[#2563EB] dark:bg-zinc-800 dark:text-zinc-300"
             >
               {QUOTE_CATEGORY_EMOJIS[c]}
             </span>

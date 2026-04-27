@@ -9,19 +9,19 @@ import { ArrowRight, Sparkles, Store, Sparkle } from "lucide-react";
 
 export default function PartnerApplyCTA() {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-[#2B66F6]/20 bg-[linear-gradient(135deg,#ffffff_0%,#e8f1ff_50%,#cfe0ff_100%)] p-6 shadow-[0_16px_40px_rgba(43,102,246,0.18)]">
+    <section className="relative overflow-hidden rounded-[28px] border border-[#2563EB]/20 bg-[linear-gradient(135deg,#ffffff_0%,#e8f1ff_50%,#cfe0ff_100%)] p-6 shadow-[0_16px_40px_rgba(43,102,246,0.18)]">
       <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full bg-[#7fb4ff]/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-[#2B66F6]/15 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-[#2563EB]/15 blur-3xl" />
 
       <div className="relative">
-        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#2B66F6]/30 bg-white/80 px-3 py-1 text-[11px] font-bold tracking-[0.12em] text-[#2B66F6]">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#2563EB]/30 bg-white/80 px-3 py-1 text-[11px] font-bold tracking-[0.12em] text-[#2563EB]">
           <Sparkles className="h-3 w-3" aria-hidden />
           매장·사무실 운영자라면
         </div>
         <h2 className="text-[22px] font-black leading-[1.25] tracking-tight text-zinc-950 dark:text-zinc-50">
           청소도 맡기고
           <br />
-          <span className="text-[#2B66F6]">광고도 맡기세요</span>
+          <span className="text-[#2563EB]">광고도 맡기세요</span>
         </h2>
         <p className="mt-2 text-[13px] leading-5 text-zinc-700 dark:text-zinc-300">
           청광 한 계정에서 정기 청소 의뢰와 홍보글 자동 발행을 모두 관리합니다.
@@ -30,7 +30,7 @@ export default function PartnerApplyCTA() {
         {/* 듀얼 가치 카드 */}
         <div className="mt-5 grid grid-cols-2 gap-2.5">
           <div className="rounded-2xl border border-white/80 bg-white/90 p-3 shadow-sm dark:bg-zinc-900/90">
-            <div className="mb-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[#e8f1ff] text-[#2B66F6]">
+            <div className="mb-1 flex h-8 w-8 items-center justify-center rounded-xl bg-[#e8f1ff] text-[#2563EB]">
               <Store className="h-4 w-4" aria-hidden />
             </div>
             <p className="text-[12px] font-bold text-zinc-900 dark:text-zinc-50">
@@ -59,7 +59,7 @@ export default function PartnerApplyCTA() {
 
         <Link
           href="/signup-partner"
-          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2B66F6] px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(43,102,246,0.32)] transition-colors hover:bg-[#1f57e6]"
+          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2563EB] px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(43,102,246,0.32)] transition-colors hover:bg-[#1D4ED8]"
         >
           파트너 등록 신청하기
           <ArrowRight className="h-4 w-4" aria-hidden />

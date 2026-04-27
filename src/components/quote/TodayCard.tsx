@@ -7,7 +7,7 @@ export async function TodayCard({ uid }: { uid: string }) {
   return (
     <section className="mt-2 rounded-[20px] bg-white p-5 shadow-[0_4px_12px_rgba(0,0,0,0.03)] dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-[15px] font-bold text-[#2B66F6] dark:text-[#5B8DF6]">
+        <h2 className="text-[15px] font-bold text-[#2563EB] dark:text-[#5B8DF6]">
           오늘의 할 일 · 4건
         </h2>
         <span className="text-[13px] font-medium text-zinc-400 dark:text-zinc-500">
@@ -19,7 +19,7 @@ export async function TodayCard({ uid }: { uid: string }) {
         {/* Item 1 */}
         <Link href="/received" className="flex items-center justify-between rounded-2xl bg-[#F0F4FF] p-4 dark:bg-blue-950/30 transition-colors">
           <div className="flex items-start gap-3">
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#2B66F6]" />
+            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#2563EB]" />
             <div>
               <p className="text-[15px] font-bold text-zinc-900 dark:text-zinc-100">새 견적 3건 도착</p>
               <p className="text-[13px] text-zinc-500 dark:text-zinc-400 mt-0.5">입주청소 32평 · 22~32만원 범위</p>
@@ -57,7 +57,7 @@ export async function TodayCard({ uid }: { uid: string }) {
 
       <Link
         href="/quote/new"
-        className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#2B66F6] py-[15px] text-[16px] font-bold text-white transition-colors hover:bg-blue-700"
+        className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#2563EB] py-[15px] text-[16px] font-bold text-white transition-colors hover:bg-blue-700"
       >
         <Plus className="h-[18px] w-[18px]" strokeWidth={2.5} /> 새 견적 요청
       </Link>

@@ -26,7 +26,7 @@ export async function AveragePriceSection() {
       className="mt-10"
     >
       <div className="mb-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2B66F6]/70">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70">
           Price Snapshot
         </p>
         <h2

@@ -49,7 +49,7 @@ export function TopProviderCard({ provider, rank }: Props) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="mb-3 flex items-center gap-2">
-            <span className="rounded-full bg-[#edf4ff] px-2.5 py-1 text-[11px] font-bold text-[#2B66F6]">
+            <span className="rounded-full bg-[#edf4ff] px-2.5 py-1 text-[11px] font-bold text-[#2563EB]">
               TOP {rank}
             </span>
             {repeatRate != null && repeatRate >= 0.5 ? (
@@ -86,12 +86,12 @@ export function TopProviderCard({ provider, rank }: Props) {
             <div className="rounded-2xl bg-[#f7fbff] px-3 py-2 dark:bg-zinc-900">
               <p className="text-[11px] text-zinc-400">응답성</p>
               <p className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                <Clock3 className="h-3.5 w-3.5 text-[#2B66F6]" aria-hidden />
+                <Clock3 className="h-3.5 w-3.5 text-[#2563EB]" aria-hidden />
                 {repeatLabel}
               </p>
             </div>
           </div>
-          <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2B66F6]">
+          <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2563EB]">
             프로필 보기
             <ArrowRight className="h-4 w-4" aria-hidden />
           </div>

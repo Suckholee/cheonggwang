@@ -46,7 +46,7 @@ export function RegionCheckboxGrid({ value, onChange, error }: Props) {
           <select
             value=""
             onChange={(e) => addRegion(e.target.value)}
-            className="w-full appearance-none rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 pr-10 text-[15px] font-medium text-zinc-700 outline-none transition-colors focus:border-[#2B66F6] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-[#5B8DF6]"
+            className="w-full appearance-none rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 pr-10 text-[15px] font-medium text-zinc-700 outline-none transition-colors focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-[#5B8DF6]"
           >
             <option value="" disabled>
               + 활동할 지역 추가하기
@@ -84,13 +84,13 @@ export function RegionCheckboxGrid({ value, onChange, error }: Props) {
             return (
               <div
                 key={`${v.city}|${v.district}`}
-                className="flex items-center gap-1.5 rounded-[12px] bg-[#F0F4FF] px-3.5 py-2 text-[14px] font-bold text-[#2B66F6] transition-colors dark:bg-[#2B66F6]/20 dark:text-[#5B8DF6]"
+                className="flex items-center gap-1.5 rounded-[12px] bg-[#F0F4FF] px-3.5 py-2 text-[14px] font-bold text-[#2563EB] transition-colors dark:bg-[#2563EB]/20 dark:text-[#5B8DF6]"
               >
                 <span>{label}</span>
                 <button
                   type="button"
                   onClick={() => removeRegion(v)}
-                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2B66F6]/10 text-[#2B66F6] transition-colors hover:bg-[#2B66F6]/20 dark:bg-black/20 dark:hover:bg-black/40"
+                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10 text-[#2563EB] transition-colors hover:bg-[#2563EB]/20 dark:bg-black/20 dark:hover:bg-black/40"
                   aria-label={`${label} 삭제`}
                 >
                   <svg

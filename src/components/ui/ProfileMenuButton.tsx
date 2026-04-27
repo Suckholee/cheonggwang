@@ -138,9 +138,9 @@ export function ProfileMenuButton() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-[#d8e6ff] bg-white px-2 py-2 text-zinc-700 shadow-[0_8px_24px_rgba(43,102,246,0.08)] transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className="flex items-center gap-2 rounded-full border border-[#d8e6ff] bg-white px-2 py-2 text-zinc-700 shadow-sm transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,#2B66F6_0%,#78A8FF_100%)] text-sm font-bold text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2563EB] text-sm font-bold text-white shadow-sm">
           {ready ? initial : ""}
         </span>
         <ChevronDown className="h-4 w-4 text-zinc-400" aria-hidden />
@@ -170,9 +170,9 @@ export function ProfileMenuButton() {
                   className="flex items-center gap-3 rounded-[18px] px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-[#f7fbff] dark:text-zinc-300 dark:hover:bg-zinc-900"
                 >
                   {profile.providerId ? (
-                    <Settings className="h-4 w-4 text-[#2B66F6]" aria-hidden />
+                    <Settings className="h-4 w-4 text-[#2563EB]" aria-hidden />
                   ) : (
-                    <User className="h-4 w-4 text-[#2B66F6]" aria-hidden />
+                    <User className="h-4 w-4 text-[#2563EB]" aria-hidden />
                   )}
                   {profile.providerId ? "내 정보 수정" : "내 정보 보기"}
                 </Link>
@@ -194,7 +194,7 @@ export function ProfileMenuButton() {
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 rounded-[18px] px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-[#f7fbff] dark:text-zinc-300 dark:hover:bg-zinc-900"
               >
-                <LogIn className="h-4 w-4 text-[#2B66F6]" aria-hidden />
+                <LogIn className="h-4 w-4 text-[#2563EB]" aria-hidden />
                 로그인
               </Link>
             )}

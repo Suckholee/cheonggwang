@@ -32,7 +32,7 @@ export async function TopProvidersSection() {
       className="mt-6 -mx-4 rounded-[32px] bg-[linear-gradient(180deg,#eef6ff_0%,#f8fbff_100%)] p-4 pt-6 pb-8 dark:bg-zinc-900/50"
     >
       <div className="mb-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2B66F6]/70">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70">
           Recommended Pros
         </p>
         <div className="mt-1 flex items-center gap-2">

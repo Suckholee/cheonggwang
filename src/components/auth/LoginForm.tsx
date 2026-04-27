@@ -125,7 +125,7 @@ export function LoginForm() {
             placeholder={mode === "signup" ? "영문·숫자·_ (4-20자)" : "아이디"}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 text-[15px] outline-none transition-colors focus:border-[#2B66F6] focus:ring-1 focus:ring-[#2B66F6] dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-[#5B8DF6] dark:focus:ring-[#5B8DF6]"
+            className="rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 text-[15px] outline-none transition-colors focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-[#5B8DF6] dark:focus:ring-[#5B8DF6]"
           />
           {mode === "signup" && (
             <span className="ml-1 text-[11px] text-zinc-500">
@@ -148,7 +148,7 @@ export function LoginForm() {
             }
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 text-[15px] outline-none transition-colors focus:border-[#2B66F6] focus:ring-1 focus:ring-[#2B66F6] dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-[#5B8DF6] dark:focus:ring-[#5B8DF6]"
+            className="rounded-[16px] border border-zinc-200 bg-white px-4 py-3.5 text-[15px] outline-none transition-colors focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-[#5B8DF6] dark:focus:ring-[#5B8DF6]"
           />
         </label>
       </div>
@@ -164,7 +164,7 @@ export function LoginForm() {
           비밀번호를 잊으셨나요?{" "}
           <a
             href="mailto:help@cheonggwang.app?subject=비밀번호 재설정 요청"
-            className="font-semibold text-[#2B66F6] hover:underline dark:text-[#5B8DF6]"
+            className="font-semibold text-[#2563EB] hover:underline dark:text-[#5B8DF6]"
           >
             운영팀에 문의
           </a>
@@ -174,7 +174,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-[16px] bg-[#2B66F6] px-4 py-3.5 text-[16px] font-bold text-white transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2B66F6] dark:text-white"
+        className="mt-2 rounded-[16px] bg-[#2563EB] px-4 py-3.5 text-[16px] font-bold text-white transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50 dark:bg-[#2563EB] dark:text-white"
       >
         {pending
           ? "처리 중..."
@@ -189,7 +189,7 @@ export function LoginForm() {
         </span>{" "}
         <Link
           href="/signup-provider"
-          className="font-bold text-[#2B66F6] hover:underline dark:text-[#5B8DF6]"
+          className="font-bold text-[#2563EB] hover:underline dark:text-[#5B8DF6]"
         >
           청명으로 가입 →
         </Link>

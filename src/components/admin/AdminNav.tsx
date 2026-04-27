@@ -43,7 +43,7 @@ export default function AdminNav() {
         <div className="flex items-center gap-4">
           <Link
             href="/admin"
-            className="text-sm font-bold tracking-tight text-[#2B66F6]"
+            className="text-sm font-bold tracking-tight text-[#2563EB]"
           >
             청광 운영 콘솔
           </Link>

@@ -2,9 +2,47 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
   /** v1.1b bottom-tab-nav · 하단 nav 고정 높이 */
   --bottom-nav-height: 64px;
+
+  /* Cheonggwang Brand Colors (Primary) */
+  --color-brand-50: #EFF6FF;
+  --color-brand-100: #DBEAFE;
+  --color-brand-500: #2563EB;
+  --color-brand-600: #1D4ED8;
+  --color-brand-700: #1E40AF;
+
+  /* Semantic Colors */
+  --color-success-500: #10B981;
+  --color-warning-500: #F59E0B;
+  --color-danger-500: #EF4444;
+  --color-credit-500: #FBBF24;
+
+  /* Gray Scale (Ink) */
+  --color-ink-50: #F9FAFB;
+  --color-ink-100: #F3F4F6;
+  --color-ink-300: #D1D5DB;
+  --color-ink-500: #6B7280;
+  --color-ink-700: #374151;
+  --color-ink-900: #111827;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-md: 0 4px 12px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 12px 32px rgba(17, 24, 39, 0.12);
+
+  /* Easing */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1.4);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @theme inline {
@@ -22,9 +60,21 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink-50);
+  color: var(--color-ink-900);
+  font-family: inherit;
+}
+
+.chg-card {
+  background-color: white;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-ink-100);
+  padding: 24px;
+  transition: all 0.2s var(--ease-standard);
+}
+
+.chg-card:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 /**

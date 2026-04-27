@@ -23,13 +23,13 @@ export default function PartnerLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <header className="border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="min-h-screen bg-[#F9FAFB] dark:bg-zinc-950">
+      <header className="border-b border-[#F3F4F6] bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900 sticky top-0 z-50 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/partner/posts"
-              className="text-sm font-bold tracking-tight"
+              className="text-base font-bold tracking-tight text-[#2563EB]"
             >
               청광 파트너
             </Link>
@@ -42,7 +42,7 @@ export default function PartnerLayout({
           </Suspense>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+      <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>
   );
 }

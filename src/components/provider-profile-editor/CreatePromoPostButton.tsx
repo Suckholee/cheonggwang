@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles } from "lucide-react";
+import { Sparkles, AlertCircle, Calendar } from "lucide-react";
 import { createPromoPost } from "@/app/actions/promo-actions";
 import { formatScheduledLabel } from "@/domain/booking-day-bucket";
 import { PROVIDERS_SUBCATEGORIES } from "@/lib/feed/panel-config";
@@ -55,25 +55,26 @@ export function CreatePromoPostButton({ provider }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
-      <h3 className="mb-3 flex items-center gap-2 text-base font-bold">
-        <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" aria-hidden />
-        새 홍보 포스트 만들기
-      </h3>
+    <section className="rounded-2xl border border-[#F3F4F6] bg-white p-6 shadow-sm">
+      <div className="mb-6 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#6B7280]">
+        <Sparkles className="h-4 w-4 text-[#2563EB]" />
+        <span>새 홍보 포스트 만들기</span>
+      </div>
+
       {!settingsReady && (
-        <p className="mb-3 rounded bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
-          먼저 위 사전 정보를 저장해 주세요.
-        </p>
+        <div className="mb-6 flex items-center gap-2 rounded-xl bg-[#FFFBEB] px-4 py-3 text-[13px] font-medium text-[#92400E]">
+          <AlertCircle className="h-4 w-4" />
+          <span>먼저 위 사전 정보를 저장해 주세요.</span>
+        </div>
       )}
-      <div className="space-y-3">
-        <div>
-          <span className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300">
-            카테고리
-          </span>
+
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <label className="text-[12px] font-semibold text-[#4B5563]">카테고리 선택</label>
           <div
             role="radiogroup"
             aria-label="스토리 카테고리 선택"
-            className="flex flex-wrap gap-1.5"
+            className="flex flex-wrap gap-2"
           >
             {PROVIDERS_SUBCATEGORIES.map((sub) => {
               const active = storyCategory === sub.slug;
@@ -85,12 +86,11 @@ export function CreatePromoPostButton({ provider }: Props) {
                   aria-checked={active}
                   onClick={() => setStoryCategory(sub.slug)}
                   title={sub.description}
-                  className={[
-                    "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                  className={`inline-flex items-center gap-1.5 rounded-full border-2 px-4 py-1.5 text-[13px] font-bold transition-all ${
                     active
-                      ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-200"
-                      : "border-zinc-200 text-zinc-600 hover:border-indigo-300 dark:border-zinc-800 dark:text-zinc-400",
-                  ].join(" ")}
+                      ? "border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]"
+                      : "border-[#F3F4F6] bg-[#F9FAFB] text-[#6B7280] hover:border-[#D1D5DB]"
+                  }`}
                 >
                   <span aria-hidden>{sub.emoji}</span>
                   {sub.label}
@@ -98,51 +98,62 @@ export function CreatePromoPostButton({ provider }: Props) {
               );
             })}
           </div>
-          <p className="mt-1 text-[11px] text-zinc-500">
-            {
-              PROVIDERS_SUBCATEGORIES.find((s) => s.slug === storyCategory)
-                ?.description
-            }
+          <p className="text-[11px] font-medium text-[#9CA3AF]">
+            {PROVIDERS_SUBCATEGORIES.find((s) => s.slug === storyCategory)?.description}
           </p>
         </div>
-        <div>
-          <label
-            htmlFor="topicHint"
-            className="mb-1 block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            주제 힌트 <span className="text-zinc-500">(선택 · 60자)</span>
+
+        <div className="space-y-1.5">
+          <label htmlFor="topicHint" className="text-[12px] font-semibold text-[#4B5563]">
+            오늘의 주제 힌트 <span className="font-normal text-[#9CA3AF]">(선택 · 최대 60자)</span>
           </label>
-          <input
-            id="topicHint"
-            type="text"
-            value={topicHint}
-            maxLength={60}
-            onChange={(e) => setTopicHint(e.target.value)}
-            placeholder="예: 어제 다녀온 현장 · 욕실 물때 팁"
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-          />
+          <div className="relative">
+            <input
+              id="topicHint"
+              type="text"
+              value={topicHint}
+              maxLength={60}
+              onChange={(e) => setTopicHint(e.target.value)}
+              placeholder="예: 어제 다녀온 현장 · 욕실 물때 관리 팁"
+              className="w-full rounded-xl border border-[#D1D5DB] bg-white px-4 py-2.5 text-[14px] focus:border-[#2563EB] focus:outline-none focus:ring-4 focus:ring-[#DBEAFE] transition-all"
+            />
+          </div>
         </div>
+
         {inCooldown && nextAllowedLabel && (
-          <p className="rounded bg-zinc-50 px-3 py-2 text-[11px] text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
-            💡 다음 생성 가능: {nextAllowedLabel}
-          </p>
+          <div className="flex items-center gap-2 rounded-xl bg-[#F9FAFB] px-4 py-3 text-[12px] font-bold text-[#6B7280]">
+            <Calendar className="h-4 w-4 text-[#2563EB]" />
+            <span>다음 포스트 생성 가능 일시: {nextAllowedLabel}</span>
+          </div>
         )}
+
         {error && (
-          <p className="rounded bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/50 dark:text-red-300">
-            {error}
-          </p>
+          <div className="flex items-center gap-2 rounded-xl bg-[#FEF2F2] px-4 py-3 text-[13px] font-medium text-[#991B1B]">
+            <AlertCircle className="h-4 w-4" />
+            <span>{error}</span>
+          </div>
         )}
+
         <button
           type="button"
           onClick={handleClick}
           disabled={disabled}
-          className="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
+          className={`flex w-full items-center justify-center gap-2 rounded-xl bg-[#2563EB] py-4 text-[16px] font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-[#1D4ED8] hover:shadow-blue-500/30 active:scale-[0.98] disabled:opacity-50 ${
+            isPending ? "cursor-wait" : ""
+          }`}
         >
-          {isPending
-            ? "AI가 작성 중... (10-30초)"
-            : inCooldown
-              ? "쿨다운 중"
-              : "📝 포스트 생성 (주 1회)"}
+          {isPending ? (
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          ) : (
+            <Sparkles className="h-5 w-5" />
+          )}
+          <span>
+            {isPending
+              ? "AI가 작성 중... (약 20초)"
+              : inCooldown
+              ? "현재 쿨다운 중입니다"
+              : "AI 홍보 포스트 생성하기"}
+          </span>
         </button>
       </div>
     </section>

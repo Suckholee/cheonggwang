@@ -79,7 +79,7 @@ export function RequestStatusCard({ request, priceRange }: Props) {
         ) : (
           <p className="text-[14px] text-zinc-400 font-medium">청명 응답 대기 중</p>
         )}
-        <span className="flex items-center gap-1.5 rounded-full bg-[#2B66F6] px-[18px] py-[10px] text-[14px] font-bold text-white shadow-sm transition-colors group-hover:bg-blue-700">
+        <span className="flex items-center gap-1.5 rounded-full bg-[#2563EB] px-[18px] py-[10px] text-[14px] font-bold text-white shadow-sm transition-colors group-hover:bg-blue-700">
           비교하기
           <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden />
         </span>

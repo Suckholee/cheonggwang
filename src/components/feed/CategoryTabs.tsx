@@ -36,7 +36,7 @@ export function CategoryTabs() {
             scroll={false}
             className={`rounded-[12px] px-3.5 py-1.5 text-[14px] font-bold whitespace-nowrap transition-colors ${
               active
-                ? "bg-[#2B66F6] text-white dark:bg-[#5B8DF6]"
+                ? "bg-[#2563EB] text-white dark:bg-[#5B8DF6]"
                 : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >

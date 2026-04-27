@@ -20,7 +20,7 @@ export function FeedControls({ authSlot }: Props) {
           href="/"
           className="shrink-0 flex flex-col items-center gap-[3px] hover:opacity-80 pt-1"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#2B66F6]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#2563EB]">
             <svg
               className="h-[20px] w-[20px] text-white"
               viewBox="0 0 24 24"
@@ -33,7 +33,7 @@ export function FeedControls({ authSlot }: Props) {
                 strokeWidth="3.5"
                 strokeLinecap="square"
               />
-              <rect x="10.5" y="10.5" width="3" height="3" fill="#2B66F6" />
+              <rect x="10.5" y="10.5" width="3" height="3" fill="#2563EB" />
               <path
                 d="M16 5H19V8M8 19H5V16"
                 stroke="currentColor"
@@ -42,7 +42,7 @@ export function FeedControls({ authSlot }: Props) {
               />
             </svg>
           </div>
-          <span className="text-[10px] font-extrabold tracking-tighter text-[#2B66F6] leading-none">
+          <span className="text-[10px] font-extrabold tracking-tighter text-[#2563EB] leading-none">
             청광
           </span>
         </Link>

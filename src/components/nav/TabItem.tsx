@@ -21,7 +21,7 @@ export function TabItem({ tab, active, badgeCount = 0 }: Props) {
       aria-label={label}
       className={`flex flex-1 flex-col items-center justify-center gap-1 py-1 text-[11px] font-bold transition-colors w-full ${
         active
-          ? "text-[#2B66F6] dark:text-[#5B8DF6]"
+          ? "text-[#2563EB] dark:text-[#5B8DF6]"
           : "text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-300"
       }`}
     >

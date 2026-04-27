@@ -37,10 +37,10 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-zinc-100 dark:bg-black`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-[#F9FAFB] dark:bg-black`}
     >
-      <body className="flex min-h-full flex-col items-center justify-center font-sans text-zinc-900 bg-zinc-100 dark:bg-black dark:text-zinc-50 has-[[data-admin-shell]]:bg-zinc-50 has-[[data-admin-shell]]:dark:bg-zinc-950">
-        <div className="w-full max-w-[480px] bg-[#f5f6f8] dark:bg-zinc-950 min-h-screen relative flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.05)] overflow-hidden has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible">
+      <body className="flex min-h-full flex-col items-center justify-center font-sans text-[#111827] bg-[#F9FAFB] dark:bg-black dark:text-zinc-50 has-[[data-admin-shell]]:bg-[#F9FAFB] has-[[data-admin-shell]]:dark:bg-zinc-950">
+        <div className="w-full max-w-[480px] bg-[#F9FAFB] dark:bg-zinc-950 min-h-screen relative flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.03)] overflow-hidden has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible">
           <main className="flex-1 overflow-y-auto pb-[calc(var(--bottom-nav-height)+20px)] [&::-webkit-scrollbar]:hidden has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:pb-0">
             {children}
           </main>
