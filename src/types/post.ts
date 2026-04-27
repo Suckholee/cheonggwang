@@ -101,6 +101,9 @@ export interface Post {
   templateId?: string;
   /** v1.12 cycle #25: 사용된 템플릿 scenarios 스냅샷 (한국어 사용자 친화 라벨, 카드 배지). */
   templateScenarios?: string[];
+
+  /** v1.13 cycle #26: 자동 시리즈로 발행된 글. UI 배지·관리자 통계용 */
+  isAutoSeries?: boolean;
 }
 
 /** Server → Client boundary · feed card primitive */

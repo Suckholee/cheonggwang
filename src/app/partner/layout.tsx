@@ -50,6 +50,12 @@ export default function PartnerLayout({
               + 새 초고
             </Link>
             <Link
+              href="/partner/series"
+              className="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300"
+            >
+              ✨ 시리즈
+            </Link>
+            <Link
               href="/partner/profile"
               className="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300"
             >

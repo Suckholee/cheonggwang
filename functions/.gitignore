@@ -1,5 +1,9 @@
 node_modules/
 lib/
+# v1.13 cycle #26 — auto-series source code (functions/src/auto-series/lib/)는
+# tsc 빌드 산출물(functions/lib/)이 아닌 source이므로 negation
+!src/auto-series/lib/
+!src/auto-series/lib/**
 *.log
 .env
 .env.local

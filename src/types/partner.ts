@@ -1,5 +1,6 @@
 import type { QuoteCategory } from "@/domain/quote-category";
 import type { PartnerProfile } from "./partner-profile";
+import type { PartnerAutoSeries } from "./auto-series";
 
 /**
  * v1.7 partner-promo — 청광 운영진이 인증한 B2B 파트너(의뢰업체) 마스터.
@@ -56,6 +57,8 @@ export interface Partner {
   notes: string | null;
   /** v1.11 partner-rag-system · cycle #24 — 매장 RAG 자료 (사장님 입력). */
   profile?: PartnerProfile;
+  /** v1.13 cycle #26 partner-auto-series — 자동 시리즈 운영 설정. */
+  autoSeries?: PartnerAutoSeries;
 }
 
 /**

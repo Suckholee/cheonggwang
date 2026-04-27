@@ -12,6 +12,7 @@ import {
   type PartnerEvent,
   type PartnerStatus,
 } from "@/types/partner";
+import type { PartnerAutoSeries } from "@/types/auto-series";
 import type { QuoteCategory } from "@/domain/quote-category";
 import { AppError } from "@/lib/errors";
 
@@ -64,6 +65,29 @@ function toPartner(id: string, d: DocumentData): Partner {
     issuedAt: tsToDate(d.issuedAt as Timestamp | undefined),
     issuedBy: String(d.issuedBy ?? ""),
     notes: (d.notes as string | null | undefined) ?? null,
+    // v1.13 cycle #26 — autoSeries optional 매핑
+    autoSeries: toAutoSeries(d.autoSeries as DocumentData | undefined),
+  };
+}
+
+function toAutoSeries(
+  raw: DocumentData | undefined,
+): PartnerAutoSeries | undefined {
+  if (!raw) return undefined;
+  const tone = raw.brandTone;
+  return {
+    enabled: raw.enabled === true,
+    lastIndex: typeof raw.lastIndex === "number" ? raw.lastIndex : -1,
+    lastTickAt: raw.lastTickAt
+      ? tsToDate(raw.lastTickAt as Timestamp)
+      : null,
+    brandTone:
+      tone === "professional" || tone === "playful" || tone === "friendly"
+        ? tone
+        : "friendly",
+    totalPublished:
+      typeof raw.totalPublished === "number" ? raw.totalPublished : 0,
+    totalFailed: typeof raw.totalFailed === "number" ? raw.totalFailed : 0,
   };
 }
 
@@ -154,6 +178,39 @@ export const partnerRepository = {
       autoPublish: { ...cfg },
       updatedAt: FieldValue.serverTimestamp(),
     });
+  },
+
+  /**
+   * v1.13 cycle #26 — autoSeries 부분 갱신 (dot-path).
+   *
+   * 화이트리스트는 호출자(server action)가 검증.
+   *  - server action: enabled, brandTone만
+   *  - admin/runner: 모든 필드 가능
+   *
+   * null 값은 FieldValue.delete()로 변환.
+   */
+  async updateAutoSeries(
+    id: string,
+    patch: Partial<PartnerAutoSeries>,
+  ): Promise<void> {
+    const fields: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(patch)) {
+      fields[`autoSeries.${k}`] = v === null ? FieldValue.delete() : v;
+    }
+    fields.updatedAt = FieldValue.serverTimestamp();
+    await col().doc(id).update(fields);
+  },
+
+  /**
+   * v1.13 cycle #26 — autoSeries.enabled=true + status='active' 파트너 목록.
+   * Cloud Functions runner가 매시간 호출. 인덱스: (autoSeries.enabled, status).
+   */
+  async listAutoSeriesEnabled(): Promise<Partner[]> {
+    const snap = await col()
+      .where("autoSeries.enabled", "==", true)
+      .where("status", "==", "active")
+      .get();
+    return snap.docs.map((d) => toPartner(d.id, d.data()));
   },
 
   /**

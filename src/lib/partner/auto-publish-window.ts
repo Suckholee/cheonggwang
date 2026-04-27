@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { AutoPublishConfig } from "@/types/partner";
+import type { AutoPublishConfig, Partner } from "@/types/partner";
 
 /**
  * v1.7 partner-promo — 자동 발행 윈도우 판정·검증·다음 윈도우 계산.
@@ -161,4 +161,43 @@ function setKstClock(base: Date, minute: number): Date {
   const d = new Date(base);
   d.setHours(Math.floor(minute / 60), minute % 60, 0, 0);
   return d;
+}
+
+/**
+ * v1.13 cycle #26 partner-auto-series · §4.4.
+ *
+ * 현재 KST 윈도우의 시작 시각.
+ *  - 윈도우 밖 또는 비활성 요일이면 null
+ *  - 윈도우 안이면 today + startMinute (KST 벽시계 Date)
+ */
+export function currentWindowStart(
+  cfg: AutoPublishConfig,
+  now: Date = new Date(),
+): Date | null {
+  if (!cfg.enabled) return null;
+  if (cfg.weekdays.length === 0) return null;
+  const kst = toKST(now);
+  if (!cfg.weekdays.includes(kst.getDay())) return null;
+  const minute = kst.getHours() * 60 + kst.getMinutes();
+  if (minute < cfg.startMinute || minute >= cfg.endMinute) return null;
+  return setKstClock(kst, cfg.startMinute);
+}
+
+/**
+ * 같은 윈도우 안에서 이미 자동 시리즈 발행이 처리됐는지.
+ *
+ * 호출 invariant (M3): 반드시 `isInAutoPublishWindow`가 true일 때만 호출 — 윈도우 밖이면 false-positive skip.
+ *
+ *  - partner.autoSeries.lastTickAt이 currentWindowStart 이후면 이미 처리됨 → true
+ *  - lastTickAt 없거나 윈도우 시작 이전이면 false (다음 처리 가능)
+ */
+export function recentlyPublishedInWindow(
+  partner: Partner,
+  now: Date = new Date(),
+): boolean {
+  const lastTick = partner.autoSeries?.lastTickAt;
+  if (!lastTick) return false;
+  const winStart = currentWindowStart(partner.autoPublish, now);
+  if (!winStart) return false;
+  return lastTick.getTime() >= winStart.getTime();
 }

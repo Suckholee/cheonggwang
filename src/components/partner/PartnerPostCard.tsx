@@ -72,6 +72,11 @@ export function PartnerPostCard({ post, fallbackCover, href }: Props) {
             {POST_FORMAT_EMOJI[format]}
           </div>
         )}
+        {post.isAutoSeries ? (
+          <span className="absolute right-2 top-2 rounded-full bg-zinc-900/75 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+            🤖 자동
+          </span>
+        ) : null}
       </div>
 
       {/* meta */}
