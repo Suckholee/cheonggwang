@@ -44,21 +44,72 @@ export default function PartnerPromoDraftForm({
     "friendly" | "professional" | "playful"
   >("friendly");
   const [submitting, setSubmitting] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  /**
+   * Vercel body size limit (4.5MB total) 회피용 client-side compression.
+   * 큰 사진은 max 1600px + JPEG quality 0.85로 resize. 평균 70% 용량 절감.
+   */
+  async function compressImage(file: File): Promise<File> {
+    if (!file.type.startsWith("image/")) return file;
+    if (file.size < 800 * 1024) return file; // 0.8MB 미만은 그대로
+
+    const bitmap = await createImageBitmap(file);
+    const maxDim = 1600;
+    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.85),
+    );
+    if (!blob) return file;
+    if (blob.size >= file.size) return file; // 압축 후 더 커지면 원본 유지
+
+    const newName = file.name.replace(/\.(png|webp|heic)$/i, ".jpg");
+    return new File([blob], newName, { type: "image/jpeg" });
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const list = Array.from(e.target.files ?? []);
     if (list.length > 5) {
       setError("사진은 최대 5장까지 올릴 수 있어요");
       return;
     }
-    const tooBig = list.find((f) => f.size > 5 * 1024 * 1024);
+    const tooBig = list.find((f) => f.size > 10 * 1024 * 1024);
     if (tooBig) {
-      setError(`각 사진은 5MB 이하여야 합니다 (${tooBig.name})`);
+      setError(`각 사진은 10MB 이하여야 합니다 (${tooBig.name})`);
       return;
     }
+
     setError(null);
-    setFiles(list);
+    setCompressing(true);
+    try {
+      const compressed = await Promise.all(list.map(compressImage));
+      // 총합 4MB 안전선 체크 (Vercel 4.5MB limit 여유)
+      const total = compressed.reduce((s, f) => s + f.size, 0);
+      if (total > 4 * 1024 * 1024) {
+        setError(
+          `사진 총 용량이 ${(total / 1024 / 1024).toFixed(1)}MB로 너무 커요. 사진 수를 줄여주세요. (총 4MB 이하 권장)`,
+        );
+        setFiles([]);
+        return;
+      }
+      setFiles(compressed);
+    } catch (err) {
+      console.warn("[compress] failed", err);
+      setError("사진 처리 중 오류가 발생했습니다. 다른 사진으로 시도해주세요.");
+    } finally {
+      setCompressing(false);
+    }
   }
 
   function addKeyword() {
@@ -150,19 +201,26 @@ export default function PartnerPromoDraftForm({
       </div>
       <div>
         <label className="mb-2 block text-sm font-medium">
-          사진 (1~5장, 각 5MB 이하)
+          사진 (1~5장)
         </label>
         <label
           htmlFor="partner-promo-photos"
-          className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-4 py-6 text-sm font-medium text-zinc-700 transition-colors hover:border-blue-500 hover:bg-blue-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-blue-400 dark:hover:bg-blue-950"
+          className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-4 py-6 text-sm font-medium text-zinc-700 transition-colors hover:border-blue-500 hover:bg-blue-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-blue-400 dark:hover:bg-blue-950 ${
+            compressing ? "pointer-events-none opacity-60" : ""
+          }`}
         >
           <span className="text-xl">📷</span>
           <span>
-            {files.length > 0
-              ? `사진 ${files.length}장 선택됨 (변경하려면 클릭)`
-              : "클릭해서 매장 사진 업로드 (1~5장)"}
+            {compressing
+              ? "사진 자동 압축 중…"
+              : files.length > 0
+                ? `사진 ${files.length}장 선택됨 (변경하려면 클릭)`
+                : "클릭해서 매장 사진 업로드 (1~5장)"}
           </span>
         </label>
+        <p className="mt-1 text-xs text-zinc-500">
+          큰 사진은 자동으로 압축됩니다 (max 1600px). 총 4MB 이하 권장.
+        </p>
         <input
           id="partner-promo-photos"
           type="file"
