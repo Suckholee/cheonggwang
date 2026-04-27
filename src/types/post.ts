@@ -1,4 +1,5 @@
 import type { QuoteCategory } from "@/domain/quote-category";
+import type { PostFormat } from "@/domain/post-format";
 
 /**
  * v1.4 #1 provider-promo-content — AI 블로그 홍보 포스트.
@@ -48,6 +49,10 @@ export interface StoryGenerationMeta {
   visionTags: string[];
   /** v1.7: partner-promo 입력 키워드(0..5). customer-story에서는 미사용. */
   keywordsHint?: string[];
+  /** v1.12 cycle #25: 사용된 admin contentTemplate.tags 스냅샷 (analytics·디버그용, UI 미노출). */
+  templateTags?: string[];
+  /** v1.12 cycle #25: card-news 검증 실패 후 blog로 fallback 재compose된 경우 true. */
+  cardNewsValidationFailed?: boolean;
 }
 
 /** v1.7: partner-promo 의도를 명시하는 별칭. shape는 StoryGenerationMeta와 동일. */
@@ -86,6 +91,16 @@ export interface Post {
   generationMeta?: StoryGenerationMeta;
   /** v1.6 — 데모/샘플 계정이 작성한 포스트. UI에 배지 노출. */
   isSample?: boolean;
+
+  /**
+   * v1.12 cycle #25: partner-promo 콘텐츠 형식. 'blog' | 'card-news'.
+   * 누락 시 `postFormatFallback`이 'blog'로 매핑 (R1 안전망).
+   */
+  format?: PostFormat;
+  /** v1.12 cycle #25: 사용된 admin contentTemplate ID (추적용, optional). */
+  templateId?: string;
+  /** v1.12 cycle #25: 사용된 템플릿 scenarios 스냅샷 (한국어 사용자 친화 라벨, 카드 배지). */
+  templateScenarios?: string[];
 }
 
 /** Server → Client boundary · feed card primitive */

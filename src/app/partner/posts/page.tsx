@@ -75,9 +75,10 @@ async function AutoPublishBanner() {
 
 async function PostsBody() {
   await connection();
-  const { uid } = await requirePartnerPage();
+  const { uid, partner } = await requirePartnerPage();
   const posts = await postRepository.listMyPosts(uid, 100);
-  return <PartnerPostsList posts={posts} />;
+  const partnerCover = partner.profile?.photoUrls?.[0] ?? null;
+  return <PartnerPostsList posts={posts} partnerCover={partnerCover} />;
 }
 
 function BannerSkeleton() {

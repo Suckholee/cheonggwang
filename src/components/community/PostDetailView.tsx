@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { renderMarkdown } from "@/lib/markdown";
+import { PostBodyRenderer } from "@/components/post/PostBodyRenderer";
 import { formatRelativeTime } from "@/lib/format/relative-time";
 import { shouldUnoptimizeImage } from "@/lib/image/should-unoptimize";
 import {
@@ -12,8 +12,12 @@ interface Props {
   post: Post;
 }
 
+/**
+ * v1.12 cycle #25 (H2 결의): 본문 div를 PostBodyRenderer로 교체.
+ * 헤더·커버·summary·JSON-LD·prose-promo는 보존. partner-promo + format='card-news'면
+ * 자동으로 슬라이드 뷰어로 렌더링됨. 그 외는 cycle #19 BlogRenderer로 동일 동작.
+ */
 export function PostDetailView({ post }: Props) {
-  const html = renderMarkdown(post.bodyMarkdown);
   const category = post.categories[0];
   const categoryLabel = category ? QUOTE_CATEGORY_LABELS[category] : "";
   const categoryEmoji = category ? QUOTE_CATEGORY_EMOJIS[category] : "";
@@ -47,11 +51,7 @@ export function PostDetailView({ post }: Props) {
           {post.summary80}
         </p>
       </header>
-      <div
-        className="prose-promo space-y-4 text-[15px] leading-7 text-zinc-800 dark:text-zinc-200"
-        // eslint-disable-next-line react/no-danger -- sanitize-html로 안전화
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <PostBodyRenderer post={post} />
     </article>
   );
 }

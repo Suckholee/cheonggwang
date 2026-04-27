@@ -14,6 +14,7 @@ import type {
   StoryGenerationMeta,
   PublishStatus,
 } from "@/types/post";
+import type { PostFormat } from "@/domain/post-format";
 import type { QuoteCategory } from "@/domain/quote-category";
 
 const COLLECTION = "posts";
@@ -67,6 +68,12 @@ function toPost(id: string, d: DocumentData): Post {
         keywordsHint: Array.isArray(genMetaRaw.keywordsHint)
           ? (genMetaRaw.keywordsHint as string[])
           : undefined,
+        // v1.12 cycle #25
+        templateTags: Array.isArray(genMetaRaw.templateTags)
+          ? (genMetaRaw.templateTags as string[])
+          : undefined,
+        cardNewsValidationFailed:
+          genMetaRaw.cardNewsValidationFailed === true ? true : undefined,
       }
     : undefined;
   const createdAt = tsToDate(d.createdAt as Timestamp | undefined);
@@ -104,6 +111,16 @@ function toPost(id: string, d: DocumentData): Post {
     sourcePhotos,
     generationMeta,
     isSample: d.isSample === true,
+    // v1.12 cycle #25
+    format: ((): PostFormat | undefined => {
+      const f = d.format;
+      return f === "blog" || f === "card-news" ? f : undefined;
+    })(),
+    templateId:
+      typeof d.templateId === "string" ? (d.templateId as string) : undefined,
+    templateScenarios: Array.isArray(d.templateScenarios)
+      ? (d.templateScenarios as string[])
+      : undefined,
   };
 }
 
@@ -127,6 +144,12 @@ export interface CreatePostInput {
   generationMeta?: StoryGenerationMeta;
   /** v1.7: 누락 시 'published' 기본값 (기존 호출자 호환). partner-promo는 항상 명시. */
   publishStatus?: PublishStatus;
+  /** v1.12 cycle #25 — partner-promo 콘텐츠 형식. 누락 시 read 시점에 'blog' fallback. */
+  format?: PostFormat;
+  /** v1.12 cycle #25 — 사용된 admin contentTemplate ID. */
+  templateId?: string;
+  /** v1.12 cycle #25 — 사용된 템플릿 scenarios 스냅샷 (한국어 카드 배지). */
+  templateScenarios?: string[];
 }
 
 export interface UpdateDraftInput {
@@ -187,6 +210,12 @@ export const postRepository = {
         ...data.generationMeta,
         generatedAt: Timestamp.fromDate(data.generationMeta.generatedAt),
       };
+    }
+    // v1.12 cycle #25 — partner-content-formats
+    if (data.format) payload.format = data.format;
+    if (data.templateId) payload.templateId = data.templateId;
+    if (data.templateScenarios && data.templateScenarios.length > 0) {
+      payload.templateScenarios = data.templateScenarios;
     }
     await col().doc(id).create(payload);
   },

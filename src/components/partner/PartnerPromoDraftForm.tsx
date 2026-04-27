@@ -8,8 +8,18 @@ import { useState } from "react";
  * 사진 1~5 + 키워드(0~5) + 슬로건(선택) + brandTone → POST /api/partner/posts
  */
 
+import type { PostFormat } from "@/domain/post-format";
+
 interface Props {
   inAutoPublishWindow: boolean;
+  /** v1.12 cycle #25 — Wizard에서 결정된 format. 미지정 시 'blog'. */
+  format?: PostFormat;
+  /** v1.12 cycle #25 — Wizard에서 선택된 admin contentTemplate ID. null이면 직접 입력. */
+  templateId?: string | null;
+  /** v1.12 cycle #25 — 선택된 템플릿 미리보기(폼 헤더 표시용, optional). */
+  templateLabel?: string | null;
+  /** v1.12 cycle #25 — 'Wizard 이전 단계로' 핸들러 (있으면 버튼 노출). */
+  onBack?: () => void;
 }
 
 const TONE_LABEL: Record<string, string> = {
@@ -20,6 +30,10 @@ const TONE_LABEL: Record<string, string> = {
 
 export default function PartnerPromoDraftForm({
   inAutoPublishWindow,
+  format = "blog",
+  templateId = null,
+  templateLabel = null,
+  onBack,
 }: Props) {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
@@ -85,6 +99,9 @@ export default function PartnerPromoDraftForm({
       }
       if (slogan.trim()) fd.append("slogan", slogan.trim());
       fd.append("brandTone", brandTone);
+      // v1.12 cycle #25 — Wizard에서 결정된 format/templateId
+      fd.append("format", format);
+      if (templateId) fd.append("templateId", templateId);
 
       const res = await fetch("/api/partner/posts", {
         method: "POST",
@@ -104,8 +121,33 @@ export default function PartnerPromoDraftForm({
     }
   }
 
+  const formatLabel = format === "card-news" ? "🖼️ 카드뉴스" : "📝 블로그글";
+
   return (
     <form onSubmit={onSubmit} className="space-y-5">
+      <div className="flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs dark:border-blue-900 dark:bg-blue-950">
+        <div>
+          <span className="font-semibold text-blue-700 dark:text-blue-300">
+            {formatLabel}
+          </span>
+          {templateLabel ? (
+            <span className="ml-2 text-blue-600 dark:text-blue-400">
+              · 템플릿: {templateLabel}
+            </span>
+          ) : (
+            <span className="ml-2 text-zinc-500">· 직접 입력</span>
+          )}
+        </div>
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="text-blue-700 underline dark:text-blue-300"
+          >
+            ← 이전 단계
+          </button>
+        ) : null}
+      </div>
       <div>
         <label className="mb-1 block text-sm font-medium">
           사진 (1~5장, 각 5MB 이하)

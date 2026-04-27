@@ -15,6 +15,9 @@ import { titleToSlug } from "@/lib/slug";
 import { inferCategories } from "@/domain/infer-categories";
 import { AppError, type AppErrorCode } from "@/lib/errors";
 import type { BrandTone, PromoGenerationMeta } from "@/types/post";
+import { contentTemplateRepository } from "@/lib/firebase/content-template-repository";
+import { buildTemplateContextSection } from "@/lib/llm/template-context";
+import { isPostFormat, type PostFormat } from "@/domain/post-format";
 
 /**
  * v1.7 partner-promo · §3.1 + §6.1 — 초고 생성.
@@ -76,6 +79,10 @@ interface ValidatedInput {
   keywords: string[];
   slogan: string | null;
   brandTone: BrandTone;
+  /** v1.12 cycle #25: 'blog' (default) | 'card-news' */
+  format: PostFormat;
+  /** v1.12 cycle #25: 선택된 admin contentTemplate ID — null이면 직접 입력 */
+  templateId: string | null;
 }
 
 function extFromMime(mime: string): string {
@@ -162,7 +169,17 @@ async function validateForm(form: FormData): Promise<ValidatedInput> {
       ? toneRaw
       : "friendly";
 
-  return { buffers, keywords, slogan, brandTone };
+  // v1.12 cycle #25 — format / templateId
+  const formatRaw = form.get("format");
+  const format: PostFormat = isPostFormat(formatRaw) ? formatRaw : "blog";
+
+  const templateIdRaw = form.get("templateId");
+  const templateId =
+    typeof templateIdRaw === "string" && templateIdRaw.trim().length > 0
+      ? templateIdRaw.trim().slice(0, 64)
+      : null;
+
+  return { buffers, keywords, slogan, brandTone, format, templateId };
 }
 
 async function uploadPhotosToStorage(
@@ -223,7 +240,7 @@ export async function POST(request: NextRequest) {
     await checkAndIncrement(`partner:${uid}`, DAILY_LIMIT, DAY_MS);
 
     const form = await request.formData();
-    const { buffers, keywords, slogan, brandTone } =
+    const { buffers, keywords, slogan, brandTone, format, templateId } =
       await validateForm(form);
 
     postId = nanoid(16);
@@ -237,6 +254,20 @@ export async function POST(request: NextRequest) {
       throw e; // 업로드 자체 실패 — Storage에 잔여 없음
     }
 
+    // v1.12 cycle #25 — templateId 조회 + templateContext 직렬화 + scenarios/tags 스냅샷
+    let templateContext = "";
+    let templateScenarios: string[] = [];
+    let templateTagsSnapshot: string[] = [];
+    if (templateId) {
+      const tpl = await contentTemplateRepository.getById(templateId);
+      // type 불일치는 무시 (사용자 cheat 가드)
+      if (tpl && tpl.type === format) {
+        templateContext = buildTemplateContextSection(tpl);
+        templateScenarios = tpl.scenarios.slice(0, 5);
+        templateTagsSnapshot = tpl.tags.slice(0, 5);
+      }
+    }
+
     const draft = await generatePartnerPromoDraft({
       uid,
       partnerId: partner.id,
@@ -246,6 +277,8 @@ export async function POST(request: NextRequest) {
       slogan,
       brandTone,
       businessName: partner.businessName,
+      format,
+      templateContext,
     });
 
     if (!draft.passed) {
@@ -286,6 +319,9 @@ export async function POST(request: NextRequest) {
       hygieneScore: draft.hygieneScore,
       visionTags: draft.visionTags,
       keywordsHint: keywords,
+      // v1.12 cycle #25
+      templateTags: templateTagsSnapshot.length > 0 ? templateTagsSnapshot : undefined,
+      cardNewsValidationFailed: draft.cardNewsValidationFailed,
     };
 
     // categories: partners.category 1차 + visionTags 2차 (OQ-5)
@@ -312,6 +348,11 @@ export async function POST(request: NextRequest) {
       publishStatus,
       sourcePhotos: photoUrls,
       generationMeta,
+      // v1.12 cycle #25
+      format: draft.format,
+      templateId: templateId ?? undefined,
+      templateScenarios:
+        templateScenarios.length > 0 ? templateScenarios : undefined,
     });
 
     // 이벤트 로깅 + 자동 발행시 revalidate

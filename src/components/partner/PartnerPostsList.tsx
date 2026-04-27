@@ -1,10 +1,21 @@
 import Link from "next/link";
+import { PartnerPostCard } from "./PartnerPostCard";
 import type { Post, PublishStatus } from "@/types/post";
 
 /**
- * v1.7 partner-promo — 본인 글 status별 그룹 리스트.
- * Server Component (no client interactivity here — 액션은 각 행의 Link로).
+ * v1.12 cycle #25 partner-content-formats · §5.2.
+ *
+ * 파트너 본인 글 카드 그리드. status별 그룹핑 유지 (Phase 3 결정).
+ * 클릭 라우팅: 모든 status가 `/community/p/{slug}` 단일 경로 (R5/C5 결의).
+ *  - published       → 정상 공개페이지
+ *  - draft·withdrawn → owner-only 미리보기 + noindex 배너 (cycle #19 기존 구현)
  */
+
+interface Props {
+  posts: Post[];
+  /** partner.profile?.photoUrls?.[0] — post.coverImageUrl 누락 시 fallback */
+  partnerCover: string | null;
+}
 
 const STATUS_LABEL: Record<PublishStatus, string> = {
   draft: "초고",
@@ -18,18 +29,11 @@ const STATUS_EMOJI: Record<PublishStatus, string> = {
   withdrawn: "🚫",
 };
 
-function formatDateKST(d: Date): string {
-  return d.toLocaleString("ko-KR", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+function resolveCardHref(p: Post): string {
+  return `/community/p/${p.slug}`;
 }
 
-export default function PartnerPostsList({ posts }: { posts: Post[] }) {
+export default function PartnerPostsList({ posts, partnerCover }: Props) {
   const groups: Record<PublishStatus, Post[]> = {
     draft: [],
     published: [],
@@ -60,51 +64,26 @@ export default function PartnerPostsList({ posts }: { posts: Post[] }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {(["draft", "published", "withdrawn"] as PublishStatus[]).map(
         (status) => {
           const list = groups[status];
           if (list.length === 0) return null;
           return (
             <section key={status}>
-              <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+              <h2 className="mb-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                 {STATUS_EMOJI[status]} {STATUS_LABEL[status]} ({list.length})
               </h2>
-              <ul className="divide-y divide-zinc-200 rounded-lg border border-zinc-200 bg-white dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {list.map((p) => (
-                  <li
+                  <PartnerPostCard
                     key={p.id}
-                    className="flex items-center justify-between gap-3 px-4 py-3"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
-                        {p.title || "(제목 없음)"}
-                      </p>
-                      <p className="mt-0.5 text-xs text-zinc-500">
-                        {formatDateKST(p.createdAt)}
-                        {p.publishedAt &&
-                          ` · 발행 ${formatDateKST(p.publishedAt)}`}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-2 text-sm">
-                      {status === "published" ? (
-                        <Link
-                          href={`/community/p/${p.slug}`}
-                          className="text-blue-600 hover:underline"
-                        >
-                          공개 페이지
-                        </Link>
-                      ) : null}
-                      <Link
-                        href={`/partner/posts/${p.id}/edit`}
-                        className="rounded-md border border-zinc-300 px-2 py-1 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
-                      >
-                        편집
-                      </Link>
-                    </div>
-                  </li>
+                    post={p}
+                    fallbackCover={partnerCover}
+                    href={resolveCardHref(p)}
+                  />
                 ))}
-              </ul>
+              </div>
             </section>
           );
         },

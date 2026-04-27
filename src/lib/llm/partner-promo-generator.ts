@@ -9,8 +9,14 @@ import {
 import { adminStorage, getStorageBucketName } from "@/lib/firebase/admin";
 import { retrievePartnerStyleReferences } from "./partner-promo-rag";
 import { checkMarkdownHygiene } from "./hygiene-guard";
+import {
+  buildCardNewsInstruction,
+  patchComposeSchemaForCardNews,
+  validateCardNewsBody,
+} from "./card-news-generator";
 import { AppError } from "@/lib/errors";
 import type { BrandTone, Post } from "@/types/post";
+import type { PostFormat } from "@/domain/post-format";
 
 /**
  * v1.7 partner-promo · §4 — partner-promo AI 초고 생성.
@@ -168,6 +174,10 @@ function buildComposePrompt(args: {
   styleRefs: Post[];
   /** v1.11 cycle #24 — partner-rag-context 통합. 옵셔널 (호환). */
   ragContextSection?: string;
+  /** v1.12 cycle #25 — admin contentTemplate 직렬화 텍스트. 옵셔널. */
+  templateContext?: string;
+  /** v1.12 cycle #25 — 'blog' (default) | 'card-news'. 옵셔널. */
+  format?: PostFormat;
 }): string {
   const photoBlock = args.visionDescs
     .map(
@@ -202,6 +212,15 @@ function buildComposePrompt(args: {
     ? `\n${args.ragContextSection}\n`
     : "";
 
+  const templateBlock = args.templateContext
+    ? `\n${args.templateContext}\n`
+    : "";
+
+  const formatRule =
+    args.format === "card-news"
+      ? buildCardNewsInstruction()
+      : "- 800~1200자 한국어 본문 (markdown — h2/h3/p/ul/li/strong 허용).";
+
   return `[사진 설명]
 ${photoBlock}
 
@@ -210,14 +229,14 @@ ${photoBlock}
 ${keywordBlock}
 ${sloganBlock}
 - brandTone: ${args.brandTone}
-${styleBlock}${ragBlock}
-위 사진 설명과 파트너 입력만 근거로 자연스러운 한국어 홍보 블로그 글을 쓰세요.
+${styleBlock}${ragBlock}${templateBlock}
+위 사진 설명과 파트너 입력만 근거로 자연스러운 한국어 홍보 ${args.format === "card-news" ? "카드뉴스" : "블로그 글"}를 쓰세요.
 규칙:
 - 사진에 없는 가격·전화번호·할인율을 지어내지 않습니다.
 - 자기 매장 상호명(${args.businessName})은 자연스럽게 1~2회 언급.
 - 청광·경쟁업체 직접 언급/비방 금지.
 - "최저가", "업계 1위", "만족도 100%" 등 단정 광고 표현 금지.
-- 800~1200자 한국어 본문 (markdown — h2/h3/p/ul/li/strong 허용).
+${formatRule}
 - 결과를 JSON으로 반환.`;
 }
 
@@ -230,20 +249,31 @@ async function composeDraft(args: {
   styleRefs: Post[];
   /** v1.11 cycle #24 */
   ragContextSection?: string;
+  /** v1.12 cycle #25 — admin contentTemplate 직렬화 텍스트. */
+  templateContext?: string;
+  /** v1.12 cycle #25 — 'blog' (default) | 'card-news'. */
+  format?: PostFormat;
 }): Promise<PartnerDraft> {
   if (!genAI)
     throw new AppError(
       "LLM_FAILURE",
       "GOOGLE_GENERATIVE_AI_API_KEY 미설정",
     );
+  const isCardNews = args.format === "card-news";
+  const responseSchema = isCardNews
+    ? patchComposeSchemaForCardNews(composeSchema)
+    : composeSchema;
+  const systemInstruction = isCardNews
+    ? "당신은 사진과 파트너 입력을 바탕으로 SEO 친화적 B2B 매장 홍보 카드뉴스를 쓰는 한국어 카피라이터입니다. 주어진 자료만 근거로 슬라이드형 짧은 텍스트를 작성하며, 허위 정보(가격·전화번호·약속·과장)를 절대 쓰지 않습니다."
+    : "당신은 사진과 파트너 입력을 바탕으로 SEO 친화적 B2B 매장 홍보 블로그를 쓰는 한국어 카피라이터입니다. 주어진 자료만 근거로 글을 쓰며, 허위 정보(가격·전화번호·약속·과장)를 절대 쓰지 않습니다.";
+
   const model = genAI.getGenerativeModel({
     model: COMPOSE_MODEL,
     safetySettings: SAFETY_SETTINGS,
-    systemInstruction:
-      "당신은 사진과 파트너 입력을 바탕으로 SEO 친화적 B2B 매장 홍보 블로그를 쓰는 한국어 카피라이터입니다. 주어진 자료만 근거로 글을 쓰며, 허위 정보(가격·전화번호·약속·과장)를 절대 쓰지 않습니다.",
+    systemInstruction,
     generationConfig: {
       responseMimeType: "application/json",
-      responseSchema: composeSchema,
+      responseSchema,
       temperature: 0.7,
     },
   });
@@ -292,6 +322,10 @@ export interface GeneratePartnerPromoInput {
   slogan: string | null;
   brandTone: BrandTone;
   businessName: string;
+  /** v1.12 cycle #25 — 'blog' (default) | 'card-news'. R1: optional, 미지정 시 cycle #24 동일 동작. */
+  format?: PostFormat;
+  /** v1.12 cycle #25 — admin contentTemplate 직렬화 텍스트 (선택된 템플릿 있을 때만). */
+  templateContext?: string;
 }
 
 export interface PartnerPromoDraftResult {
@@ -304,6 +338,10 @@ export interface PartnerPromoDraftResult {
   hygieneScore: number;
   passed: boolean;
   reasons: string[];
+  /** v1.12 cycle #25 — 결과 형식. 입력 format 또는 fallback 결과 ('card-news' 검증 실패 시 'blog'). */
+  format: PostFormat;
+  /** v1.12 cycle #25 — card-news 검증 실패 후 blog로 fallback 재compose된 경우 true. */
+  cardNewsValidationFailed?: boolean;
 }
 
 /**
@@ -351,16 +389,27 @@ export async function generatePartnerPromoDraft(
   const ragContextSection = buildRagContextSection(ragContext);
 
   // 3. Compose (RAG 실패/빈 결과면 fallback 재시도)
+  // v1.12 cycle #25: format/templateContext 전달 + card-news 검증 + fallback chain (H5·H6)
+  const requestedFormat: PostFormat = input.format ?? "blog";
+  const baseArgs = {
+    visionDescs,
+    businessName: input.businessName,
+    keywords: input.keywords,
+    slogan: input.slogan,
+    brandTone: input.brandTone,
+    templateContext: input.templateContext,
+  };
+
   let draft: PartnerDraft;
+  let resultFormat: PostFormat = requestedFormat;
+  let cardNewsValidationFailed = false;
+
   try {
     draft = await composeDraft({
-      visionDescs,
-      businessName: input.businessName,
-      keywords: input.keywords,
-      slogan: input.slogan,
-      brandTone: input.brandTone,
+      ...baseArgs,
       styleRefs: ragPosts,
       ragContextSection,
+      format: requestedFormat,
     });
   } catch (e) {
     console.warn(
@@ -368,14 +417,57 @@ export async function generatePartnerPromoDraft(
       e,
     );
     draft = await composeDraft({
-      visionDescs,
-      businessName: input.businessName,
-      keywords: input.keywords,
-      slogan: input.slogan,
-      brandTone: input.brandTone,
+      ...baseArgs,
       styleRefs: [],
       ragContextSection: "",
+      format: requestedFormat,
     });
+  }
+
+  // card-news post-process 검증 + 1회 retry + blog fallback (H5)
+  if (requestedFormat === "card-news") {
+    const v1 = validateCardNewsBody(draft.bodyMarkdown);
+    if (!v1.ok) {
+      console.warn(
+        `[partner-promo-generator] card-news validation failed (${v1.reason}), retrying`,
+      );
+      try {
+        draft = await composeDraft({
+          ...baseArgs,
+          styleRefs: ragPosts,
+          ragContextSection,
+          format: "card-news",
+        });
+        const v2 = validateCardNewsBody(draft.bodyMarkdown);
+        if (!v2.ok) {
+          console.warn(
+            `[partner-promo-generator] card-news retry failed (${v2.reason}), falling back to blog`,
+          );
+          // blog로 재compose
+          draft = await composeDraft({
+            ...baseArgs,
+            styleRefs: ragPosts,
+            ragContextSection,
+            format: "blog",
+          });
+          resultFormat = "blog";
+          cardNewsValidationFailed = true;
+        }
+      } catch (e) {
+        console.warn(
+          "[partner-promo-generator] card-news retry threw, falling back to blog",
+          e,
+        );
+        draft = await composeDraft({
+          ...baseArgs,
+          styleRefs: [],
+          ragContextSection: "",
+          format: "blog",
+        });
+        resultFormat = "blog";
+        cardNewsValidationFailed = true;
+      }
+    }
   }
 
   // 4. Hygiene (partner-promo 룰 포함)
@@ -403,5 +495,7 @@ export async function generatePartnerPromoDraft(
     hygieneScore: hygiene.score,
     passed: hygiene.passed,
     reasons: hygiene.reasons,
+    format: resultFormat,
+    cardNewsValidationFailed: cardNewsValidationFailed || undefined,
   };
 }
