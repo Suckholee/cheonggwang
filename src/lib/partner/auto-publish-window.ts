@@ -164,6 +164,47 @@ function setKstClock(base: Date, minute: number): Date {
 }
 
 /**
+ * v1.14 cycle #27 partner-series-queue · §3.6 (S4).
+ *
+ * 다음 N개의 활성 윈도우 시작·종료 시각 — Queue Preview용.
+ *  - cfg 비활성/빈 weekdays/n<=0 → []
+ *  - 오늘이 활성 요일이고 아직 윈도우 종료 전 → 첫 항목으로 포함
+ *  - 오늘이 활성 요일이지만 endMinute 이후 → 다음 활성 요일부터
+ *  - 검색 범위 30일 (안전장치). 그 안에 N개 못 찾으면 그만큼만 반환.
+ *
+ * 호출자: nextNSlots(queue-preview.ts) — 사장님이 보는 다음 5회 발행 예정.
+ */
+export function nextNAutoPublishWindows(
+  cfg: AutoPublishConfig,
+  now: Date = new Date(),
+  n: number = 5,
+): Array<{ startsAt: Date; endsAt: Date }> {
+  if (!cfg.enabled) return [];
+  if (cfg.weekdays.length === 0) return [];
+  if (n <= 0) return [];
+
+  const kst = toKST(now);
+  const todayDow = kst.getDay();
+  const todayMin = kst.getHours() * 60 + kst.getMinutes();
+
+  const result: Array<{ startsAt: Date; endsAt: Date }> = [];
+  for (let i = 0; i < 30 && result.length < n; i++) {
+    const targetDow = (todayDow + i) % 7;
+    if (!cfg.weekdays.includes(targetDow)) continue;
+    // 오늘인데 이미 윈도우 종료 → skip
+    if (i === 0 && todayMin >= cfg.endMinute) continue;
+
+    const target = new Date(kst);
+    target.setDate(kst.getDate() + i);
+    result.push({
+      startsAt: setKstClock(target, cfg.startMinute),
+      endsAt: setKstClock(target, cfg.endMinute),
+    });
+  }
+  return result;
+}
+
+/**
  * v1.13 cycle #26 partner-auto-series · §4.4.
  *
  * 현재 KST 윈도우의 시작 시각.

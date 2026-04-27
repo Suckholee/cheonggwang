@@ -11,10 +11,15 @@ import type { AutoSeriesAngle } from "@/domain/auto-series-angle";
  *  - event  → ['신규 오픈', '특별 할인']
  *  - story  → ['매장 이야기', regionLabel ?? businessName]
  *
- * photoUrls — partner.profile.photoUrls에서 lastIndex offset으로 라운드 로빈 1~2장.
+ * photoUrls — partner.profile.photoUrls에서 photoCursor offset으로 라운드 로빈 1~2장.
  * photoUrls가 비어있으면 { error: 'photo-missing' } 반환.
  *
- * Next.js 측 + functions 측 모두에서 동일 로직 사용 (Option A 복제 시 functions/src/auto-series/lib/derive-inputs.ts에 미러).
+ * v1.14 cycle #27 (C1 결의) — photoCursor 분리:
+ *   이전: lastIndex 사용 → queue 편집 시 photoCursor도 점프 (의도치 않은 동작).
+ *   현재: photoCursor 사용 → queue 편집과 무관하게 사진 라운드 로빈 유지.
+ *   호출자(runner.ts)는 성공 발행 후 photoCursor++ 별도로 증분.
+ *
+ * Next.js 측 + functions 측 모두에서 동일 로직 사용 (functions/src/auto-series/lib/derive-inputs.ts 미러, CI lint로 동기화 보장).
  */
 
 export interface DerivedAutoInputs {
@@ -35,9 +40,10 @@ export function deriveAutoInputs(
     return { error: "photo-missing" };
   }
 
-  const lastIndex = partner.autoSeries?.lastIndex ?? 0;
-  // 음수 lastIndex 보호 + 라운드 로빈 offset
-  const offset = ((lastIndex % photos.length) + photos.length) % photos.length;
+  const photoCursor = partner.autoSeries?.photoCursor ?? 0;
+  // 음수 photoCursor 보호 + 라운드 로빈 offset
+  const offset =
+    ((photoCursor % photos.length) + photos.length) % photos.length;
   const photoUrls = [
     photos[offset],
     photos[(offset + 1) % photos.length],

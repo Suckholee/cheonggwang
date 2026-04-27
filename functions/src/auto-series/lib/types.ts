@@ -31,6 +31,19 @@ export interface PartnerAutoSeries {
   brandTone: BrandTone;
   totalPublished: number;
   totalFailed: number;
+  /** v1.14 cycle #27 (C1) — photo round-robin cursor decoupled from lastIndex */
+  photoCursor: number;
+}
+
+/**
+ * v1.14 cycle #27 partner-series-queue — 사장님이 편집한 발행 큐.
+ * undefined 또는 효과 큐 비어 있으면 ROTATION_POOL fallback (R2).
+ */
+export interface QueueItem {
+  id: string;
+  angle: AutoSeriesAngle;
+  format: PostFormat;
+  enabled: boolean;
 }
 
 export interface PriceItem {
@@ -60,6 +73,8 @@ export interface Partner {
   autoPublish: AutoPublishConfig;
   profile?: PartnerProfile;
   autoSeries?: PartnerAutoSeries;
+  /** v1.14 cycle #27 partner-series-queue */
+  autoSeriesQueue?: QueueItem[];
 }
 
 export interface ContentTemplate {

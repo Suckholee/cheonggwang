@@ -2,14 +2,13 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { requirePartnerPage } from "@/lib/auth/require-partner";
 import { autoSeriesRepository } from "@/lib/firebase/auto-series-repository";
-import { nextAutoPublishWindow } from "@/lib/partner/auto-publish-window";
-import { pickSlot } from "@/domain/auto-series-rotation-pool";
-import { ANGLE_LABELS, ANGLE_EMOJI } from "@/domain/auto-series-angle";
-import { POST_FORMAT_LABELS, POST_FORMAT_EMOJI } from "@/domain/post-format";
 import { DEFAULT_AUTO_SERIES } from "@/types/auto-series";
 import PartnerAutoSeriesPanel from "@/components/partner/PartnerAutoSeriesPanel";
 import PartnerSeriesHistoryList from "@/components/partner/PartnerSeriesHistoryList";
 import AutoPublishSettings from "@/components/partner/AutoPublishSettings";
+import PartnerSeriesQueueEditor from "@/components/partner/PartnerSeriesQueueEditor";
+import PartnerSeriesQueueAddDialog from "@/components/partner/PartnerSeriesQueueAddDialog";
+import PartnerSeriesQueuePreview from "@/components/partner/PartnerSeriesQueuePreview";
 
 /**
  * v1.13 cycle #26 partner-auto-series · §6.1 — 사장님 진행 현황 페이지.
@@ -42,8 +41,7 @@ async function SeriesBody() {
   const { partner } = await requirePartnerPage("/partner/series");
   const cfg = partner.autoSeries ?? DEFAULT_AUTO_SERIES;
   const history = await autoSeriesRepository.listHistory(partner.id, 20);
-  const next = pickSlot(cfg.lastIndex);
-  const nextWindow = nextAutoPublishWindow(partner.autoPublish);
+  const queue = partner.autoSeriesQueue ?? [];
 
   const photoCount = partner.profile?.photoUrls?.length ?? 0;
   const autoPublishOn = partner.autoPublish.enabled;
@@ -75,30 +73,22 @@ async function SeriesBody() {
       </section>
 
       <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-        <h2 className="mb-2 text-sm font-semibold">다음 발행 예정</h2>
-        {nextWindow.startsAt ? (
-          <div className="space-y-1 text-sm">
-            <p className="font-medium">
-              {nextWindow.startsAt.toLocaleString("ko-KR", {
-                timeZone: "Asia/Seoul",
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">
-              {ANGLE_EMOJI[next.slot.angle]} {ANGLE_LABELS[next.slot.angle]}{" "}
-              · {POST_FORMAT_EMOJI[next.slot.format]}{" "}
-              {POST_FORMAT_LABELS[next.slot.format]}
-            </p>
-          </div>
-        ) : (
-          <p className="text-xs text-zinc-500">
-            자동발행 윈도우가 비어있어 다음 발행 예정이 없습니다.
-          </p>
-        )}
+        <h2 className="mb-1 text-sm font-semibold">발행 큐 편집</h2>
+        <p className="mb-3 text-xs text-zinc-500">
+          큐에 등록한 (angle × format) 조합을 위에서 아래로 순환 발행해요. 일시정지·삭제·드래그 정렬 가능.
+        </p>
+        <div className="space-y-3">
+          <PartnerSeriesQueueEditor initialQueue={queue} />
+          <PartnerSeriesQueueAddDialog
+            currentQueue={queue}
+            maxReached={queue.length >= 30}
+          />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <h2 className="mb-2 text-sm font-semibold">다음 5회 발행 예정</h2>
+        <PartnerSeriesQueuePreview partner={partner} n={5} />
       </section>
 
       <section className="grid grid-cols-2 gap-3">

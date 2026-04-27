@@ -2,6 +2,44 @@
 
 ## Features
 
+### partner-series-queue — 사장님이 직접 편집하는 발행 큐 (Marketplace v1.14 · #27 · 🎯 95% · **🏆 7번 연속 single-pass**)
+
+- **완료일**: 2026-04-28
+- **Match Rate**: **95%** (Critical 0 · Major 0 · Minor 4 · 모두 documentation/cosmetic)
+- **PDCA 사이클**: #27 (Plan Plus → Design v0.2 post-validator 24/24 → Do S1–S13 → Check 95% → Report → Archive)
+- **Streak**: 🏆 **7사이클 연속 single-pass 90s%** (cycles #21~#27). Plan Plus + design-validator → reality-check 패턴이 small/medium/large 모든 규모 + Cloud Functions 통합 + 사장님 UI 편집 영역까지 일관된 90s% 달성. 7번 연속 = 통계적으로 의미있는 검증 (도구·메소드 둘 다 캘리브레이션 완료)
+- **레벨**: Dynamic (Next.js 16 · Firebase Cloud Functions v2 cron · 사장님 self-write server actions · cross-package 통합)
+- **방향**: 사용자 인사이트 "이건 이미 발행된 글 아니야? 나는 자동 발행을 위해 세팅되어 있는 상태들의 목록을 관리하고 싶은데" → cycle #26 ROTATION_POOL 고정 풀 → autoSeriesQueue 사장님 직접 편집 가능. 큐 비어있으면 ROTATION_POOL fallback (R2). 일시정지/삭제/드래그 정렬 + ▲▼ 모바일 fallback. 다음 5회 발행 미리보기 + MAX 30 + photoCursor 분리 (lastIndex와 decoupling, C1)
+- **경로**: [partner-series-queue/](./partner-series-queue/)
+
+**문서**
+- [Plan](./partner-series-queue/partner-series-queue.plan.md) (Plan Plus 4 phase · Q1 시스템 기본 angle 5종 × format 2종 조합만 · Q3 multiselect 4종 모두 in-scope)
+- [Design](./partner-series-queue/partner-series-queue.design.md) (v0.2 · validator 24/24 결의 · §12 결의 매트릭스 C1-C5 H1-H8 M1-M7 L1-L4)
+- [Analysis](./partner-series-queue/partner-series-queue.analysis.md) (95% · 0 critical/major · 4 minor 모두 doc/cosmetic · R1~R8 모두 통과)
+- [Report](./partner-series-queue/partner-series-queue.report.md)
+
+**핵심 결정**
+- **R1 cycle #19 generator 0줄 변경 (7번째 검증 통과)** — `src/lib/llm/partner-promo-generator.ts` + `functions/src/auto-series/lib/generator.ts` 무수정. 7사이클 연속 라이브러리처럼 보존된 자산
+- **R2 ROTATION_POOL fallback** — `autoSeriesQueue` undefined 또는 `active.length === 0` 시 cycle #26 10-slot 풀로 자동 fallback. 사장님이 큐를 비워도 cron은 멈추지 않음
+- **R8 Path X — lastIndex = effectiveQueue 인덱스** (full queue 아님). 3-layer 보호: runner safeLastIndex 클램프 + correctLastIndex 순수함수 + queue-preview modulo. 7건 단위 테스트 모두 통과
+- **C1 photoCursor 분리 (cycle #26 latent gap fix)** — 이전엔 lastIndex로 사진 라운드 로빈 → 큐 편집시 photoCursor도 점프하는 의도치 않은 동작. 분리 후: 성공 발행 시에만 photoCursor++ (hygiene-fail/error/photo-missing은 보존). FieldValue.increment로 atomic
+- **H7 atomic transaction** — `partnerRepository.updateAutoSeriesQueueAndIndexAtomic`이 `adminDb.runTransaction`으로 큐+lastIndex 묶음 갱신. 사장님 편집 ↔ cron tick race 차단. addQueueItem은 lastIndex 미변경이라 non-atomic 허용
+- **C2 partnerFromSnap autoSeriesQueue 매핑 (design-validator reality-check 결정적 catch)** — cycle #26 latent zero-effect bug였음 (mapper에서 autoSeriesQueue 누락하면 cron이 항상 fallback 사용 → 큐 편집 무효). Pre-Do에서 catch, 0 LOC rework. CI lint(`scripts/check-queue-mirror.mjs`)로 functions/src 미러 보장
+- **Option A 코드 복제 2번째 적용** — cycle #26에 이어 effective-queue/derive-inputs/types를 functions/src와 src 양쪽 복제. mirror lint(`pnpm lint:mirror` = 2 scripts) 6/6 통과. 2 cycles 동안 0 drift incident
+- **drift-proof zod enums (M7 결의)** — server actions가 `z.enum([...AUTO_SERIES_ANGLES])` 사용 → domain/에 신규 angle 추가하면 검증도 자동 전파
+- **Optimistic UI + rollback** — addQueueItem/toggle/remove/reorder 모두 setQueue(prev) 롤백. 좋은 네트워크에선 즉각 반응 + 실패 시 정직
+- **drag-and-drop + ▲▼ 모바일 fallback (M2)** — HTML5 dragstart 미발화 터치 디바이스 대비. 두 입력 방식 동일 commitOrder 경유
+- **MAX 30 큐 길이 제한** — server-side 강제 + UI 비활성화. 30건 초과 시 한국어 안내
+- **`/partner/series` 리뉴얼** — 단일 다음 슬롯 미리보기 → 큐 편집기 + 추가 다이얼로그 + 다음 5회 미리보기 3-section. autoPublish OFF 가드 + 큐 비었을 때 시스템 기본 안내
+
+**Plan Plus + design-validator → reality-check 메소드 7번 연속 검증 분석**:
+- 7 cycles × 95~97% Match Rate × 0 Act iteration = 통계적으로 의미있는 sample
+- design-validator의 핵심 가치: spec 내부 일관성보다 **실제 구현 파일 reading의 reality-check loop** — cycle #27에서만 5건의 critical pre-Do 버그 catch (그중 1건은 cycle #26의 latent zero-effect bug)
+- Plan Plus의 핵심 가치: Q2 alternatives — 사용자가 "이건 이미 발행된 글 아니야?" 한마디 던졌을 때 Option B(큐 편집)로 깨끗이 pivot 가능. brainstorming phase 없이 바로 Plan으로 갔다면 Option A(read-only) 만들고 폐기했을 위험
+- Code duplication (Option A) + CI lint 페어링은 sustainable — 2 cycles 동안 mirror drift 0건
+
+---
+
 ### partner-auto-series — Cloud Functions cron + 라운드 로빈 자동 발행 (Marketplace v1.13 · #26 · 🏆 97% · **6번 연속 single-pass**)
 
 - **완료일**: 2026-04-27

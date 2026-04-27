@@ -1,6 +1,6 @@
 import type { QuoteCategory } from "@/domain/quote-category";
 import type { PartnerProfile } from "./partner-profile";
-import type { PartnerAutoSeries } from "./auto-series";
+import type { PartnerAutoSeries, QueueItem } from "./auto-series";
 
 /**
  * v1.7 partner-promo — 청광 운영진이 인증한 B2B 파트너(의뢰업체) 마스터.
@@ -59,6 +59,11 @@ export interface Partner {
   profile?: PartnerProfile;
   /** v1.13 cycle #26 partner-auto-series — 자동 시리즈 운영 설정. */
   autoSeries?: PartnerAutoSeries;
+  /**
+   * v1.14 cycle #27 partner-series-queue — 사장님이 편집한 발행 큐.
+   * undefined 또는 빈 효과 큐 → cycle #26 ROTATION_POOL fallback (R2).
+   */
+  autoSeriesQueue?: QueueItem[];
 }
 
 /**

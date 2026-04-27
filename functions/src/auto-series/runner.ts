@@ -8,14 +8,21 @@ import {
   generatePartnerPromoDraft,
   type PartnerPromoDraftResult,
 } from "./lib/generator";
-import { pickSlot } from "./lib/rotation";
+import {
+  effectiveQueue,
+  pickSlotFromEffective,
+} from "./lib/effective-queue";
 import { deriveAutoInputs } from "./lib/derive-inputs";
 import {
   isInAutoPublishWindow,
   recentlyPublishedInWindow,
 } from "./lib/window";
 import { createPostFromDraft } from "./lib/post-writer";
-import type { Partner } from "./lib/types";
+import {
+  isAutoSeriesAngle,
+  isPostFormat,
+} from "./lib/guards";
+import type { Partner, QueueItem } from "./lib/types";
 
 /**
  * v1.13 cycle #26 partner-auto-series · §4.2 — Cloud Functions runner.
@@ -49,6 +56,11 @@ function partnerFromSnap(id: string, d: FirebaseFirestore.DocumentData): Partner
           typeof d.autoSeries.totalFailed === "number"
             ? d.autoSeries.totalFailed
             : 0,
+        // v1.14 cycle #27 (C1)
+        photoCursor:
+          typeof d.autoSeries.photoCursor === "number"
+            ? d.autoSeries.photoCursor
+            : 0,
       }
     : undefined;
 
@@ -69,7 +81,33 @@ function partnerFromSnap(id: string, d: FirebaseFirestore.DocumentData): Partner
     },
     profile: d.profile ?? undefined,
     autoSeries,
+    // v1.14 cycle #27 partner-series-queue
+    autoSeriesQueue: toQueueItems(d.autoSeriesQueue),
   };
+}
+
+function toQueueItems(raw: unknown): QueueItem[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const valid: QueueItem[] = [];
+  for (const item of raw) {
+    if (item === null || typeof item !== "object") continue;
+    const obj = item as Record<string, unknown>;
+    if (
+      typeof obj.id !== "string" ||
+      typeof obj.enabled !== "boolean" ||
+      !isAutoSeriesAngle(obj.angle) ||
+      !isPostFormat(obj.format)
+    ) {
+      continue;
+    }
+    valid.push({
+      id: obj.id,
+      angle: obj.angle,
+      format: obj.format,
+      enabled: obj.enabled,
+    });
+  }
+  return valid;
 }
 
 export async function runAutoSeriesTick(now: Date): Promise<void> {
@@ -116,15 +154,26 @@ async function processOnePartner(
   if (recentlyPublishedInWindow(partner, now)) return;
 
   // R2 atomic transaction — lastIndex 진행 (lastTickAt은 결과 반영 후 — H2)
+  // v1.14 cycle #27 — effectiveQueue 기준. partner는 tx 내 fresh 데이터로 재구성.
   const slotResult = await db.runTransaction(async (tx) => {
     const ref = db.collection("partners").doc(partner.id);
     const fresh = await tx.get(ref);
     const data = fresh.data();
+    const freshPartner = partnerFromSnap(partner.id, data ?? {});
+    const effective = effectiveQueue(freshPartner);
+
     const lastIndex =
       typeof data?.autoSeries?.lastIndex === "number"
         ? (data.autoSeries.lastIndex as number)
         : -1;
-    const { nextIndex, slot } = pickSlot(lastIndex);
+    // R8 — lastIndex가 effective 길이를 벗어나면 -1로 reset (큐 편집 사이 race 안전장치)
+    const safeLastIndex =
+      lastIndex >= 0 && lastIndex < effective.length ? lastIndex : -1;
+
+    const { nextIndex, slot } = pickSlotFromEffective(
+      effective,
+      safeLastIndex,
+    );
     tx.update(ref, { "autoSeries.lastIndex": nextIndex });
     return { nextIndex, slot };
   });
@@ -229,10 +278,15 @@ async function processOnePartner(
       hygieneScore: draft.hygieneScore,
       at: now,
     });
+    // v1.14 cycle #27 (C1) — 성공 발행시에만 photoCursor 증분.
+    // hygiene-fail/error/photo-missing엔 사진 사용 안했으니 cursor 보존.
     await db
       .collection("partners")
       .doc(partner.id)
-      .update({ "autoSeries.totalPublished": FieldValue.increment(1) });
+      .update({
+        "autoSeries.totalPublished": FieldValue.increment(1),
+        "autoSeries.photoCursor": FieldValue.increment(1),
+      });
   } catch (e) {
     // post.create 실패 — transient 가정, lastTickAt 미갱신
     await appendSeriesHistory(db, partner.id, {

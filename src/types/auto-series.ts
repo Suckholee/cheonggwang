@@ -14,7 +14,10 @@ import type { PostFormat } from "@/domain/post-format";
 
 export interface PartnerAutoSeries {
   enabled: boolean;
-  /** -1: 첫 tick 시 (lastIndex+1) % 10 = 0번 슬롯부터. server-only write */
+  /**
+   * v1.14 cycle #27 R8 (Path X): effectiveQueue 안 인덱스.
+   * -1: 첫 tick. server-only write.
+   */
   lastIndex: number;
   /**
    * 마지막 cron tick 처리 시각.
@@ -29,6 +32,12 @@ export interface PartnerAutoSeries {
   totalPublished: number;
   /** server-only write */
   totalFailed: number;
+  /**
+   * v1.14 cycle #27 (C1 결의): photo offset 전용 cursor.
+   * lastIndex와 분리 — queue length 변경에 영향 받지 않고 매 tick +1.
+   * undefined/누락 시 0 fallback.
+   */
+  photoCursor: number;
 }
 
 export const DEFAULT_AUTO_SERIES: PartnerAutoSeries = {
@@ -38,7 +47,23 @@ export const DEFAULT_AUTO_SERIES: PartnerAutoSeries = {
   brandTone: "friendly",
   totalPublished: 0,
   totalFailed: 0,
+  photoCursor: 0,
 };
+
+/**
+ * v1.14 cycle #27 partner-series-queue · §2.1.
+ *
+ * 사장님이 편집하는 자동 시리즈 큐 항목.
+ * partner.autoSeriesQueue가 undefined 또는 빈 효과 큐 → cycle #26 ROTATION_POOL fallback.
+ */
+export interface QueueItem {
+  /** nanoid(8) — reorder/remove 보정용 안정 식별자 */
+  id: string;
+  angle: AutoSeriesAngle;
+  format: PostFormat;
+  /** false = 일시정지 (cron skip, 큐에는 남음) */
+  enabled: boolean;
+}
 
 export type SeriesHistoryStatus =
   | "published"

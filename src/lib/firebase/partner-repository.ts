@@ -12,7 +12,9 @@ import {
   type PartnerEvent,
   type PartnerStatus,
 } from "@/types/partner";
-import type { PartnerAutoSeries } from "@/types/auto-series";
+import type { PartnerAutoSeries, QueueItem } from "@/types/auto-series";
+import { isAutoSeriesAngle } from "@/domain/auto-series-angle";
+import { isPostFormat } from "@/domain/post-format";
 import type { PartnerProfile } from "@/types/partner-profile";
 import type { QuoteCategory } from "@/domain/quote-category";
 import { AppError } from "@/lib/errors";
@@ -70,7 +72,26 @@ function toPartner(id: string, d: DocumentData): Partner {
     profile: d.profile as PartnerProfile | undefined,
     // v1.13 cycle #26 — autoSeries optional 매핑
     autoSeries: toAutoSeries(d.autoSeries as DocumentData | undefined),
+    // v1.14 cycle #27 — autoSeriesQueue optional 매핑 (validation 포함)
+    autoSeriesQueue: toAutoSeriesQueue(
+      d.autoSeriesQueue as unknown[] | undefined,
+    ),
   };
+}
+
+function toAutoSeriesQueue(raw: unknown): QueueItem[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const valid = raw.filter((q): q is QueueItem => {
+    if (q === null || typeof q !== "object") return false;
+    const obj = q as Record<string, unknown>;
+    return (
+      typeof obj.id === "string" &&
+      typeof obj.enabled === "boolean" &&
+      isAutoSeriesAngle(obj.angle) &&
+      isPostFormat(obj.format)
+    );
+  });
+  return valid.length === 0 && raw.length === 0 ? [] : valid;
 }
 
 function toAutoSeries(
@@ -91,6 +112,9 @@ function toAutoSeries(
     totalPublished:
       typeof raw.totalPublished === "number" ? raw.totalPublished : 0,
     totalFailed: typeof raw.totalFailed === "number" ? raw.totalFailed : 0,
+    // v1.14 cycle #27 (C1)
+    photoCursor:
+      typeof raw.photoCursor === "number" ? raw.photoCursor : 0,
   };
 }
 
@@ -214,6 +238,40 @@ export const partnerRepository = {
       .where("status", "==", "active")
       .get();
     return snap.docs.map((d) => toPartner(d.id, d.data()));
+  },
+
+  /**
+   * v1.14 cycle #27 — autoSeriesQueue 갱신 (queue만, lastIndex 미변경).
+   * addQueueItem · toggleQueueItem (lastIndex 변경 없는 경우)에서 사용.
+   */
+  async updateAutoSeriesQueue(
+    id: string,
+    queue: QueueItem[],
+  ): Promise<void> {
+    await col().doc(id).update({
+      autoSeriesQueue: queue,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  },
+
+  /**
+   * v1.14 cycle #27 (H7 결의) — autoSeriesQueue + lastIndex atomic update.
+   * 사장님 편집 ↔ cron tick race 방지. removeQueueItem · toggleQueueItem ·
+   * reorderQueue에서 사용.
+   */
+  async updateAutoSeriesQueueAndIndexAtomic(
+    id: string,
+    queue: QueueItem[],
+    lastIndex: number,
+  ): Promise<void> {
+    await adminDb.runTransaction(async (tx) => {
+      const ref = col().doc(id);
+      tx.update(ref, {
+        autoSeriesQueue: queue,
+        "autoSeries.lastIndex": lastIndex,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
   },
 
   /**

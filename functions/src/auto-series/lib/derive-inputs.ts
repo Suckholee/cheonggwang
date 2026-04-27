@@ -3,6 +3,8 @@ import type { AutoSeriesAngle, Partner } from "./types";
 /**
  * v1.13 cycle #26 · §3.3 — derive-inputs functions 측 복제.
  *
+ * v1.14 cycle #27 (C1) — photoCursor 분리. queue 편집과 무관하게 사진 라운드 로빈.
+ *
  * ⚠️ MIRROR of src/lib/auto-series/derive-inputs.ts — keep in sync
  */
 
@@ -20,8 +22,9 @@ export function deriveAutoInputs(
   const photos = partner.profile?.photoUrls ?? [];
   if (photos.length === 0) return { error: "photo-missing" };
 
-  const lastIndex = partner.autoSeries?.lastIndex ?? 0;
-  const offset = ((lastIndex % photos.length) + photos.length) % photos.length;
+  const photoCursor = partner.autoSeries?.photoCursor ?? 0;
+  const offset =
+    ((photoCursor % photos.length) + photos.length) % photos.length;
   const photoUrls = [
     photos[offset],
     photos[(offset + 1) % photos.length],
