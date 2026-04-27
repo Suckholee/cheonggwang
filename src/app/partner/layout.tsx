@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { requirePartnerPage } from "@/lib/auth/require-partner";
+import PartnerHeaderNav from "@/components/partner/PartnerHeaderNav";
 import type { ReactNode } from "react";
 
 /**
@@ -36,38 +37,7 @@ export default function PartnerLayout({
               <PartnerNameLabel />
             </Suspense>
           </div>
-          <nav className="flex items-center gap-3 text-sm">
-            <Link
-              href="/partner/posts"
-              className="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300"
-            >
-              내 글
-            </Link>
-            <Link
-              href="/partner/posts/new"
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-white hover:bg-blue-700"
-            >
-              + 새 초고
-            </Link>
-            <Link
-              href="/partner/series"
-              className="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300"
-            >
-              ✨ 시리즈
-            </Link>
-            <Link
-              href="/partner/profile"
-              className="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300"
-            >
-              매장 정보
-            </Link>
-            <Link
-              href="/partner/settings"
-              className="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300"
-            >
-              설정
-            </Link>
-          </nav>
+          <PartnerHeaderNav />
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
