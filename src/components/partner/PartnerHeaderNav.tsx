@@ -13,8 +13,6 @@ import { usePathname } from "next/navigation";
 interface Tab {
   href: string;
   label: string;
-  /** "+ 새 초고" 같은 primary action — active와 무관하게 항상 파란색 */
-  primary?: boolean;
   match: (pathname: string) => boolean;
 }
 
@@ -29,7 +27,6 @@ const TABS: Tab[] = [
   {
     href: "/partner/posts/new",
     label: "+ 새 초고",
-    primary: true,
     match: (p) => p.startsWith("/partner/posts/new"),
   },
   {
@@ -56,21 +53,6 @@ export default function PartnerHeaderNav() {
     <nav className="flex items-center gap-2 text-sm">
       {TABS.map((tab) => {
         const active = tab.match(pathname);
-        if (tab.primary) {
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className={`rounded-md px-3 py-1.5 font-semibold text-white transition-colors ${
-                active
-                  ? "bg-blue-700 ring-2 ring-blue-300 dark:ring-blue-700"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
-            >
-              {tab.label}
-            </Link>
-          );
-        }
         return (
           <Link
             key={tab.href}
