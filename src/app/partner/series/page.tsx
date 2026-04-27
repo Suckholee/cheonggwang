@@ -9,6 +9,7 @@ import { POST_FORMAT_LABELS, POST_FORMAT_EMOJI } from "@/domain/post-format";
 import { DEFAULT_AUTO_SERIES } from "@/types/auto-series";
 import PartnerAutoSeriesPanel from "@/components/partner/PartnerAutoSeriesPanel";
 import PartnerSeriesHistoryList from "@/components/partner/PartnerSeriesHistoryList";
+import AutoPublishSettings from "@/components/partner/AutoPublishSettings";
 
 /**
  * v1.13 cycle #26 partner-auto-series · §6.1 — 사장님 진행 현황 페이지.
@@ -64,6 +65,14 @@ async function SeriesBody() {
             : []),
         ]}
       />
+
+      <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <h2 className="mb-1 text-sm font-semibold">발행 요일·시간</h2>
+        <p className="mb-3 text-xs text-zinc-500">
+          선택한 요일·시간 범위에 자동 시리즈가 글을 만들고 발행해요. KST 기준.
+        </p>
+        <AutoPublishSettings initial={partner.autoPublish} />
+      </section>
 
       <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
         <h2 className="mb-2 text-sm font-semibold">다음 발행 예정</h2>
