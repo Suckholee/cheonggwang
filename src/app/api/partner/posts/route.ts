@@ -376,6 +376,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // 사장님 카드 그리드는 published/draft 양쪽 모두 revalidate (cycle #25 누락 핫픽스)
+    revalidatePath("/partner/posts");
+    revalidatePath("/partner/series");
+
     return NextResponse.json(
       {
         postId,
