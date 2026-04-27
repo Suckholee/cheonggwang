@@ -207,33 +207,79 @@ export default function PartnerPromoEditor({ post }: Props) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">
-          커버 이미지 URL
-        </label>
-        <input
-          type="url"
-          value={coverImageUrl}
-          onChange={(e) => setCoverImageUrl(e.target.value)}
-          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-        />
-        {post.sourcePhotos && post.sourcePhotos.length > 1 ? (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {post.sourcePhotos.map((u, i) => (
-              <button
-                type="button"
-                key={i}
-                onClick={() => setCoverImageUrl(u)}
-                className={`rounded-md border px-2 py-1 text-xs ${
-                  u === coverImageUrl
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
-                    : "border-zinc-300 dark:border-zinc-700"
-                }`}
-              >
-                사진 {i + 1}
-              </button>
-            ))}
+        <label className="mb-2 block text-sm font-medium">커버 이미지</label>
+
+        {/* 현재 선택된 cover 큰 미리보기 */}
+        {coverImageUrl ? (
+          <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverImageUrl}
+              alt={coverImageAlt || "커버 이미지"}
+              className="aspect-[16/10] w-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="mb-3 flex aspect-[16/10] w-full items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-zinc-50 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900">
+            커버 이미지가 선택되지 않았습니다
+          </div>
+        )}
+
+        {/* sourcePhotos 썸네일 picker */}
+        {post.sourcePhotos && post.sourcePhotos.length > 0 ? (
+          <div>
+            <p className="mb-2 text-xs text-zinc-500">
+              매장 사진 중 선택 ({post.sourcePhotos.length}장)
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {post.sourcePhotos.map((u, i) => {
+                const selected = u === coverImageUrl;
+                return (
+                  <button
+                    type="button"
+                    key={i}
+                    onClick={() => setCoverImageUrl(u)}
+                    aria-label={`사진 ${i + 1} 선택`}
+                    aria-pressed={selected}
+                    className={`relative h-20 w-28 overflow-hidden rounded-md border-2 transition-all ${
+                      selected
+                        ? "border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900"
+                        : "border-zinc-200 hover:border-blue-300 dark:border-zinc-700"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={u}
+                      alt={`사진 ${i + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                    {selected ? (
+                      <span className="absolute right-1 top-1 rounded-full bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white">
+                        선택
+                      </span>
+                    ) : null}
+                    <span className="absolute bottom-0 left-0 right-0 bg-black/50 px-1 py-0.5 text-center text-[10px] text-white">
+                      사진 {i + 1}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         ) : null}
+
+        {/* URL 직접 편집은 접어서 — 평소 사용자는 안 봄 */}
+        <details className="mt-3">
+          <summary className="cursor-pointer text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
+            URL 직접 편집
+          </summary>
+          <input
+            type="url"
+            value={coverImageUrl}
+            onChange={(e) => setCoverImageUrl(e.target.value)}
+            className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-1.5 text-xs dark:border-zinc-700 dark:bg-zinc-900"
+          />
+        </details>
       </div>
 
       <div>
