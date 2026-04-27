@@ -50,7 +50,7 @@ export default function PartnerHeaderNav() {
   const pathname = usePathname() ?? "";
 
   return (
-    <nav className="flex items-center gap-1 text-[13px]">
+    <nav className="flex items-center gap-0.5 overflow-x-auto no-scrollbar py-1">
       {TABS.map((tab) => {
         const active = tab.match(pathname);
         return (
@@ -58,9 +58,9 @@ export default function PartnerHeaderNav() {
             key={tab.href}
             href={tab.href}
             aria-current={active ? "page" : undefined}
-            className={`rounded-lg px-3.5 py-1.5 transition-all duration-200 ${
+            className={`whitespace-nowrap rounded-lg px-3 py-2 text-[12px] sm:text-[13px] font-bold tracking-tight transition-all duration-200 ${
               active
-                ? "bg-[#EFF6FF] font-bold text-[#2563EB]"
+                ? "bg-[#EFF6FF] text-[#2563EB]"
                 : "text-[#6B7280] hover:bg-[#F9FAFB] hover:text-[#111827]"
             }`}
           >

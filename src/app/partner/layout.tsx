@@ -24,12 +24,12 @@ export default function PartnerLayout({
 }) {
   return (
     <div className="min-h-screen bg-[#F9FAFB] dark:bg-zinc-950">
-      <header className="border-b border-[#F3F4F6] bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900 sticky top-0 z-50 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="border-b border-[#F3F4F6] bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900 sticky top-0 z-50 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <div className="mx-auto flex max-w-5xl items-center justify-between h-16">
+          <div className="flex items-center gap-2 shrink-0 mr-4">
             <Link
               href="/partner/posts"
-              className="text-base font-bold tracking-tight text-[#2563EB]"
+              className="whitespace-nowrap text-[15px] font-black tracking-tight text-[#2563EB]"
             >
               청광 파트너
             </Link>
@@ -37,9 +37,11 @@ export default function PartnerLayout({
               <PartnerNameLabel />
             </Suspense>
           </div>
-          <Suspense fallback={<NavSkeleton />}>
-            <PartnerHeaderNav />
-          </Suspense>
+          <div className="flex-1 flex justify-end min-w-0">
+            <Suspense fallback={<NavSkeleton />}>
+              <PartnerHeaderNav />
+            </Suspense>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
@@ -50,7 +52,7 @@ export default function PartnerLayout({
 async function PartnerNameLabel() {
   await connection();
   const { partner } = await requirePartnerPage();
-  return <span className="text-xs text-zinc-500">· {partner.businessName}</span>;
+  return <span className="hidden sm:inline whitespace-nowrap text-xs text-zinc-500">· {partner.businessName}</span>;
 }
 
 function NavSkeleton() {
