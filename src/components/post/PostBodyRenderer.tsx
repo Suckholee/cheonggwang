@@ -21,7 +21,7 @@ export function PostBodyRenderer({ post }: { post: Post }) {
   }
   const format = postFormatFallback(post);
   if (format === "card-news") {
-    return <CardNewsViewer body={post.bodyMarkdown} />;
+    return <CardNewsViewer post={post} />;
   }
   return <BlogRenderer body={post.bodyMarkdown} />;
 }
