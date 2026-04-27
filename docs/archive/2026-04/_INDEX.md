@@ -2,6 +2,37 @@
 
 ## Features
 
+### partner-content-formats — blog·card-news multi-format + 카드 그리드 + 카드뉴스 시각 디자인 (Marketplace v1.12 · #25 · 🎯 97% · 5번 연속 single-pass)
+
+- **완료일**: 2026-04-27
+- **Match Rate**: **97%** (Critical 0 · High 0 · Medium 0 · Low 0 · 3 acceptable divergences + 5 post-design enhancements)
+- **PDCA 사이클**: #25 (Plan Plus → Design v0.2 post-validator 25/25 → Do S1–S11 → Post-design v0.3 시각 디자인 → Check 97% → Report → Archive)
+- **Streak**: 🏆 **5사이클 연속 single-pass 90s%** (cycles #21~#25). Plan Plus + design-validator가 프로젝트 mature PDCA 메소드로 검증
+- **레벨**: Dynamic (Next.js 16 · Firebase Admin SDK · Gemini 2.5 Flash · 카드뉴스 슬라이드 server pre-render + client paginator)
+- **방향**: 사용자 인사이트 "여러 형식·내용으로 돌려가며 올리고 싶다" → blog 단일 → blog + card-news 풀 multi-format. cycle #24 admin contentTemplates(이미 시드된 12건) 파트너 측 노출 + 카드뉴스 슬라이드 렌더러 신규 + /partner/posts 카드 그리드 개편 + Wizard 3-step. 별도 /preview 페이지 신설 X — `/community/p/[slug]` 재사용으로 ~150 LOC 절감
+- **경로**: [partner-content-formats/](./partner-content-formats/)
+
+**문서**
+- [Plan](./partner-content-formats/partner-content-formats.plan.md) (Plan Plus 4 phase · 사용자 인사이트로 사이클 범위 확장 · YAGNI 12 in-scope)
+- [Design](./partner-content-formats/partner-content-formats.design.md) (v0.2 · validator 5 Critical + 8 High + 7 Medium + 5 Low 결의 — 코드베이스 reality gap 정확 발견)
+- [Analysis](./partner-content-formats/partner-content-formats.analysis.md) (97% · 모든 R/AC/OQ/S 충족 · 0 critical/missing)
+- [Report](./partner-content-formats/partner-content-formats.report.md)
+
+**핵심 결정**
+- **R1 cycle #19 진입점 변경 0건** — `composeDraft`·`generatePartnerPromoDraft` args object에 `format?`·`templateContext?` optional만 추가 (8·9번째). 미지정 시 'blog' default → cycle #24와 100% 동일 동작 (regression 0)
+- **R2 ContentTemplate 모델 변경 0** — cycle #24 시드 12건 그대로 활용. `queryByIndustry`/`getById` 변경 0
+- **C5 별도 /preview 페이지 신설 X** — design-validator가 `/community/p/[slug]`이 이미 owner draft preview를 구현(`tryVerifySessionCookie` + noindex 배너) 발견. resolveCardHref 단일 경로(`/community/p/${slug}`)로 통일. ~150 LOC 절감 + ownership 단일 진입점
+- **PostBodyRenderer 단일 진입점 (H2·AD2)** — partner-promo만 format 분기, 그 외 postType은 항상 BlogRenderer. preview·공개페이지·관리자 미리보기 모두 동일 컴포넌트 → "사장님이 본 모습 = 손님이 본 모습" 100% 일관성
+- **CardNewsViewer server wrapper + CardNewsPaginator client (H1)** — `renderMarkdown`이 server-only이므로 server에서 슬라이드별 HTML 미리 sanitize → client paginator에 prop 전달. 외부 라이브러리 도입 0
+- **`@@SLIDE@@` sentinel (M2)** — `\n---\n` markdown HR과 충돌 회피. distinct sentinel로 pure 분리. validateCardNewsBody가 4~12 슬라이드·각 250자 이하 검증
+- **H5 fallback chain** — card-news 검증 실패 → retry 1회 → 또 실패면 blog로 재compose + `cardNewsValidationFailed=true` 플래그. 모두 단일 HTTP 안에서 처리 → rate-limit 1회 차감 보장 (H6)
+- **listTemplatesForPartner partner-callable action (H4)** — cycle #24의 admin-only `listContentTemplatesForAdmin`과 별개. 인증된 파트너만 호출, industry='other' fallback 포함
+- **templateScenarios vs templateTags (H7)** — UI 표시는 한국어 친화 `scenarios` ("신규 오픈"·"시즌 메뉴"), 분석/디버그용 `tags`는 generationMeta로 분리 (UI 미노출)
+- **카드뉴스 시각 디자인 (post-design v0.3)** — 단순 텍스트 박스 → 핀터레스트·인스타 패턴: 4:5 종횡비, 사진 배경 라운드 로빈, 어두운 그라디언트 오버레이, 노란 헤드라인(`**bold**`), 형광펜 italic(`*italic*`), 시리얼 카운터(01/06), 매장명 워터마크, 첫·마지막 슬라이드 마커
+- **prose-cardnews CSS 신규** — globals.css에 카드뉴스 전용 typography (yellow-300 strong + linear-gradient italic highlight). text-shadow로 사진 위 가독성 보강
+
+---
+
 ### partner-rag-system — 매장 RAG 자료 + admin 컨텐츠 템플릿 (Marketplace v1.11 · #24 · 🎯 97% single-pass · 역대 최대)
 
 - **완료일**: 2026-04-26
