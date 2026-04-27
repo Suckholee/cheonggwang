@@ -149,25 +149,48 @@ export default function PartnerPromoDraftForm({
         ) : null}
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">
+        <label className="mb-2 block text-sm font-medium">
           사진 (1~5장, 각 5MB 이하)
         </label>
+        <label
+          htmlFor="partner-promo-photos"
+          className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-4 py-6 text-sm font-medium text-zinc-700 transition-colors hover:border-blue-500 hover:bg-blue-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-blue-400 dark:hover:bg-blue-950"
+        >
+          <span className="text-xl">📷</span>
+          <span>
+            {files.length > 0
+              ? `사진 ${files.length}장 선택됨 (변경하려면 클릭)`
+              : "클릭해서 매장 사진 업로드 (1~5장)"}
+          </span>
+        </label>
         <input
+          id="partner-promo-photos"
           type="file"
           multiple
           accept="image/jpeg,image/png,image/webp"
           onChange={handleFileChange}
-          className="block w-full text-sm"
+          className="hidden"
         />
         {files.length > 0 ? (
-          <p className="mt-1 text-xs text-zinc-500">
-            선택된 사진: {files.length}장 (총{" "}
-            {(
-              files.reduce((s, f) => s + f.size, 0) /
-              (1024 * 1024)
-            ).toFixed(1)}{" "}
-            MB)
-          </p>
+          <ul className="mt-2 space-y-1 text-xs text-zinc-600 dark:text-zinc-400">
+            {files.map((f, i) => (
+              <li key={i} className="flex items-center gap-2">
+                <span>•</span>
+                <span className="truncate">{f.name}</span>
+                <span className="shrink-0 text-zinc-400">
+                  ({(f.size / 1024 / 1024).toFixed(1)} MB)
+                </span>
+              </li>
+            ))}
+            <li className="mt-1 text-zinc-500">
+              총 {files.length}장 ·{" "}
+              {(
+                files.reduce((s, f) => s + f.size, 0) /
+                (1024 * 1024)
+              ).toFixed(1)}{" "}
+              MB
+            </li>
+          </ul>
         ) : null}
       </div>
 
