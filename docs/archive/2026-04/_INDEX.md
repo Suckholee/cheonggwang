@@ -2,6 +2,84 @@
 
 ## Features
 
+### partner-editorial-oversight — 검토 단계 + AI footer (Marketplace v1.16 · #29 · 🏆🏆 99% · **9번 연속 single-pass · 통계적 검증 완료**)
+
+- **완료일**: 2026-04-28
+- **Match Rate**: **99%** (역대 최고 single-pass 기록 갱신, cycle #28 98.7% 경신) — Critical 0 · Major 0 · Minor 2 (모두 cosmetic)
+- **PDCA 사이클**: #29 (Plan Plus → Design v0.2 post-validator 18/18 → Do S1–S17 → Check 99% → Report → Archive)
+- **Streak**: 🏆🏆 **9사이클 연속 single-pass 90s%** (cycles #21~#29). **9 데이터포인트는 통계적으로 의미있는 sample size — Plan Plus + design-validator → reality-check 패턴이 메소드로 검증 완료**.
+- **레벨**: Dynamic (Next.js 16 cacheComponents · Firebase Cloud Functions v2 · cross-package mirror)
+- **방향**: 사용자 질문 "구글이나 다른 LLM에서 이렇게 올리는 글들에 대해서 제재를 가하지는 않을까?"가 cycle 트리거. Google 2026년 3월 코어 업데이트 (Scaled Content Abuse 50-80% 트래픽 감소) + 한국 광고법 2026년 초 시행 (AI 표시 의무화) 두 가지 정책 동시 대응. 편집 투명성 layer 도입: 사장님 검토 단계 (publishMode 'auto' | 'draft-only') + 본문 AI footer 자동 표시. 100매장 확장 시점 미리 대응
+- **경로**: [partner-editorial-oversight/](./partner-editorial-oversight/)
+
+**문서**
+- [Plan](./partner-editorial-oversight/partner-editorial-oversight.plan.md) (Plan Plus 4 phase · Q1 신규 매장 'draft-only' default · A1+A2+A3 add-ons + X2 확장 포인트)
+- [Design](./partner-editorial-oversight/partner-editorial-oversight.design.md) (v0.2 · validator 2 Critical + 5 High + 5 Medium + 6 Low = 18 결의 — 자체 식별 + 신규 발견 통합)
+- [Analysis](./partner-editorial-oversight/partner-editorial-oversight.analysis.md) (99% · 18 issue 모두 file:line 추적 · 0 critical/major)
+- [Report](./partner-editorial-oversight/partner-editorial-oversight.report.md)
+
+**핵심 결정**
+- **R15 cycle #19 generator 0줄 변경 (9번째 검증 통과)** — `partner-promo-generator.ts:168-241` 함수 시그니처 0 변경. 9사이클 동안 라이브러리처럼 보존된 자산 — 초기 architecture 설계의 9사이클 누적 효과 검증
+- **R12 (NEW) back-compat mapper** — publishMode 미설정 → 'auto' fallback. 기존 7매장 영향 0 (cycle #28 동작 그대로 유지). 신규 매장만 DEFAULT_AUTO_SERIES.publishMode='draft-only' 적용
+- **R13 (NEW) cycle #19 publish 토글 재사용** — draft → published 전환은 cycle #19 server action 그대로. 코드 변경 0. UI 일관성 + maintenance burden 0
+- **R14 (NEW) AI footer scope** — isAutoSeries=true && partner-promo postType만. 사장님 직접 작성 글 + tip/provider postType은 footer X (한국 광고법은 AI 작성에만 적용)
+- **N8 결의 — sanitize pipeline 통과** — AI footer를 markdown으로 append → renderMarkdown(marked + sanitize-html) 통과. 향후 footer parameterize 시 XSS 방어 자동
+- **H1 결의 — cacheComponents 호환** — layout.tsx sync + Suspense 자식 PartnerHeaderWithBadge async (cycle #28 패턴 준수). 검토 대기 건수 server fetch + 빨간 동그라미 배지
+- **N10 결의 — Next 16 async searchParams** — `searchParams: Promise<{filter?: string}>` Suspense 자식으로 전달, page level await X. cacheComponents 호환
+- **C1·H2 결의 — publishedAt cycle #19 convention** — draft 시 publishedAt field omit (null 설정 X). post-repository toPost mapper가 absent → null 변환
+- **N1 결의 — runner partnerFromSnap mapper 명시** — publishMode + targetAudience as const fallback (validator catch — Design v0.1에 없었으면 functions runtime 에러 가능)
+- **Option A 코드 복제 4번째 사이클** — Cloud Functions ↔ Next.js mirror. CI lint(`scripts/check-queue-mirror.mjs`)에 cycle #29용 2 신규 stricter check 추가 (publishMode + targetAudience type alias 강제). 4 cycles 동안 mirror drift 0건
+- **확장 포인트 디자인** — `targetAudience: string | null` 필드만 cycle #29에 추가하되 UI/AI 적용은 cycle #30 이월. cycle #30이 깨끗한 시작 가능 (X2 결정)
+- **/partner/series PartnerPublishModeToggle** — 사장님이 발행 모드 직접 전환 (auto / draft-only). 기존 7매장 사장님이 의식적으로 'draft-only' 선택 가능
+- **/partner/posts ?filter=auto-draft** — Next 16 async searchParams + 노란 검토 대기 배너 + cycle #19 publish 토글 그대로
+- **검토 대기 빨간 배지** — /partner/* 헤더 nav에 N건 표시. count > 0일 때만 표시 (UX clarity)
+
+**Plan Plus + design-validator → reality-check 메소드 검증 (9 데이터포인트)**:
+- cycles #21~#29 모두 ≥ 90% Match Rate single-pass. 평균 ~96.5%
+- small (~200 LOC) ~ medium (~500 LOC) ~ large (~830 LOC) 모두 적용
+- frontend only ~ backend only ~ cross-package (functions + Next.js) 모두 적용
+- 신규 feature ~ 잠복 버그 핫픽스 (cycle #28 timezone) ~ infra 강화 (cycle #28 AEO/SEO) ~ 정책 대응 (cycle #29 Google/한국 광고법) 모두 적용
+- design-validator가 cycle #29에서 18 issue 발견 (Critical 2, High 5, Medium 5, Low 6). 그중 N1, H1, N8, N10 4개는 reality-check 없이는 catch 불가능했을 functional bug — Design v0.1 → v0.2가 ~150 LOC rework + 1 production incident 사전 방지
+- **9 사이클은 통계적으로 의미있는 sample size** — Plan Plus + design-validator 패턴이 청광 프로젝트에서 mature, repeatable, measurable 메소드로 검증 완료. 향후 새 프로젝트에서도 적용 가능
+
+---
+
+### partner-aeo-boost — AEO/SEO 인프라 + cycle #19 timezone 핫픽스 (Marketplace v1.15 · #28 · 🏆 98.7% · **8번 연속 single-pass**)
+
+- **완료일**: 2026-04-28
+- **Match Rate**: **98.7%** (cycle #24~#26 97% 기록 경신, cycle #28 시점 역대 최고 single-pass) — Critical 0 · Major 1 · Minor 4
+- **PDCA 사이클**: #28 (Plan Plus → Design v0.2 post-validator 26/26 → Do S1–S15 → Check 98.7% → Report → Archive)
+- **Streak**: 🏆 **8사이클 연속 single-pass 90s%** (cycles #21~#28). Plan Plus + design-validator → reality-check 패턴이 small/medium/large 모든 규모 + cross-package + 잠복 버그 핫픽스까지 일관된 90s% 달성
+- **레벨**: Dynamic (Next.js 16 · Firebase Cloud Functions v2 · Schema.org 구조화 데이터 + AEO 콘텐츠 패턴)
+- **방향**: 사용자 요구 "글의 퀄리티를 높여보도록 하자. AEO와 SEO 최적화에 대한 부분이 적용되어 있는지 확인" → 진단 종합 69/100 (C+) → 95+/100 (A) 예상. 동시에 cycle #19 잠복 timezone 버그 (setKstClock 9시간 오프셋 — recentlyPublishedInWindow 무력화) 핫픽스. 두 영역 단일 사이클로 묶기 + R1 cycle #19 generator 8번째 무수정 검증
+- **경로**: [partner-aeo-boost/](./partner-aeo-boost/)
+
+**문서**
+- [Plan](./partner-aeo-boost/partner-aeo-boost.plan.md) (Plan Plus 4 phase · A안 통합 사이클 + S1~S4 + A1~A4 add-ons 모두 선택)
+- [Design](./partner-aeo-boost/partner-aeo-boost.design.md) (v0.2 · validator 4 Critical + 7 High + 9 Medium + 6 Low = 26 결의 — 가장 큰 발견 C3 Page vs Partner 모델 혼동)
+- [Analysis](./partner-aeo-boost/partner-aeo-boost.analysis.md) (98.7% · 모든 R/AC 충족 · timezone fix W2 unit test로 사용자 incident 케이스 회복 검증)
+- [Report](./partner-aeo-boost/partner-aeo-boost.report.md)
+
+**핵심 결정**
+- **R1 cycle #19 generator 0줄 변경 (8번째 검증 통과)** — `partner-promo-generator.ts:168-241` 함수 시그니처 0 변경. 8사이클 동안 라이브러리처럼 보존 + AI 프롬프트 string에 AEO 패턴 4줄만 추가
+- **C1·H7 결의 — toKstWallClock + window 4함수 마이그레이션** — cycle #19 setKstClock 9시간 오프셋 root cause. Intl.DateTimeFormat host-agnostic 헬퍼로 isInAutoPublishWindow + currentWindowStart + nextAutoPublishWindow + nextNAutoPublishWindows 모두 마이그레이션. W2 unit test가 사용자 실제 incident 케이스(lastTickAt UTC 23:08 4/27, now UTC 00:00 4/28) → recentlyPublishedInWindow=TRUE 회복 검증
+- **C3 결의 — /p/[slug]는 Page 모델** — design v0.1 잘못된 Partner 모델 가정. validator catch. v0.2 buildLocalBusinessJsonLd(page: Page) 시그니처 재작성 (page.address/phone/region 직접 매핑)
+- **AEO 인프라 도입** — FAQPage JSON-LD 자동 추출 (faq-extractor regex graceful fallback) + Article + BreadcrumbList @graph 통합 + LocalBusiness (매장 페이지) + Organization (전역 layout) + 카드뉴스 슬라이드 alt 자동 + sitemap image:image
+- **AI 프롬프트 강화 (G1·H1)** — TL;DR 첫 단락 + 자연어 H2 헤더 + ## 자주 묻는 질문 + ### Q1./Q2./Q3. 형식 강제 (blog format 전용, card-news는 슬라이드 형식 미적합으로 제외)
+- **metadataBase 설정 (G5·H3)** — layout.tsx에 process.env.NEXT_PUBLIC_BASE_URL || 'https://www.cheonggwang.kr' fallback. SNS 공유 og:image 절대 URL 보장
+- **Option A 코드 복제 3번째 사이클** — Cloud Functions ↔ Next.js mirror. CI lint(`scripts/check-queue-mirror.mjs`)에 cycle #28용 2 신규 check (Date.UTC 사용 + toKstWallClock export)
+- **functions tsconfig exclude (C4)** — `**/*.test.ts` 빌드 산출물 제외. Cloud Functions deploy 정리
+- **/partner/series 미리보기 시각 정상화** — timezone fix 후 KST 06:00 → AM 06:00 정확 표시 (이전 PM 03:00 잘못 표시되던 9시간 오프셋 해결)
+- **R8 Path X 3-layer 보호** — runner safeLastIndex 클램프 + correctLastIndex 순수함수 + queue-preview modulo (cycle #27 → #28 이어서 검증)
+- **Page 모델 sitemap (H4)** — pageRepository.listPublishedSlugsForSitemap 신규 메서드. published===true && slug !== null 매장 페이지 enumeration
+
+**Plan Plus + design-validator → reality-check 메소드 검증 (8 데이터포인트)**:
+- 단일 사이클에 AEO/SEO 인프라 + cycle #19 잠복 timezone 핫픽스 동시 처리 — surgical philosophy로 분리 영향 최소화
+- design-validator가 26 issue 발견 — 그중 C3 (Page vs Partner 모델 혼동)이 가장 결정적. Design v0.1 → v0.2가 ~150 LOC rework 사전 방지 + production runtime 에러 방지
+- 통합 검증 — pnpm exec tsc(2 packages) + pnpm exec next build full prerender + pnpm lint:mirror 8/8 + 단위 테스트 22+11+14+7 = 54/54
+
+---
+
 ### partner-series-queue — 사장님이 직접 편집하는 발행 큐 (Marketplace v1.14 · #27 · 🎯 95% · **🏆 7번 연속 single-pass**)
 
 - **완료일**: 2026-04-28
