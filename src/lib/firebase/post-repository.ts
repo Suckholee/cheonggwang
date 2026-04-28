@@ -24,7 +24,7 @@ function tsToDate(ts: Timestamp | undefined | null): Date {
   return ts?.toDate?.() ?? new Date();
 }
 
-function toPost(id: string, d: DocumentData): Post {
+export function toPost(id: string, d: DocumentData): Post {
   const rawCategories = Array.isArray(d.categories)
     ? (d.categories as QuoteCategory[])
     : [];

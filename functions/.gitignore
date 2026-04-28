@@ -4,6 +4,9 @@ lib/
 # tsc 빌드 산출물(functions/lib/)이 아닌 source이므로 negation
 !src/auto-series/lib/
 !src/auto-series/lib/**
+# v1.17 cycle #30 — tips source code (functions/src/tips/lib/) 동일 패턴
+!src/tips/lib/
+!src/tips/lib/**
 *.log
 .env
 .env.local

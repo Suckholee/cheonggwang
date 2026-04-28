@@ -2,6 +2,44 @@
 
 ## Features
 
+### cleaning-tips-content — 청소 노하우 자동 발행 (Marketplace v1.17 · #30 · 🏆🏆🏆 98.5% · **10번 연속 single-pass · 두 자릿수 마일스톤**)
+
+- **완료일**: 2026-04-28
+- **Match Rate**: **98.5%** (cycle #29 99% 다음 가는 single-pass) — Critical 0 · Major 0 · Minor 1 (prompt.ts design 확장 disclosure penalty −1.5pp)
+- **PDCA 사이클**: #30 (Plan Plus → Design v0.2 post-validator 26/26 → Do S1–S15 → Check 98.5% → Report → Archive)
+- **Streak**: 🏆🏆🏆 **10사이클 연속 single-pass 90s%** (cycles #21~#30). **두 자릿수 마일스톤 도달 — Plan Plus + design-validator → reality-check 메소드가 새 도메인(tips)에서도 첫 시도에 단일 패스 통과**
+- **레벨**: Dynamic (Next.js 16 cacheComponents · Firebase Cloud Functions v2 · cross-package mirror · 신규 도메인 tips)
+- **방향**: 사용자 트리거 "청소 노하우를 /plan-plus 로 기획해서 채워넣자" — /community/tips 패널 0건 → 매일 1건 자동 발행 시스템. R15 cycle #19 generator 10번째 무수정 + 새 도메인(tips) 적용 가능성 동시 검증. 가장 큰 scope (~1,710 LOC, 27 files = 20 신규 + 7 수정) — 9-streak 가장 큰 cycle 처리 가능성 검증
+- **경로**: [cleaning-tips-content/](./cleaning-tips-content/)
+
+**문서**
+- [Plan](./cleaning-tips-content/cleaning-tips-content.plan.md) (Plan Plus 4 phase · Q1 AI 자동 + admin 검토 · Q2 신규 tips-generator (R15 보호) · Q3 A1+A2+A3+A4 모두)
+- [Design](./cleaning-tips-content/cleaning-tips-content.design.md) (v0.2 · validator 6 Critical + 4 High + 10 Medium + 7 Low = 26 결의 — 가장 큰 issue 묶음 single cycle)
+- [Analysis](./cleaning-tips-content/cleaning-tips-content.analysis.md) (98.5% · 26/26 issue 모두 file:line 추적 · 0 critical/major)
+- [Report](./cleaning-tips-content/cleaning-tips-content.report.md)
+
+**핵심 결정**
+- **R15 cycle #19 generator 0줄 변경 (10번째 검증 통과)** — `partner-promo-generator.ts:168-241` 함수 시그니처 0 변경. **10사이클 연속 무수정 — 두 자릿수 마일스톤 도달**. 초기 architecture 설계의 10사이클 누적 효과 검증. 라이브러리처럼 보존된 자산
+- **R1 cycle #26 auto-series runner 0줄 변경 유지** — NEW-C5 결의로 `nanoid16` 함수 functions/tips/runner.ts 안에 로컬 복제. functions/auto-series/runner.ts 미접촉
+- **NEW-C4 OQ9 Option 2** — functions hygiene-guard mirror을 별도 신규 파일(`functions/src/tips/lib/hygiene-guard.ts`)로 작성. auto-series/lib/generator.ts에서 추출 X (R1 streak 보호). FAKE_BUSINESS + PII 패턴만 mirror, PARTNER_PROMO_PATTERNS 미적용 (NEW-H2 의도적 — tip 운영진 톤)
+- **NEW-R19 Cron offset (NEW-H6 결의)** — autoSeriesTick `every 1 hours from 09:00 to 18:00` ↔ tipsTick `30 9-17 * * *`. 매시간 :00와 :30 분리하여 동시 발화 + rate limit + log 가독성
+- **NEW-R20 toPost export (NEW-C6 결의)** — `src/lib/firebase/post-repository.ts:27` `function toPost` → `export function toPost`. 1줄 surgical 수정으로 tip-repository hydration 가능
+- **NEW-L8 결의 — uniqueSlug 표준 helper** — `src/lib/slug.ts`에 `uniqueSlug(db, title)` 추가 (functions side와 동일 알고리즘, 4자 random suffix). Math.random 기반 — nanoid 의존성 회피
+- **prompt.ts 분리 (Design v0.3 backport 필요)** — `tips-generator.ts`의 `import "server-only"` + Design §9.1의 `__testExports.buildTipPrompt` test 요구가 충돌 → `src/lib/tips/prompt.ts`에 buildTipPrompt + TipTopic + TipComposeArgs 추출. 유일한 design 외 추가 (−1.5pp). cycle #31+에서 Design 템플릿 §3.4에 server-only/test-isolation 가이드라인 backport
+- **Option A 코드 복제 5번째 사이클 (6 mirror 파일)** — topic-pool, tips-generator, stock-images, today-kst, infer-categories, hygiene-guard 모두 양 패키지 mirror. CI lint 8 → 13 (5 신규 check 추가)
+- **AEO 패턴 재사용** — cycle #28의 TL;DR + 자연어 H2 + `## 자주 묻는 질문` + `### Q1./Q2./Q3.` 형식을 tip 프롬프트에 그대로 강제. faq-extractor + article-jsonld @graph 인프라 0줄 변경 자동 활용
+- **toKstWallClock 재사용 (M1·NEW-C1·NEW-M9)** — cycle #28의 host-agnostic helper 활용. `src/lib/tips/today-kst.ts` 안에 getTodayKstStart + currentKstSeason + firstDayOfMonthKst 통합 정의. functions mirror는 `auto-series/lib/window` 직접 import
+- **새 도메인 (tips) 검증** — partner-promo / auto-series / aeo / editorial 외 추가 도메인에서도 같은 메소드(R1, R15, Option A, surgical, 결의 매트릭스) 첫 시도 적용 가능 검증. 메소드 일반화 가능성 입증
+
+**10-streak 마일스톤 (cycles #21~#30 평균 96.4%)**:
+- 통계적 sample size 9 → 10 — 두 자릿수 데이터포인트 도달
+- 가장 큰 scope (~1,710 LOC, 27 files) 처리 가능성 검증 — small/medium/large/cross-package/잠복 핫픽스/정책 대응/새 도메인 모든 측면 cover
+- design-validator가 cycle #30에서 26 issue 발견 (가장 많음) — Critical 6 + High 4 + Medium 10 + Low 7. 그중 NEW-C4 (functions hygiene-guard mirror 누락), NEW-C5 (nanoid16 미정의), NEW-C6 (toPost export), NEW-H6 (cron 충돌)는 reality-check 없이는 catch 불가능했을 functional bug. Design v0.1 → v0.2 26-issue 결의 매트릭스가 ~250 LOC rework + functions runtime 에러 사전 방지
+- **R15 invariant 10사이클 연속** — 두 자릿수 invariant longevity는 architecture maturity의 강력한 시그널. 향후 cycle #31+에서 R15 11번째 도전이 가능
+- 통합 검증: pnpm exec tsc(2 packages) + pnpm build full prerender + pnpm test:tips 8/8 + pnpm lint:mirror 13/13
+
+---
+
 ### partner-editorial-oversight — 검토 단계 + AI footer (Marketplace v1.16 · #29 · 🏆🏆 99% · **9번 연속 single-pass · 통계적 검증 완료**)
 
 - **완료일**: 2026-04-28

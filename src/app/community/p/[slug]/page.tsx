@@ -10,6 +10,7 @@ import { PostDetailView } from "@/components/community/PostDetailView";
 import { PostProviderInfoCard } from "@/components/community/PostProviderInfoCard";
 import { QuoteCTAButton } from "@/components/community/QuoteCTAButton";
 import { buildArticleGraphJsonLd } from "@/lib/seo/article-jsonld";
+import { getBaseUrl } from "@/lib/seo/base-url";
 import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import {
   postTypeToPanelSlug,
@@ -104,6 +105,8 @@ async function PostBody({
   const jsonLd = await buildArticleGraphJsonLd(post, {
     breadcrumb: { panelLabel, panelSlug },
   });
+  // v1.17 cycle #30 §3.12 — photoless tip의 og:image fallback (logo).
+  const ogImageFallback = `${await getBaseUrl()}/logo.png`;
 
   return (
     <div className="space-y-6">
@@ -116,8 +119,10 @@ async function PostBody({
       <meta property="og:type" content="article" />
       {/* v1.7: 비공개 글의 미리보기는 검색엔진 인덱싱 차단. */}
       {isPreview && <meta name="robots" content="noindex, nofollow" />}
-      {post.coverImageUrl && (
+      {post.coverImageUrl ? (
         <meta property="og:image" content={post.coverImageUrl} />
+      ) : (
+        <meta property="og:image" content={ogImageFallback} />
       )}
       <JsonLdScript data={jsonLd} />
       {/* v1.15 cycle #28 hotfix — 뒤로 가기 nav. 패널별로 다른 라벨 표시. */}

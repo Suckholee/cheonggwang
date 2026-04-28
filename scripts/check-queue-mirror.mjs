@@ -96,6 +96,49 @@ const CHECKS = [
     ],
     test: (src) => /targetAudience\s*:\s*string\s*\|\s*null/.test(src),
   },
+  // v1.17 cycle #30 cleaning-tips-content (5 신규 mirror check)
+  {
+    title: "tips-generator AEO 패턴 (FAQ + TL;DR) 양 패키지",
+    files: [
+      "src/lib/llm/tips-generator.ts",
+      "functions/src/tips/lib/tips-generator.ts",
+    ],
+    test: (src) =>
+      /자주\s*묻는\s*질문/.test(src) && /TL;DR|첫\s*단락/.test(src),
+  },
+  {
+    title: "TIPS_TOPIC_POOL 양 패키지 동일 export",
+    files: [
+      "src/lib/tips/topic-pool.ts",
+      "functions/src/tips/lib/topic-pool.ts",
+    ],
+    test: (src) => /export const TIPS_TOPIC_POOL/.test(src),
+  },
+  {
+    title: "STOCK_IMAGES 양 패키지 동일 export (NEW C3)",
+    files: [
+      "src/lib/tips/stock-images.ts",
+      "functions/src/tips/lib/stock-images.ts",
+    ],
+    test: (src) => /pickStockImage|STOCK_IMAGES/.test(src),
+  },
+  {
+    title: "inferCategoriesFromTopic 양 패키지 (NEW C2)",
+    files: [
+      "src/lib/tips/infer-categories.ts",
+      "functions/src/tips/lib/infer-categories.ts",
+    ],
+    test: (src) => /export function inferCategoriesFromTopic/.test(src),
+  },
+  {
+    title: "today-kst 양 패키지 (NEW C1)",
+    files: [
+      "src/lib/tips/today-kst.ts",
+      "functions/src/tips/lib/today-kst.ts",
+    ],
+    test: (src) =>
+      /getTodayKstStart/.test(src) && /currentKstSeason/.test(src),
+  },
 ];
 
 async function readSafe(path) {

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "lint:mirror": "node scripts/check-auto-series-mirror.mjs && node scripts/check-queue-mirror.mjs"
+    "lint:mirror": "node scripts/check-auto-series-mirror.mjs && node scripts/check-queue-mirror.mjs",
+    "test:tips": "npx tsx src/lib/llm/tips-generator.test.ts && npx tsx src/lib/tips/topic-pool.test.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

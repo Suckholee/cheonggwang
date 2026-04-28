@@ -9,3 +9,4 @@
 
 // export * from "./research"; // cycle #20 — secret 등록 후 활성화
 export * from "./auto-series";
+export * from "./tips"; // cycle #30 cleaning-tips-content — tipsTick scheduled function
