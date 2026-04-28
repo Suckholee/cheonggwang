@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -97,11 +99,10 @@ async function PostBody({
     ? await providerRepository.get(post.providerId)
     : null;
 
+  const panelSlug = postTypeToPanelSlug(post.postType);
+  const panelLabel = panelLabelForPost(post);
   const jsonLd = await buildArticleGraphJsonLd(post, {
-    breadcrumb: {
-      panelLabel: panelLabelForPost(post),
-      panelSlug: postTypeToPanelSlug(post.postType),
-    },
+    breadcrumb: { panelLabel, panelSlug },
   });
 
   return (
@@ -119,6 +120,14 @@ async function PostBody({
         <meta property="og:image" content={post.coverImageUrl} />
       )}
       <JsonLdScript data={jsonLd} />
+      {/* v1.15 cycle #28 hotfix — 뒤로 가기 nav. 패널별로 다른 라벨 표시. */}
+      <Link
+        href={`/community/${panelSlug}`}
+        className="inline-flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        <span>{panelLabel}</span>
+      </Link>
       {isPreview && (
         <div
           role="status"
