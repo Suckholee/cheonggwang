@@ -13,9 +13,11 @@ import { headers } from "next/headers";
  * 트레일링 슬래시 제거.
  */
 export async function getBaseUrl(): Promise<string> {
-  const env = process.env.NEXT_PUBLIC_BASE_URL;
+  const env = process.env.NEXT_PUBLIC_BASE_URL?.trim();
   if (env) return env.replace(/\/$/, "");
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL.trim()}`;
+  }
   try {
     const h = await headers();
     const host = h.get("x-forwarded-host") ?? h.get("host");

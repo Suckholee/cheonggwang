@@ -23,7 +23,10 @@ export interface OrganizationJsonLd {
 const FALLBACK_BASE = "https://www.cheonggwang.kr";
 
 function getBase(): string {
-  return (process.env.NEXT_PUBLIC_BASE_URL || FALLBACK_BASE).replace(/\/$/, "");
+  // .trim() — Vercel CLI stdin pipe (echo "..." | vercel env add)가
+  // trailing newline을 그대로 저장하는 케이스 방어 (cycle #28 hotfix).
+  const raw = (process.env.NEXT_PUBLIC_BASE_URL ?? FALLBACK_BASE).trim();
+  return raw.replace(/\/$/, "");
 }
 
 function parseSameAs(): string[] | undefined {
