@@ -16,14 +16,20 @@ function formatTime(minute: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-export default function PartnerPostsPage() {
+export default function PartnerPostsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
+  // v1.16 cycle #29 (N10 + cacheComponents 호환): searchParams Promise를 Suspense 자식으로 전달.
+  // page-level await는 'Uncached data outside Suspense' 위반.
   return (
     <div className="space-y-6">
       <Suspense fallback={<BannerSkeleton />}>
         <AutoPublishBanner />
       </Suspense>
       <Suspense fallback={<ListSkeleton />}>
-        <PostsBody />
+        <PostsBody searchParams={searchParams} />
       </Suspense>
     </div>
   );
@@ -73,12 +79,30 @@ async function AutoPublishBanner() {
   );
 }
 
-async function PostsBody() {
+async function PostsBody({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
   await connection();
+  const { filter } = await searchParams;
   const { uid, partner } = await requirePartnerPage();
-  const posts = await postRepository.listMyPosts(uid, 100);
+  const all = await postRepository.listMyPosts(uid, 100);
+  // v1.16 cycle #29 (M1 결의): list 필터링 in-memory (count는 aggregation 사용)
+  const posts =
+    filter === "auto-draft"
+      ? all.filter(
+          (p) => p.publishStatus === "draft" && p.isAutoSeries === true,
+        )
+      : all;
   const partnerCover = partner.profile?.photoUrls?.[0] ?? null;
-  return <PartnerPostsList posts={posts} partnerCover={partnerCover} />;
+  return (
+    <PartnerPostsList
+      posts={posts}
+      partnerCover={partnerCover}
+      filter={filter}
+    />
+  );
 }
 
 function BannerSkeleton() {

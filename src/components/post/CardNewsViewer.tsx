@@ -1,6 +1,11 @@
 import { renderMarkdown } from "@/lib/markdown";
 import { parseCardNewsSlides } from "@/lib/post/parse-card-news-slides";
 import { CardNewsPaginator } from "./CardNewsPaginator";
+import {
+  shouldShowAiFooter,
+  AI_FOOTER_TEXT,
+  AI_FOOTER_MARKDOWN,
+} from "@/lib/seo/ai-footer";
 import type { Post } from "@/types/post";
 
 /**
@@ -14,10 +19,13 @@ import type { Post } from "@/types/post";
  */
 export function CardNewsViewer({ post }: { post: Post }) {
   const slides = parseCardNewsSlides(post.bodyMarkdown);
+  const showFooter = shouldShowAiFooter(post);
 
   // 슬라이드 0건이면 (parser 실패) 본문 통째 markdown 렌더 fallback
+  // v1.16 cycle #29 (N9 결의): parser-fail branch도 footer 표시 + Fragment wrapping
   if (slides.length === 0) {
-    const html = renderMarkdown(post.bodyMarkdown);
+    const md = post.bodyMarkdown + (showFooter ? AI_FOOTER_MARKDOWN : "");
+    const html = renderMarkdown(md);
     return (
       <div
         className="prose-promo space-y-4 text-[15px] leading-7 text-zinc-800 dark:text-zinc-200"
@@ -38,10 +46,17 @@ export function CardNewsViewer({ post }: { post: Post }) {
   }
 
   return (
-    <CardNewsPaginator
-      slideHtmls={slideHtmls}
-      photoPool={photoPool}
-      companyName={post.companyName}
-    />
+    <>
+      <CardNewsPaginator
+        slideHtmls={slideHtmls}
+        photoPool={photoPool}
+        companyName={post.companyName}
+      />
+      {showFooter && (
+        <p className="mt-6 px-4 text-center text-xs italic text-zinc-500 dark:text-zinc-400">
+          {AI_FOOTER_TEXT}
+        </p>
+      )}
+    </>
   );
 }

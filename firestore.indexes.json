@@ -242,6 +242,15 @@
       ]
     },
     {
+      "collectionGroup": "posts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "providerOwnerUid", "order": "ASCENDING" },
+        { "fieldPath": "publishStatus", "order": "ASCENDING" },
+        { "fieldPath": "isAutoSeries", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "storyScrapbook",
       "queryScope": "COLLECTION",
       "fields": [
@@ -305,13 +314,6 @@
       "fields": [
         { "fieldPath": "autoSeries.enabled", "order": "ASCENDING" },
         { "fieldPath": "status", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "seriesHistory",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "at", "order": "DESCENDING" }
       ]
     }
   ],

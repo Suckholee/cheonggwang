@@ -17,11 +17,11 @@ import type { Post } from "@/types/post";
  */
 export function PostBodyRenderer({ post }: { post: Post }) {
   if (post.postType !== "partner-promo") {
-    return <BlogRenderer body={post.bodyMarkdown} />;
+    return <BlogRenderer post={post} />;
   }
   const format = postFormatFallback(post);
   if (format === "card-news") {
     return <CardNewsViewer post={post} />;
   }
-  return <BlogRenderer body={post.bodyMarkdown} />;
+  return <BlogRenderer post={post} />;
 }

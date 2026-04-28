@@ -12,6 +12,18 @@ import type { PostFormat } from "@/domain/post-format";
  *  - server-only: lastIndex, lastTickAt, totalPublished, totalFailed
  */
 
+/**
+ * v1.16 cycle #29 partner-editorial-oversight · §3.1.
+ *
+ * publishMode: 사장님 검토 단계 도입 (Google scaled content abuse 회피).
+ *  - 'auto'        : AI 생성 즉시 publish (cycle #28까지의 동작)
+ *  - 'draft-only'  : AI 생성 → draft 저장 → 사장님 검토 후 publish
+ *
+ * R12 (back-compat): mapper에서 미설정 시 'auto' fallback. 기존 7매장 영향 없음.
+ * 신규 매장은 DEFAULT_AUTO_SERIES.publishMode='draft-only' default 적용.
+ */
+export type PublishMode = "auto" | "draft-only";
+
 export interface PartnerAutoSeries {
   enabled: boolean;
   /**
@@ -38,6 +50,19 @@ export interface PartnerAutoSeries {
    * undefined/누락 시 0 fallback.
    */
   photoCursor: number;
+  /**
+   * v1.16 cycle #29 partner-editorial-oversight (G1 + R12).
+   * 'auto'        : AI 생성 즉시 publish (cycle #28까지)
+   * 'draft-only'  : AI 생성 → draft 저장 → 사장님 검토 후 publish
+   * mapper에서 미설정 시 'auto' fallback.
+   */
+  publishMode: PublishMode;
+  /**
+   * v1.16 cycle #29 (X2 확장 포인트): cycle #30 audience targeting feature 활용 예정.
+   * 현재 cycle에서는 필드만 추가, AI prompt/UI 미사용.
+   * mapper에서 미설정 시 null fallback.
+   */
+  targetAudience: string | null;
 }
 
 export const DEFAULT_AUTO_SERIES: PartnerAutoSeries = {
@@ -48,6 +73,9 @@ export const DEFAULT_AUTO_SERIES: PartnerAutoSeries = {
   totalPublished: 0,
   totalFailed: 0,
   photoCursor: 0,
+  // cycle #29 — 신규 매장 default 'draft-only' (사장님 검토 후 publish)
+  publishMode: "draft-only",
+  targetAudience: null,
 };
 
 /**
@@ -67,6 +95,8 @@ export interface QueueItem {
 
 export type SeriesHistoryStatus =
   | "published"
+  /** v1.16 cycle #29 — publishMode='draft-only' 매장 발행 시 */
+  | "auto-draft-saved"
   | "hygiene-fail"
   | "error"
   | "photo-missing";

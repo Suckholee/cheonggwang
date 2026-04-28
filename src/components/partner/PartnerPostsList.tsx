@@ -15,6 +15,10 @@ interface Props {
   posts: Post[];
   /** partner.profile?.photoUrls?.[0] — post.coverImageUrl 누락 시 fallback */
   partnerCover: string | null;
+  /**
+   * v1.16 cycle #29 (A2): 'auto-draft' 필터 활성 시 헤더에 태그 + "전체 보기" 링크.
+   */
+  filter?: string;
 }
 
 const STATUS_LABEL: Record<PublishStatus, string> = {
@@ -33,7 +37,8 @@ function resolveCardHref(p: Post): string {
   return `/community/p/${p.slug}`;
 }
 
-export default function PartnerPostsList({ posts, partnerCover }: Props) {
+export default function PartnerPostsList({ posts, partnerCover, filter }: Props) {
+  const isAutoDraftFilter = filter === "auto-draft";
   const groups: Record<PublishStatus, Post[]> = {
     draft: [],
     published: [],
@@ -65,6 +70,19 @@ export default function PartnerPostsList({ posts, partnerCover }: Props) {
 
   return (
     <div className="space-y-8">
+      {isAutoDraftFilter && (
+        <div className="flex items-center justify-between rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 dark:border-amber-700 dark:bg-amber-950/40">
+          <p className="text-sm text-amber-800 dark:text-amber-300">
+            🤖 AI 자동 생성 후 검토 대기 중인 글만 표시 중
+          </p>
+          <Link
+            href="/partner/posts"
+            className="text-xs font-semibold text-amber-700 hover:underline dark:text-amber-300"
+          >
+            전체 보기
+          </Link>
+        </div>
+      )}
       {(["draft", "published", "withdrawn"] as PublishStatus[]).map(
         (status) => {
           const list = groups[status];

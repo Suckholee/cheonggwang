@@ -16,6 +16,12 @@ const STATUS_BADGE: Record<
     label: "발행됨",
     className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
   },
+  // v1.16 cycle #29 — publishMode='draft-only' 매장 발행 시
+  "auto-draft-saved": {
+    emoji: "📝",
+    label: "검토 대기",
+    className: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
+  },
   "hygiene-fail": {
     emoji: "⚠️",
     label: "위생 실패",

@@ -28,6 +28,12 @@ export interface CreatePostFromDraftInput {
   templateId?: string;
   templateScenarios?: string[];
   templateTags?: string[];
+  /**
+   * v1.16 cycle #29 (C1·H2 결의): publishMode 'draft-only' 매장은 'draft'로 저장.
+   * 미설정 시 'published' default (back-compat).
+   * draft 시 publishedAt field omit (cycle #19 convention).
+   */
+  publishStatus?: "published" | "draft";
 }
 
 export interface CreatePostFromDraftResult {
@@ -51,6 +57,7 @@ export async function createPostFromDraft(
     templateId,
     templateScenarios,
     templateTags,
+    publishStatus = "published",
   } = input;
 
   // C3 — uniqueSlug
@@ -92,14 +99,18 @@ export async function createPostFromDraft(
     topicHint: null,
     brandTone,
     postType: "partner-promo",
-    publishStatus: "published",
+    publishStatus,
     sourcePhotos: photoUrls,
     generationMeta,
     format: draft.format as PostFormat,
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
-    publishedAt: FieldValue.serverTimestamp(),     // C4 — published 자동 설정
   };
+  // v1.16 cycle #29 (C1·H2): draft 시 publishedAt field omit (cycle #19 convention).
+  // toPost mapper가 absent → null 변환하므로 효과 동일.
+  if (publishStatus === "published") {
+    payload.publishedAt = FieldValue.serverTimestamp();
+  }
 
   if (isAutoSeries) payload.isAutoSeries = true;
   if (templateId) payload.templateId = templateId;

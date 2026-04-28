@@ -451,6 +451,34 @@ export const postRepository = {
   },
 
   /**
+   * v1.16 cycle #29 partner-editorial-oversight · §3.8 (A2 + H3·M1 결의).
+   *
+   * 사장님 헤더 빨간 배지용 — auto-draft 검토 대기 건수 aggregation count.
+   * Firestore Admin SDK count() (firebase-admin v11.4.0+, 현재 v13.x).
+   * React cache()로 같은 request 안에서 1회만 실제 fetch.
+   *
+   * Composite index 필요: (providerOwnerUid, publishStatus, isAutoSeries).
+   * firestore.indexes.json에 등록 + firebase deploy --only firestore:indexes.
+   */
+  countAutoDraftsForOwner: cache(
+    async (ownerUid: string): Promise<number> => {
+      try {
+        const snap = await col()
+          .where("providerOwnerUid", "==", ownerUid)
+          .where("publishStatus", "==", "draft")
+          .where("isAutoSeries", "==", true)
+          .count()
+          .get();
+        return snap.data().count;
+      } catch (e) {
+        // index 미빌드 등 transient 오류 시 0 반환 (배지 비표시)
+        console.warn("[post-repository.countAutoDraftsForOwner]", e);
+        return 0;
+      }
+    },
+  ),
+
+  /**
    * v1.7: draft/published 본문 수정. updatedAt 자동 set.
    * publishStatus·publishedAt은 변경하지 않음 (전이는 setPublishStatus 사용).
    */

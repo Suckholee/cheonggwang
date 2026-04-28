@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { requirePartnerPage } from "@/lib/auth/require-partner";
 import PartnerHeaderNav from "@/components/partner/PartnerHeaderNav";
+import { postRepository } from "@/lib/firebase/post-repository";
 import type { ReactNode } from "react";
 
 /**
@@ -39,7 +40,7 @@ export default function PartnerLayout({
           </div>
           <div className="flex-1 flex justify-end min-w-0">
             <Suspense fallback={<NavSkeleton />}>
-              <PartnerHeaderNav />
+              <PartnerHeaderWithBadge />
             </Suspense>
           </div>
         </div>
@@ -53,6 +54,18 @@ async function PartnerNameLabel() {
   await connection();
   const { partner } = await requirePartnerPage();
   return <span className="hidden sm:inline whitespace-nowrap text-xs text-zinc-500">· {partner.businessName}</span>;
+}
+
+/**
+ * v1.16 cycle #29 (H1 결의) — PartnerHeaderNav를 server-fetched draftCount와 함께 wrap.
+ * cycle #28 cacheComponents 패턴 준수: layout 자체는 sync, server fetch는 Suspense 자식.
+ * postRepository.countAutoDraftsForOwner는 React cache()로 같은 request 안 dedup.
+ */
+async function PartnerHeaderWithBadge() {
+  await connection();
+  const { uid } = await requirePartnerPage();
+  const draftCount = await postRepository.countAutoDraftsForOwner(uid);
+  return <PartnerHeaderNav draftCount={draftCount} />;
 }
 
 function NavSkeleton() {

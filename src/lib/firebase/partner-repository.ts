@@ -115,6 +115,10 @@ function toAutoSeries(
     // v1.14 cycle #27 (C1)
     photoCursor:
       typeof raw.photoCursor === "number" ? raw.photoCursor : 0,
+    // v1.16 cycle #29 (R12 back-compat) — 미설정 시 'auto'로 fallback
+    publishMode: raw.publishMode === "draft-only" ? "draft-only" : "auto",
+    targetAudience:
+      typeof raw.targetAudience === "string" ? raw.targetAudience : null,
   };
 }
 

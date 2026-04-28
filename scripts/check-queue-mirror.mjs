@@ -77,6 +77,25 @@ const CHECKS = [
     ],
     test: (src) => /export function toKstWallClock/.test(src),
   },
+  // v1.16 cycle #29 partner-editorial-oversight (N4 stricter regex)
+  {
+    title: "PartnerAutoSeries.publishMode + PublishMode type 양 패키지",
+    files: [
+      "src/types/auto-series.ts",
+      "functions/src/auto-series/lib/types.ts",
+    ],
+    test: (src) =>
+      /publishMode\s*:\s*PublishMode/.test(src) &&
+      /export type PublishMode\s*=/.test(src),
+  },
+  {
+    title: "PartnerAutoSeries.targetAudience 양 패키지",
+    files: [
+      "src/types/auto-series.ts",
+      "functions/src/auto-series/lib/types.ts",
+    ],
+    test: (src) => /targetAudience\s*:\s*string\s*\|\s*null/.test(src),
+  },
 ];
 
 async function readSafe(path) {

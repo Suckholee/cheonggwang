@@ -24,6 +24,12 @@ export interface AutoPublishConfig {
   timezone: "Asia/Seoul";
 }
 
+/**
+ * v1.16 cycle #29 — publishMode (G1, R12 back-compat).
+ * ⚠️ MIRROR of src/types/auto-series.ts — keep in sync.
+ */
+export type PublishMode = "auto" | "draft-only";
+
 export interface PartnerAutoSeries {
   enabled: boolean;
   lastIndex: number;
@@ -33,6 +39,10 @@ export interface PartnerAutoSeries {
   totalFailed: number;
   /** v1.14 cycle #27 (C1) — photo round-robin cursor decoupled from lastIndex */
   photoCursor: number;
+  /** v1.16 cycle #29 — 'auto' (cycle #28까지) | 'draft-only' (사장님 검토) */
+  publishMode: PublishMode;
+  /** v1.16 cycle #29 X2 확장 포인트 — cycle #30 audience targeting */
+  targetAudience: string | null;
 }
 
 /**

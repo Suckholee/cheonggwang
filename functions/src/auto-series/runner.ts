@@ -61,6 +61,15 @@ function partnerFromSnap(id: string, d: FirebaseFirestore.DocumentData): Partner
           typeof d.autoSeries.photoCursor === "number"
             ? d.autoSeries.photoCursor
             : 0,
+        // v1.16 cycle #29 (R12 back-compat): 미설정 시 'auto' fallback
+        publishMode:
+          d.autoSeries.publishMode === "draft-only"
+            ? ("draft-only" as const)
+            : ("auto" as const),
+        targetAudience:
+          typeof d.autoSeries.targetAudience === "string"
+            ? d.autoSeries.targetAudience
+            : null,
       }
     : undefined;
 
@@ -257,6 +266,17 @@ async function processOnePartner(
   }
 
   try {
+    // v1.16 cycle #29 (G1 결의): publishMode 분기 — 'draft-only'면 draft로 저장.
+    // R13: 사장님이 cycle #19 publish 토글로 draft → published 전환.
+    const desiredStatus =
+      partner.autoSeries?.publishMode === "draft-only"
+        ? ("draft" as const)
+        : ("published" as const);
+    const historyStatus =
+      desiredStatus === "draft"
+        ? ("auto-draft-saved" as const)
+        : ("published" as const);
+
     const { slug } = await createPostFromDraft(db, postId, {
       partner,
       draft,
@@ -265,6 +285,7 @@ async function processOnePartner(
       keywords: derived.keywords,
       generatedAt: now,
       isAutoSeries: true,
+      publishStatus: desiredStatus,
     });
 
     await markWindowConsumed(db, partner.id, now);
@@ -272,7 +293,7 @@ async function processOnePartner(
       slotIndex: nextIndex,
       angle,
       format,
-      status: "published",
+      status: historyStatus,
       postId,
       postSlug: slug,
       hygieneScore: draft.hygieneScore,
@@ -318,7 +339,13 @@ interface SeriesHistoryAppend {
   slotIndex: number;
   angle: string;
   format: string;
-  status: "published" | "hygiene-fail" | "error" | "photo-missing";
+  /** v1.16 cycle #29 (N2): 'auto-draft-saved' 추가 */
+  status:
+    | "published"
+    | "auto-draft-saved"
+    | "hygiene-fail"
+    | "error"
+    | "photo-missing";
   postId?: string;
   postSlug?: string;
   hygieneScore?: number;

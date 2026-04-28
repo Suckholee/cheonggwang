@@ -8,6 +8,7 @@ import { requireAdminApi } from "@/lib/auth/require-admin";
 import { partnerRepository } from "@/lib/firebase/partner-repository";
 import {
   DEFAULT_AUTO_SERIES,
+  type PublishMode,
   type QueueItem,
 } from "@/types/auto-series";
 import { AUTO_SERIES_ANGLES } from "@/domain/auto-series-angle";
@@ -291,6 +292,34 @@ export async function reorderQueue(
       newLastIndex,
     );
     revalidatePath("/partner/series");
+    return { ok: true };
+  } catch (e) {
+    return toError(e);
+  }
+}
+
+/**
+ * v1.16 cycle #29 partner-editorial-oversight · §3.5 (G1).
+ *
+ * 사장님이 publishMode 토글 — 'auto' (즉시 publish) ↔ 'draft-only' (검토 후 publish).
+ * 신규 매장은 togglePartnerAutoSeries first-time enablement 시
+ * DEFAULT_AUTO_SERIES.publishMode='draft-only' default 자동 적용.
+ */
+const togglePublishModeSchema = z.object({
+  mode: z.enum(["auto", "draft-only"]),
+});
+
+export async function togglePublishMode(
+  input: z.infer<typeof togglePublishModeSchema>,
+): Promise<ActionResult> {
+  try {
+    const { partner } = await requirePartnerApi();
+    const parsed = togglePublishModeSchema.parse(input);
+    await partnerRepository.updateAutoSeries(partner.id, {
+      publishMode: parsed.mode as PublishMode,
+    });
+    revalidatePath("/partner/series");
+    revalidatePath("/partner/posts");
     return { ok: true };
   } catch (e) {
     return toError(e);
