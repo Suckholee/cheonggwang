@@ -33,11 +33,16 @@ export default function AdminAutoSeriesPage() {
 async function Body() {
   await connection();
   await requireAdminPage("/admin/auto-series");
-  const [stats, partners] = await Promise.all([
-    autoSeriesRepository.stats24h(),
-    partnerRepository.listAutoSeriesEnabled(),
-  ]);
-  return <AutoSeriesDashboard stats={stats} partners={partners} />;
+  try {
+    const [stats, partners] = await Promise.all([
+      autoSeriesRepository.stats24h(),
+      partnerRepository.listAutoSeriesEnabled(),
+    ]);
+    return <AutoSeriesDashboard stats={stats} partners={partners} />;
+  } catch (e) {
+    console.error("[admin/auto-series] Body fetch failed", e);
+    throw e;
+  }
 }
 
 function Skeleton() {

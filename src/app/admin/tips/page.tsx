@@ -92,19 +92,24 @@ async function FlashBanner({
 async function StatCards() {
   await connection();
   await requireAdminPage("/admin/tips");
-  const stats = await tipRepository.getTipMonthlyStats();
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <StatCard label="이번 달 생성" value={stats.generated} />
-      <StatCard
-        label="검토 대기"
-        value={stats.drafted}
-        highlight={stats.drafted > 0}
-      />
-      <StatCard label="이번 달 발행" value={stats.published} />
-      <StatCard label="실패율" value={`${stats.failureRate}%`} />
-    </div>
-  );
+  try {
+    const stats = await tipRepository.getTipMonthlyStats();
+    return (
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatCard label="이번 달 생성" value={stats.generated} />
+        <StatCard
+          label="검토 대기"
+          value={stats.drafted}
+          highlight={stats.drafted > 0}
+        />
+        <StatCard label="이번 달 발행" value={stats.published} />
+        <StatCard label="실패율" value={`${stats.failureRate}%`} />
+      </div>
+    );
+  } catch (e) {
+    console.error("[admin/tips] StatCards fetch failed", e);
+    throw e;
+  }
 }
 
 function StatCard({
@@ -146,7 +151,13 @@ function StatSkeleton() {
 async function DraftList() {
   await connection();
   await requireAdminPage("/admin/tips");
-  const drafts = await tipRepository.listDrafts(20);
+  let drafts;
+  try {
+    drafts = await tipRepository.listDrafts(20);
+  } catch (e) {
+    console.error("[admin/tips] DraftList fetch failed", e);
+    throw e;
+  }
   if (drafts.length === 0) {
     return (
       <div className="rounded-md border border-zinc-200 bg-white p-8 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
