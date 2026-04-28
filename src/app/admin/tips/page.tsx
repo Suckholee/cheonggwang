@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { requireAdminPage } from "@/lib/auth/require-admin";
 import { tipRepository } from "@/lib/firebase/tip-repository";
+import { getAdminDataErrorMessage } from "@/lib/errors";
 
 /**
  * v1.17 cycle #30 cleaning-tips-content · §3.10 — admin tips dashboard.
@@ -108,7 +109,7 @@ async function StatCards() {
     );
   } catch (e) {
     console.error("[admin/tips] StatCards fetch failed", e);
-    throw e;
+    return <AdminQueryError message={getAdminDataErrorMessage(e)} />;
   }
 }
 
@@ -156,7 +157,7 @@ async function DraftList() {
     drafts = await tipRepository.listDrafts(20);
   } catch (e) {
     console.error("[admin/tips] DraftList fetch failed", e);
-    throw e;
+    return <AdminQueryError message={getAdminDataErrorMessage(e)} />;
   }
   if (drafts.length === 0) {
     return (
@@ -210,5 +211,13 @@ async function DraftList() {
 function DraftListSkeleton() {
   return (
     <div className="h-48 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800" />
+  );
+}
+
+function AdminQueryError({ message }: { message: string }) {
+  return (
+    <div className="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
+      {message}
+    </div>
   );
 }

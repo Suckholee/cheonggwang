@@ -4,6 +4,7 @@ import { requireAdminPage } from "@/lib/auth/require-admin";
 import { partnerRepository } from "@/lib/firebase/partner-repository";
 import { autoSeriesRepository } from "@/lib/firebase/auto-series-repository";
 import AutoSeriesDashboard from "@/components/admin/AutoSeriesDashboard";
+import { getAdminDataErrorMessage } from "@/lib/errors";
 
 /**
  * v1.13 cycle #26 partner-auto-series · §6.4 — admin 모니터링 페이지.
@@ -41,12 +42,20 @@ async function Body() {
     return <AutoSeriesDashboard stats={stats} partners={partners} />;
   } catch (e) {
     console.error("[admin/auto-series] Body fetch failed", e);
-    throw e;
+    return <AdminQueryError message={getAdminDataErrorMessage(e)} />;
   }
 }
 
 function Skeleton() {
   return (
     <div className="h-96 animate-pulse rounded-md bg-zinc-100 dark:bg-zinc-800" />
+  );
+}
+
+function AdminQueryError({ message }: { message: string }) {
+  return (
+    <div className="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
+      {message}
+    </div>
   );
 }
