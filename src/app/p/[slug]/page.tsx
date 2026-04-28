@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPublicPageView } from "@/services/page-service";
 import { PromoPage } from "@/components/promo/PromoPage";
+import { JsonLdScript } from "@/components/seo/JsonLdScript";
+import { buildLocalBusinessJsonLd } from "@/lib/seo/local-business-jsonld";
+import { getBaseUrl } from "@/lib/seo/base-url";
 
 type PageParams = { slug: string };
 
@@ -54,7 +57,15 @@ async function PromoContent({ params }: { params: Promise<PageParams> }) {
   const { slug } = await params;
   const view = await getPublicPageView(slug);
   if (!view) notFound();
-  return <PromoPage page={view.page} partner={view.partner} />;
+  // v1.15 cycle #28 partner-aeo-boost · §3.2 (G3) — LocalBusiness JSON-LD
+  const base = await getBaseUrl();
+  const localBusinessJsonLd = buildLocalBusinessJsonLd(view.page, base);
+  return (
+    <>
+      <JsonLdScript data={localBusinessJsonLd} />
+      <PromoPage page={view.page} partner={view.partner} />
+    </>
+  );
 }
 
 function PromoSkeleton() {

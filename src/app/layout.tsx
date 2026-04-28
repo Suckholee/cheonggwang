@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { BottomTabNavServer } from "@/components/nav/BottomTabNav";
+import { JsonLdScript } from "@/components/seo/JsonLdScript";
+import { buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,9 +16,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// v1.15 cycle #28 partner-aeo-boost · §3.3 (H3, G5).
+// metadataBase: og:image 절대 URL 보장. Vercel preview에서도 절대 URL 자동 생성.
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://cheonggwang.app";
+
 export const metadata: Metadata = {
   title: "청광",
   description: "청소 견적 마켓플레이스",
+  metadataBase: new URL(BASE_URL),
 };
 
 /**
@@ -48,6 +55,7 @@ export default function RootLayout({
             <BottomTabNavServer />
           </Suspense>
         </div>
+        <JsonLdScript data={buildOrganizationJsonLd()} />
       </body>
     </html>
   );

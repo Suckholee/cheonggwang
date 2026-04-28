@@ -94,6 +94,29 @@ export const pageRepository = {
     return snap.docs.map((d) => toPage(d.id, d.data()));
   },
 
+  /**
+   * v1.15 cycle #28 partner-aeo-boost · §3.5 (H4 결의) — sitemap 용 경량 메서드.
+   * published === true && slug !== null인 매장 페이지 slug + updatedAt만 반환.
+   */
+  async listPublishedSlugsForSitemap(
+    limit = 5000,
+  ): Promise<Array<{ slug: string; updatedAt: Date }>> {
+    const snap = await col()
+      .where("published", "==", true)
+      .orderBy("updatedAt", "desc")
+      .limit(limit)
+      .get();
+    const result: Array<{ slug: string; updatedAt: Date }> = [];
+    for (const doc of snap.docs) {
+      const d = doc.data();
+      const slug = (d.slug as string | null | undefined) ?? null;
+      if (!slug) continue;
+      const updatedAt = (d.updatedAt as Timestamp | undefined)?.toDate() ?? new Date();
+      result.push({ slug, updatedAt });
+    }
+    return result;
+  },
+
   async create(uid: string, input: SavePageInput): Promise<string> {
     const ref = col().doc();
     const now = FieldValue.serverTimestamp();

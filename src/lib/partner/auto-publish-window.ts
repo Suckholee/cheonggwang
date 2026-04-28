@@ -11,7 +11,84 @@ import type { AutoPublishConfig, Partner } from "@/types/partner";
  */
 
 /**
- * 주어진 시각이 윈도우 안에 있는지 판정.
+ * v1.15 cycle #28 partner-aeo-boost · §3.7 (C1+H7 결의).
+ *
+ * KST wall clock 컴포넌트 — host TZ 무관 산술용.
+ * Asia/Seoul = UTC+9 고정 (DST 없음).
+ */
+export interface KstWallClock {
+  /** 4-digit year, e.g. 2026 */
+  year: number;
+  /** 0-based month (Date.UTC 호환) */
+  month: number;
+  /** 1-based date */
+  date: number;
+  /** 0=Sun..6=Sat */
+  day: number;
+  /** 0..23 */
+  hours: number;
+  /** 0..59 */
+  minutes: number;
+}
+
+const WEEKDAY_MAP: Record<string, number> = {
+  Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+};
+
+/**
+ * host TZ 무관: Intl.DateTimeFormat으로 KST wall clock 컴포넌트 추출 (R10).
+ * Node 22 UTC 환경 + macOS KST 환경 모두 동일 결과.
+ */
+export function toKstWallClock(d: Date): KstWallClock {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(d);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "0";
+  return {
+    year: parseInt(get("year"), 10),
+    month: parseInt(get("month"), 10) - 1,
+    date: parseInt(get("day"), 10),
+    day: WEEKDAY_MAP[get("weekday")] ?? 0,
+    hours: parseInt(get("hour"), 10) % 24, // hour12:false에서 24:00 → 0 정규화
+    minutes: parseInt(get("minute"), 10),
+  };
+}
+
+/**
+ * KST wall clock(year, month, date)에서 `minute` 분 시각의 real UTC Date.
+ * KST = UTC+9 → real UTC = (year, month, date) at (h-9):m.
+ * h-9가 음수면 Date.UTC가 자동으로 전날로 정규화.
+ */
+function setKstClock(wall: KstWallClock, minute: number): Date {
+  const h = Math.floor(minute / 60);
+  const mi = minute % 60;
+  return new Date(Date.UTC(wall.year, wall.month, wall.date, h - 9, mi, 0, 0));
+}
+
+/**
+ * KST date 산술 (host TZ 무관). 윤년/월 경계는 Date.UTC로 정규화.
+ */
+function addDaysToWall(wall: KstWallClock, days: number): KstWallClock {
+  const tmp = new Date(Date.UTC(wall.year, wall.month, wall.date + days));
+  return {
+    ...wall,
+    year: tmp.getUTCFullYear(),
+    month: tmp.getUTCMonth(),
+    date: tmp.getUTCDate(),
+    day: tmp.getUTCDay(),
+  };
+}
+
+/**
+ * 주어진 시각이 윈도우 안에 있는지 판정 (host TZ 무관, R10).
  *
  *  - cfg.enabled = false           → false
  *  - cfg.weekdays.length === 0     → false
@@ -24,18 +101,14 @@ export function isInAutoPublishWindow(
 ): boolean {
   if (!cfg.enabled) return false;
   if (cfg.weekdays.length === 0) return false;
-  const kst = toKST(now);
-  if (!cfg.weekdays.includes(kst.getDay())) return false;
-  const minute = kst.getHours() * 60 + kst.getMinutes();
+  const wall = toKstWallClock(now);
+  if (!cfg.weekdays.includes(wall.day)) return false;
+  const minute = wall.hours * 60 + wall.minutes;
   return minute >= cfg.startMinute && minute < cfg.endMinute;
 }
 
 /**
- * KST 변환.
- * `Date#toLocaleString('en-US', { timeZone: 'Asia/Seoul' })`로 변환된 문자열을 다시 Date로 파싱하면
- * 호스트 로컬 타임존을 가진 "벽시계 KST" Date를 얻을 수 있다.
- *  - getDay/getHours/getMinutes는 호스트 타임존 기준이지만, 위 변환으로 KST 벽시계 값이 들어가 있으므로
- *    그대로 KST로 해석해도 안전.
+ * @deprecated v1.15 cycle #28 — 보존 (기존 호출자 호환). 신규 코드는 toKstWallClock 사용.
  */
 export function toKST(d: Date): Date {
   const kstStr = d.toLocaleString("en-US", { timeZone: "Asia/Seoul" });
@@ -119,49 +192,30 @@ export function nextAutoPublishWindow(
   if (!cfg.enabled) return { startsAt: null, endsAt: null };
   if (cfg.weekdays.length === 0) return { startsAt: null, endsAt: null };
 
-  const kst = toKST(now);
-  const todayDow = kst.getDay();
-  const todayMin = kst.getHours() * 60 + kst.getMinutes();
+  const wall = toKstWallClock(now);
+  const todayMin = wall.hours * 60 + wall.minutes;
 
-  // 현재 윈도우 내?
-  if (
-    cfg.weekdays.includes(todayDow) &&
-    todayMin >= cfg.startMinute &&
-    todayMin < cfg.endMinute
-  ) {
+  // 오늘이 활성 요일 + 윈도우 종료 전 (현재 윈도우 내 또는 시작 전 모두 포함)
+  if (cfg.weekdays.includes(wall.day) && todayMin < cfg.endMinute) {
     return {
-      startsAt: setKstClock(kst, cfg.startMinute),
-      endsAt: setKstClock(kst, cfg.endMinute),
-    };
-  }
-
-  // 오늘이 활성 요일이고 아직 시작 전?
-  if (cfg.weekdays.includes(todayDow) && todayMin < cfg.startMinute) {
-    return {
-      startsAt: setKstClock(kst, cfg.startMinute),
-      endsAt: setKstClock(kst, cfg.endMinute),
+      startsAt: setKstClock(wall, cfg.startMinute),
+      endsAt: setKstClock(wall, cfg.endMinute),
     };
   }
 
   // 다음 7일 내 가장 가까운 활성 요일
   for (let i = 1; i <= 7; i++) {
-    const targetDow = (todayDow + i) % 7;
+    const targetDow = (wall.day + i) % 7;
     if (!cfg.weekdays.includes(targetDow)) continue;
-    const target = new Date(kst);
-    target.setDate(kst.getDate() + i);
+    const targetWall = addDaysToWall(wall, i);
     return {
-      startsAt: setKstClock(target, cfg.startMinute),
-      endsAt: setKstClock(target, cfg.endMinute),
+      startsAt: setKstClock(targetWall, cfg.startMinute),
+      endsAt: setKstClock(targetWall, cfg.endMinute),
     };
   }
   return { startsAt: null, endsAt: null };
 }
 
-function setKstClock(base: Date, minute: number): Date {
-  const d = new Date(base);
-  d.setHours(Math.floor(minute / 60), minute % 60, 0, 0);
-  return d;
-}
 
 /**
  * v1.14 cycle #27 partner-series-queue · §3.6 (S4).
@@ -183,22 +237,20 @@ export function nextNAutoPublishWindows(
   if (cfg.weekdays.length === 0) return [];
   if (n <= 0) return [];
 
-  const kst = toKST(now);
-  const todayDow = kst.getDay();
-  const todayMin = kst.getHours() * 60 + kst.getMinutes();
+  const wall = toKstWallClock(now);
+  const todayMin = wall.hours * 60 + wall.minutes;
 
   const result: Array<{ startsAt: Date; endsAt: Date }> = [];
   for (let i = 0; i < 30 && result.length < n; i++) {
-    const targetDow = (todayDow + i) % 7;
+    const targetDow = (wall.day + i) % 7;
     if (!cfg.weekdays.includes(targetDow)) continue;
     // 오늘인데 이미 윈도우 종료 → skip
     if (i === 0 && todayMin >= cfg.endMinute) continue;
 
-    const target = new Date(kst);
-    target.setDate(kst.getDate() + i);
+    const targetWall = i === 0 ? wall : addDaysToWall(wall, i);
     result.push({
-      startsAt: setKstClock(target, cfg.startMinute),
-      endsAt: setKstClock(target, cfg.endMinute),
+      startsAt: setKstClock(targetWall, cfg.startMinute),
+      endsAt: setKstClock(targetWall, cfg.endMinute),
     });
   }
   return result;
@@ -217,11 +269,11 @@ export function currentWindowStart(
 ): Date | null {
   if (!cfg.enabled) return null;
   if (cfg.weekdays.length === 0) return null;
-  const kst = toKST(now);
-  if (!cfg.weekdays.includes(kst.getDay())) return null;
-  const minute = kst.getHours() * 60 + kst.getMinutes();
+  const wall = toKstWallClock(now);
+  if (!cfg.weekdays.includes(wall.day)) return null;
+  const minute = wall.hours * 60 + wall.minutes;
   if (minute < cfg.startMinute || minute >= cfg.endMinute) return null;
-  return setKstClock(kst, cfg.startMinute);
+  return setKstClock(wall, cfg.startMinute);
 }
 
 /**

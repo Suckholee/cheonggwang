@@ -215,10 +215,21 @@ function buildComposePrompt(args: ComposeArgs): string {
     ? `\n${args.ragContextSection}\n`
     : "";
   const tplBlock = args.templateContext ? `\n${args.templateContext}\n` : "";
-  const formatRule =
-    args.format === "card-news"
-      ? CARD_NEWS_INSTRUCTION
-      : "- 800~1200자 한국어 본문 (markdown — h2/h3/p/ul/li/strong 허용).";
+  const isCardNews = args.format === "card-news";
+  const formatRule = isCardNews
+    ? CARD_NEWS_INSTRUCTION
+    : "- 800~1200자 한국어 본문 (markdown — h2/h3/p/ul/li/strong 허용).";
+
+  // v1.15 cycle #28 partner-aeo-boost · §3.1 (G1, H1) — AEO 콘텐츠 패턴.
+  // ⚠️ MIRROR of src/lib/llm/partner-promo-generator.ts:aeoRule — keep in sync.
+  const aeoRule = isCardNews
+    ? ""
+    : `
+- **첫 단락(2-3줄)**: 핵심 메시지를 직설적으로 답변 (독자가 답을 바로 알도록).
+- **H2 헤더**: "{서비스} 비용은?", "어떻게 {서비스}하나요?" 처럼 자연어 질문 형식 1~2개 포함.
+- **마지막에 [자주 묻는 질문] 섹션**: \`## 자주 묻는 질문\` + \`### Q1./Q2./Q3.\` 형식 + 답변은 단락으로.
+- **구조**: 답변(첫 단락) → 근거(중단 H2들) → 자주 묻는 질문 (마지막).
+- FAQ 답변에서도 가격·할인율·전화번호를 사실로 단정하지 않습니다 (예: "가격은 매장에 문의" OK).`;
 
   return `[사진 설명]
 ${photoBlock}
@@ -229,12 +240,12 @@ ${keywordBlock}
 ${sloganBlock}
 - brandTone: ${args.brandTone}
 ${ragBlock}${tplBlock}
-위 사진 설명과 파트너 입력만 근거로 자연스러운 한국어 홍보 ${args.format === "card-news" ? "카드뉴스" : "블로그 글"}를 쓰세요.
+위 사진 설명과 파트너 입력만 근거로 자연스러운 한국어 홍보 ${isCardNews ? "카드뉴스" : "블로그 글"}를 쓰세요.
 규칙:
 - 사진에 없는 가격·전화번호·할인율을 지어내지 않습니다.
 - 매장 상호명(${args.businessName})은 자연스럽게 1~2회 언급.
 - 청광·경쟁업체 직접 언급/비방 금지.
-- "최저가", "업계 1위", "만족도 100%" 등 단정 광고 표현 금지.
+- "최저가", "업계 1위", "만족도 100%" 등 단정 광고 표현 금지.${aeoRule}
 ${formatRule}
 - 결과를 JSON으로 반환.`;
 }

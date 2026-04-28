@@ -7,8 +7,12 @@ import { providerRepository } from "@/lib/firebase/provider-repository";
 import { PostDetailView } from "@/components/community/PostDetailView";
 import { PostProviderInfoCard } from "@/components/community/PostProviderInfoCard";
 import { QuoteCTAButton } from "@/components/community/QuoteCTAButton";
-import { buildArticleJsonLd } from "@/lib/seo/article-jsonld";
+import { buildArticleGraphJsonLd } from "@/lib/seo/article-jsonld";
 import { JsonLdScript } from "@/components/seo/JsonLdScript";
+import {
+  postTypeToPanelSlug,
+  panelLabelForPost,
+} from "@/lib/feed/post-panel";
 import {
   SESSION_COOKIE_NAME,
   tryVerifySessionCookie,
@@ -93,7 +97,12 @@ async function PostBody({
     ? await providerRepository.get(post.providerId)
     : null;
 
-  const jsonLd = await buildArticleJsonLd(post);
+  const jsonLd = await buildArticleGraphJsonLd(post, {
+    breadcrumb: {
+      panelLabel: panelLabelForPost(post),
+      panelSlug: postTypeToPanelSlug(post.postType),
+    },
+  });
 
   return (
     <div className="space-y-6">

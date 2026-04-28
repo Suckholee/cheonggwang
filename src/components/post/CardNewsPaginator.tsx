@@ -6,6 +6,23 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { shouldUnoptimizeImage } from "@/lib/image/should-unoptimize";
 
 /**
+ * v1.15 cycle #28 partner-aeo-boost · §3.6 (G7) — 슬라이드 alt 자동 생성.
+ * 슬라이드 텍스트 첫 60자 + 매장명으로 alt 구성. 이미지 검색 + 접근성 향상.
+ */
+function makeSlideAlt(
+  html: string,
+  companyName: string,
+  n: number,
+): string {
+  const text = html
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 60);
+  return `${companyName} 카드뉴스 슬라이드 ${n}: ${text}`;
+}
+
+/**
  * v1.12 cycle #25 partner-content-formats · §5.3 (디자인 보완 v0.3).
  *
  * 카드뉴스 슬라이드 client paginator — 핀터레스트·인스타 카드뉴스 패턴.
@@ -116,7 +133,7 @@ export function CardNewsPaginator({
               {bg ? (
                 <Image
                   src={bg}
-                  alt=""
+                  alt={makeSlideAlt(html, companyName, i + 1)}
                   fill
                   sizes="(max-width: 640px) 100vw, 448px"
                   unoptimized={shouldUnoptimizeImage(bg)}

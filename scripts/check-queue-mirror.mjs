@@ -59,6 +59,24 @@ const CHECKS = [
     ],
     test: (src) => /photoCursor:\s*number/.test(src),
   },
+  // v1.15 cycle #28 partner-aeo-boost (C1+H7 결의)
+  {
+    title: "setKstClock host TZ 무관 (Date.UTC 사용 + setHours 금지)",
+    files: [
+      "src/lib/partner/auto-publish-window.ts",
+      "functions/src/auto-series/lib/window.ts",
+    ],
+    test: (src) =>
+      /Date\.UTC\(/.test(src) && !/\.setHours\(/.test(src),
+  },
+  {
+    title: "toKstWallClock 두 패키지 모두 export",
+    files: [
+      "src/lib/partner/auto-publish-window.ts",
+      "functions/src/auto-series/lib/window.ts",
+    ],
+    test: (src) => /export function toKstWallClock/.test(src),
+  },
 ];
 
 async function readSafe(path) {
