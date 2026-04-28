@@ -5,7 +5,7 @@ import { headers } from "next/headers";
  * v1.6 Phase 5 · H5 — base URL 헬퍼.
  *
  * 우선순위:
- *   1. `NEXT_PUBLIC_BASE_URL` (프로덕션 권장, 예: https://cheonggwang.app)
+ *   1. `NEXT_PUBLIC_BASE_URL` (프로덕션 권장, 예: https://www.cheonggwang.kr)
  *   2. `VERCEL_URL` (Vercel 자동 · 프리뷰 배포 포함)
  *   3. 요청 헤더 (`x-forwarded-proto` + `x-forwarded-host` 또는 `host`)
  *   4. localhost fallback

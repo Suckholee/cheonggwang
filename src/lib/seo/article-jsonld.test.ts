@@ -24,7 +24,7 @@ function assert(name: string, cond: boolean, info?: unknown): void {
 }
 
 // 환경변수 — base URL 고정 (test reproducibility)
-process.env.NEXT_PUBLIC_BASE_URL = "https://cheonggwang.app";
+process.env.NEXT_PUBLIC_BASE_URL = "https://www.cheonggwang.kr";
 
 function makePost(over: Partial<Post> = {}): Post {
   return {

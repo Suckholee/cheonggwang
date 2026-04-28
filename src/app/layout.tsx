@@ -18,7 +18,8 @@ const geistMono = Geist_Mono({
 
 // v1.15 cycle #28 partner-aeo-boost · §3.3 (H3, G5).
 // metadataBase: og:image 절대 URL 보장. Vercel preview에서도 절대 URL 자동 생성.
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://cheonggwang.app";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://www.cheonggwang.kr";
 
 export const metadata: Metadata = {
   title: "청광",

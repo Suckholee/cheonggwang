@@ -20,7 +20,7 @@ export interface OrganizationJsonLd {
   sameAs?: string[];
 }
 
-const FALLBACK_BASE = "https://cheonggwang.app";
+const FALLBACK_BASE = "https://www.cheonggwang.kr";
 
 function getBase(): string {
   return (process.env.NEXT_PUBLIC_BASE_URL || FALLBACK_BASE).replace(/\/$/, "");

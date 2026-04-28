@@ -163,7 +163,7 @@ export function LoginForm() {
         <p className="text-center text-[12px] text-zinc-500 dark:text-zinc-400">
           비밀번호를 잊으셨나요?{" "}
           <a
-            href="mailto:help@cheonggwang.app?subject=비밀번호 재설정 요청"
+            href="mailto:help@cheonggwang.kr?subject=비밀번호 재설정 요청"
             className="font-semibold text-[#2563EB] hover:underline dark:text-[#5B8DF6]"
           >
             운영팀에 문의
