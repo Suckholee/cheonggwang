@@ -66,6 +66,20 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ─── tips-admin-config (v1.18 cycle #31: 서버 전용 · Admin SDK 쓰기) ─
+    match /system/tipsAutoConfig {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /tipsTopicPool/{topicId} {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /tipsHistory/{tickId} {
+      allow read: if false;
+      allow write: if false;
+    }
+
     // ─── rateLimits (서버 전용) ────────────────────────────
     match /rateLimits/{bucket} {
       allow read: if false;

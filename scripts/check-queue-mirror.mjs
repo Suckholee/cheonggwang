@@ -139,6 +139,39 @@ const CHECKS = [
     test: (src) =>
       /getTodayKstStart/.test(src) && /currentKstSeason/.test(src),
   },
+  // v1.18 cycle #31 tips-admin-config (3 신규 mirror check)
+  {
+    title: "tips-config TipsAutoConfig 양 패키지 (NEW cycle #31)",
+    files: [
+      "src/lib/tips/tips-config.ts",
+      "functions/src/tips/lib/tips-config.ts",
+    ],
+    test: (src) => /TipsAutoConfig/.test(src),
+  },
+  {
+    title:
+      "dynamic-topic-pool fetchActiveTopicPool + pickNextTopicFromPool 양 패키지 (C2)",
+    files: [
+      "src/lib/tips/dynamic-topic-pool.ts",
+      "functions/src/tips/lib/dynamic-topic-pool.ts",
+    ],
+    test: (src) =>
+      /fetchActiveTopicPool/.test(src) && /pickNextTopicFromPool/.test(src),
+  },
+  {
+    title: "TipsTickStatus 6 literal 양 패키지 (C3 — drift 방지)",
+    files: [
+      "src/lib/tips/tips-config.ts",
+      "functions/src/tips/lib/tips-history.ts",
+    ],
+    test: (src) =>
+      /published-draft/.test(src) &&
+      /skip-disabled/.test(src) &&
+      /skip-already-today/.test(src) &&
+      /skip-no-topic/.test(src) &&
+      /compose-fail/.test(src) &&
+      /hygiene-fail/.test(src),
+  },
 ];
 
 async function readSafe(path) {

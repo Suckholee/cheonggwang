@@ -2,6 +2,44 @@
 
 ## Features
 
+### tips-admin-config — Tips 운영 자율성 (Marketplace v1.18 · #31 · 🏆🏆🏆 99.0% · **11번 연속 single-pass · cycle #29 동률 신기록**)
+
+- **완료일**: 2026-04-29
+- **Match Rate**: **99.0%** (cycle #29 99% 동률 신기록 — 가장 큰 cycle에서 record 갱신) — Critical 0 · Major 0 · Minor 2 (cosmetic — PATCH 4b numbering + `void pickNextTopic` marker, -1.0pp)
+- **PDCA 사이클**: #31 (Plan Plus → Design v0.2 post-validator 29/29 → Do S1–S16 → Check 99.0% → Report → Archive)
+- **Streak**: 🏆🏆🏆 **11사이클 연속 single-pass 90s%** (cycles #21~#31). **두 자릿수 + 1 마일스톤** — 가장 큰 cycle (~2,010 LOC, 21 files)에서도 single-pass 통과
+- **레벨**: Dynamic (Next.js 16 cacheComponents · Firebase Cloud Functions v2 · 3 신규 Firestore collection · 6번째 Option A mirror cycle)
+- **방향**: 사용자 요구 "/admin/tips에 자동 설정이 없어" + "운영 자율성 일체" — Approach B (Firestore config + 코드 schedule + admin UI). cycle #30 cleaning-tips-content의 자동 발행 시스템에 admin 운영 layer 추가. R15 cycle #19 generator 11번째 무수정 + cycle #30 자체 immutability 동시 검증 (가장 까다로운 invariant 보존 cycle)
+- **경로**: [tips-admin-config/](./tips-admin-config/)
+
+**문서**
+- [Plan](./tips-admin-config/tips-admin-config.plan.md) (Plan Plus 4 phase · Q1 운영 자율성 일체 · Q2 Approach B 절충 · Q3 S2+S4+S5+S7+S8 multiSelect)
+- [Design](./tips-admin-config/tips-admin-config.design.md) (v0.2 · validator 6 Critical + 5 High + 10 Medium + 8 Low = 29 결의)
+- [Analysis](./tips-admin-config/tips-admin-config.analysis.md) (99.0% · 29/29 issue 모두 file:line 추적 · 0 critical/major)
+- [Report](./tips-admin-config/tips-admin-config.report.md)
+
+**핵심 결정**
+- **R15 cycle #19 generator 0줄 변경 (11번째 검증 통과)** — `partner-promo-generator.ts:168-241` 함수 시그니처 0 변경. **두 자릿수 + 1 cycle**. 11사이클 동안 architecture 누적 효과 검증
+- **R1 cycle #26 auto-series runner 0줄 변경 (13번째 cycle)** — functions/auto-series/runner.ts 미접촉
+- **C2 결의 — cycle #30 자체 immutability 보존** — `topic-pool.ts:pickNextTopic` 시그니처 미변경. 신규 함수 `pickNextTopicFromPool(pool, args)`을 dynamic-topic-pool.ts에 별도 작성. cycle #30 9 file 모두 0줄 변경 (topic-pool / prompt / tips-generator / stock-images / today-kst / infer-categories / hygiene-guard / tip-repository / admin-tips-actions)
+- **NEW-R23 — every termination → tipsHistory append** — runner.ts 6 종료 path 모두 1건 history (skip-disabled / skip-already-today / skip-no-topic / compose-fail / hygiene-fail / published-draft). 운영 가시성
+- **NEW-R24 — Firestore-first + static fallback** — 양 패키지 `tipsTopicPool` 빈 → `TIPS_TOPIC_POOL` (cycle #30 30개) fallback. configure 실수 방어
+- **R12 (cycle #29) back-compat fallback 3번째 cycle 적용** — `tipsAutoConfig` doc 미존재 → `enabled: true` fallback. 0 regression 보장
+- **C5 결의 — `tips-config.ts` NOT server-only** — pure types + zod만 (외부 의존성 0). prompt.ts (cycle #30) 패턴 일치 — tsx test 가능
+- **C6 결의 — server action bind 패턴** — `action={updateTopic.bind(null, topicId)}` (inline arrow X). Next.js 16 server action 표준 패턴
+- **M3 결의 — plain server form (RHF 미사용)** — cycle #30 `triggerTipGeneration` 패턴 일치. ~150 LOC 절감 + bundle size 절약
+- **M4 결의 — 모든 신규 Suspense child가 `await connection()`** — Next.js 16 cacheComponents 호환. ScheduleInfo (`new Date()` uncached) build 단계 발견 → Suspense + connection() 추가
+- **M7 결의 — firestore.rules `read/write: if false`** — quoteTrendKeywords 패턴 일치. 3 신규 collection (tipsAutoConfig + tipsTopicPool + tipsHistory) 모두 Admin SDK only
+- **Option A 코드 복제 6번째 사이클 (3 mirror pair)** — tips-config + dynamic-topic-pool + tips-history 양 패키지. CI lint 13 → 16 (3 신규 check, TipsTickStatus 6 literal drift 방지 포함)
+
+**11-streak 마일스톤 (cycles #21~#31 평균 96.5%)**:
+- 가장 큰 scope (~2,010 LOC, 21 files) 단일 패스 통과 — methodology가 더 큰 cycle에서도 scaling 검증
+- design-validator가 cycle #31에서 29 issue 발견 (가장 까다로운 — 6 Critical + 5 High + 10 Medium + 8 Low). 그중 **C2 (pickNextTopic 시그니처 변경 risk → cycle #30 immutability 깨짐) + C5 (server-only chain blocking test) + C6 (잘못된 server action bind)** 3건은 reality-check 없이는 catch 불가능했을 functional bug. Design v0.1 → v0.2 29-issue 결의 매트릭스가 ~250 LOC rework + cycle #30 immutability 위반 사전 방지
+- **R15 invariant 11사이클 연속** — 두 자릿수 + 1 milestone. 11 cycles 동안 partner-promo-generator.ts library처럼 보존
+- 통합 검증: pnpm exec tsc(2 packages) + pnpm build full prerender + pnpm test:tips 13/13 (cycle #30 8 + cycle #31 5) + pnpm lint:mirror 16/16
+
+---
+
 ### cleaning-tips-content — 청소 노하우 자동 발행 (Marketplace v1.17 · #30 · 🏆🏆🏆 98.5% · **10번 연속 single-pass · 두 자릿수 마일스톤**)
 
 - **완료일**: 2026-04-28
