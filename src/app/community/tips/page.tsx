@@ -50,9 +50,14 @@ function FeedSkeleton() {
 async function FeedBody() {
   await connection();
   try {
-    const { posts } = await postRepository.listByType(CFG.postType, {
-      limit: 20,
-    });
+    // v1.7 published만 노출 (draft·withdrawn 제외) — /community/partners 패턴 일치.
+    // 잠복 버그 핫픽스: cycle #30/#31에서 listByType이 draft까지 노출 → /community/p/{slug}
+    // 클릭 시 admin session으로 viewerUid 매칭 실패 → notFound() 404 발생.
+    const { posts } = await postRepository.listByTypeAndStatus(
+      CFG.postType,
+      "published",
+      { limit: 20 },
+    );
     if (posts.length === 0) {
       return (
         <CommunityEmptyState
@@ -63,7 +68,7 @@ async function FeedBody() {
     }
     return <PostFeedGrid posts={posts} />;
   } catch (e) {
-    console.warn("[community/tips] listByType failed:", e);
+    console.warn("[community/tips] listByTypeAndStatus failed:", e);
     return (
       <CommunityEmptyState
         heading={CFG.emptyCopy.heading}

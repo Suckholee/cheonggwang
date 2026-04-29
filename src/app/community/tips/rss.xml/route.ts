@@ -6,9 +6,12 @@ import { getBaseUrl } from "@/lib/seo/base-url";
 export async function GET(): Promise<Response> {
   const cfg = PANELS.tips;
   const base = await getBaseUrl();
-  const { posts } = await postRepository.listByType(cfg.postType, {
-    limit: 50,
-  });
+  // v1.7 published만 포함 (draft·withdrawn 제외) — /community/partners/rss.xml 패턴 일치.
+  const { posts } = await postRepository.listByTypeAndStatus(
+    cfg.postType,
+    "published",
+    { limit: 50 },
+  );
   const xml = buildRss2_0({
     title: cfg.seoTitle,
     link: `${base}/community/${cfg.slug}`,
