@@ -20,6 +20,10 @@ import {
   SESSION_COOKIE_NAME,
   tryVerifySessionCookie,
 } from "@/lib/firebase/auth-admin";
+import {
+  ADMIN_SESSION_COOKIE,
+  verifyAdminToken,
+} from "@/lib/auth/admin-session";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -78,6 +82,7 @@ async function PostBody({
   if (!post) notFound();
 
   // v1.7 Design §3.3 — publishStatus !== 'published' 시 본인만 접근 (preview 모드).
+  // admin도 운영 검토를 위해 preview 허용.
   // 그 외 (비로그인·다른 파트너·일반 사용자)는 404로 떨어뜨려 비공개 글의 존재 자체를 숨김.
   let isPreview = false;
   if (post.publishStatus !== "published") {
@@ -85,7 +90,10 @@ async function PostBody({
     const viewerUid = await tryVerifySessionCookie(
       jar.get(SESSION_COOKIE_NAME)?.value,
     );
-    if (!viewerUid || viewerUid !== post.providerOwnerUid) {
+    const isAdmin = await verifyAdminToken(
+      jar.get(ADMIN_SESSION_COOKIE)?.value,
+    );
+    if ((!viewerUid || viewerUid !== post.providerOwnerUid) && !isAdmin) {
       notFound();
     }
     isPreview = true;
