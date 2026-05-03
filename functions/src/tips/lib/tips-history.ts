@@ -2,13 +2,14 @@ import { FieldValue, type Firestore } from "firebase-admin/firestore";
 
 /**
  * v1.18 cycle #31 tips-admin-config · §3.5 + §4.3 (NEW-R23 결의).
+ * v1.19 cycle #32 tips-schedule-editor · §3.11 — 7번째 literal 추가 (skip-out-of-schedule).
  *
  * tipsHistory append helper (functions side 전용 — Next.js은 read만).
  * NEW-R23 — 모든 runTipsTick 종료 path가 1건 append (skip/error/success 모두).
  *
- * ⚠️ C3 결의 — TipsTickStatus 6 literal은 양 패키지 (Next.js src/lib/tips/tips-config.ts +
+ * ⚠️ C3 결의 — TipsTickStatus 7 literal은 양 패키지 (Next.js src/lib/tips/tips-config.ts +
  *              functions/src/tips/lib/tips-history.ts) 모두 보존 강제.
- *              CI lint: scripts/check-queue-mirror.mjs (마지막 check 6 literal 양쪽 검증).
+ *              CI lint: scripts/check-queue-mirror.mjs check #16이 7 literal 양쪽 검증.
  */
 
 export type TipsTickStatus =
@@ -17,7 +18,8 @@ export type TipsTickStatus =
   | "skip-already-today"
   | "skip-no-topic"
   | "compose-fail"
-  | "hygiene-fail";
+  | "hygiene-fail"
+  | "skip-out-of-schedule";
 
 export interface TipsTickEventInput {
   status: TipsTickStatus;

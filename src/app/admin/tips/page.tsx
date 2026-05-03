@@ -8,6 +8,7 @@ import { getAdminDataErrorMessage } from "@/lib/errors";
 import {
   calculateNextTickTime,
   formatNextTickKst,
+  formatScheduleSummary,
 } from "@/lib/tips/next-tick-time";
 import AdminTipsAutoConfigToggle from "@/components/admin/AdminTipsAutoConfigToggle";
 import AdminTipsHistoryTable from "@/components/admin/AdminTipsHistoryTable";
@@ -116,15 +117,23 @@ async function AutoConfigSection() {
 
 async function ScheduleInfo() {
   // M4 결의 — uncached data (new Date) 사용 시 connection() 필수
+  // cycle #32 §3.9 (S19) — config-driven (R-H5: getConfig 1 surgical patch).
   await connection();
-  const next = calculateNextTickTime();
+  const config = await tipsConfigRepository.getConfig();
+  const next = calculateNextTickTime(config);
   return (
     <div className="rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium">Schedule</div>
           <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-            cron <code className="rounded bg-zinc-100 px-1 py-0.5 text-[11px] dark:bg-zinc-800">{`30 9-17 * * *`}</code> Asia/Seoul · 변경은 dev 요청
+            {formatScheduleSummary(config.schedule)} ·{" "}
+            <Link
+              href="/admin/tips/schedule"
+              className="text-blue-600 hover:underline"
+            >
+              편집하기
+            </Link>
           </div>
         </div>
         <div className="shrink-0 text-right">

@@ -80,6 +80,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ─── tips-schedule-editor (v1.19 cycle #32: 서버 전용 · Admin SDK 쓰기) ─
+    match /tipsScheduleAudit/{auditId} {
+      allow read: if false;
+      allow write: if false;
+    }
+
     // ─── rateLimits (서버 전용) ────────────────────────────
     match /rateLimits/{bucket} {
       allow read: if false;

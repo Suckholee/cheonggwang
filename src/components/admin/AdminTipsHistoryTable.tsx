@@ -21,6 +21,8 @@ const STATUS_LABELS: Record<TipsTickStatus, { label: string; color: string }> = 
   "skip-no-topic": { label: "⚠️ topic 부족", color: "text-amber-600 dark:text-amber-400" },
   "compose-fail": { label: "❌ AI 실패", color: "text-rose-600 dark:text-rose-400" },
   "hygiene-fail": { label: "⚠️ hygiene 미달", color: "text-amber-600 dark:text-amber-400" },
+  // cycle #32 — wide cron 24/일 발화에서 schedule gate 미통과 시 (정상 운영 상태 — 노이즈 ↑)
+  "skip-out-of-schedule": { label: "⏸ schedule out", color: "text-zinc-400" },
 };
 
 export default async function AdminTipsHistoryTable() {

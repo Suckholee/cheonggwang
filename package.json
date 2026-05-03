@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "lint:mirror": "node scripts/check-auto-series-mirror.mjs && node scripts/check-queue-mirror.mjs",
-    "test:tips": "npx tsx src/lib/llm/tips-generator.test.ts && npx tsx src/lib/tips/topic-pool.test.ts && npx tsx src/lib/tips/next-tick-time.test.ts"
+    "test:tips": "npx tsx src/lib/llm/tips-generator.test.ts && npx tsx src/lib/tips/topic-pool.test.ts && npx tsx src/lib/tips/next-tick-time.test.ts && npx tsx src/lib/tips/schedule-gate.test.ts && npx tsx src/lib/tips/schedule-preview.test.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

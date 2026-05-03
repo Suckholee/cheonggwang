@@ -141,12 +141,15 @@ const CHECKS = [
   },
   // v1.18 cycle #31 tips-admin-config (3 신규 mirror check)
   {
-    title: "tips-config TipsAutoConfig 양 패키지 (NEW cycle #31)",
+    // cycle #32 갱신 (R-H1·R-M3) — TipsScheduleConfig literal 추가 검증
+    title:
+      "tips-config TipsAutoConfig + TipsScheduleConfig 양 패키지 (cycle #31·32)",
     files: [
       "src/lib/tips/tips-config.ts",
       "functions/src/tips/lib/tips-config.ts",
     ],
-    test: (src) => /TipsAutoConfig/.test(src),
+    test: (src) =>
+      /TipsAutoConfig/.test(src) && /TipsScheduleConfig/.test(src),
   },
   {
     title:
@@ -159,7 +162,8 @@ const CHECKS = [
       /fetchActiveTopicPool/.test(src) && /pickNextTopicFromPool/.test(src),
   },
   {
-    title: "TipsTickStatus 6 literal 양 패키지 (C3 — drift 방지)",
+    // cycle #32 갱신 (R-M3) — 6 literal → 7 literal (skip-out-of-schedule 추가)
+    title: "TipsTickStatus 7 literal 양 패키지 (C3 — drift 방지, cycle #32)",
     files: [
       "src/lib/tips/tips-config.ts",
       "functions/src/tips/lib/tips-history.ts",
@@ -170,7 +174,27 @@ const CHECKS = [
       /skip-already-today/.test(src) &&
       /skip-no-topic/.test(src) &&
       /compose-fail/.test(src) &&
-      /hygiene-fail/.test(src),
+      /hygiene-fail/.test(src) &&
+      /skip-out-of-schedule/.test(src),
+  },
+  // v1.19 cycle #32 tips-schedule-editor (2 신규 mirror check)
+  {
+    title:
+      "schedule-gate shouldTickNow + :30 invariant 양 패키지 (NEW cycle #32)",
+    files: [
+      "src/lib/tips/schedule-gate.ts",
+      "functions/src/tips/lib/schedule-gate.ts",
+    ],
+    test: (src) => /shouldTickNow/.test(src) && /minutes !== 30/.test(src),
+  },
+  {
+    title:
+      "next-tick-time calculateNextTickTime 양 패키지 (NEW cycle #32 mirror)",
+    files: [
+      "src/lib/tips/next-tick-time.ts",
+      "functions/src/tips/lib/next-tick-time.ts",
+    ],
+    test: (src) => /calculateNextTickTime/.test(src),
   },
 ];
 

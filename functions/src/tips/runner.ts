@@ -13,15 +13,25 @@ import {
   pickNextTopicFromPool,
 } from "./lib/dynamic-topic-pool";
 import { appendTipsHistory } from "./lib/tips-history";
+// v1.19 cycle #32 tips-schedule-editor — 신규 imports (S12 — gate + KST wall clock)
+//   R-H3 — functions 측 toKstWallClock는 ../auto-series/lib/window (Next.js의
+//   auto-publish-window.ts와 다른 파일명).
+import { shouldTickNow } from "./lib/schedule-gate";
+import { toKstWallClock } from "../auto-series/lib/window";
 
 /**
  * v1.17 cycle #30 cleaning-tips-content · §3.3
- * v1.18 cycle #31 tips-admin-config · §3.2 — 5 surgical patches (config gate +
- *   dynamic pool + history append). pickNextTopic 시그니처 미변경 (C2 결의 —
- *   신규 함수 pickNextTopicFromPool 별도 사용).
+ * v1.18 cycle #31 tips-admin-config · §3.2 — 6 surgical patches (config gate +
+ *   dynamic pool + history append: PATCH 1·2·3·4·4b·5). pickNextTopic 시그니처
+ *   미변경 (C2 결의 — 신규 함수 pickNextTopicFromPool 별도 사용).
+ * v1.19 cycle #32 tips-schedule-editor · §3.2 — PATCH 0a (schedule gate) 삽입
+ *   + PATCH 1 1a/1b split [R-M5]. fetch는 line 그대로, enabled 체크는 PATCH 0a 뒤로.
+ *   결과: 7 patch 구조 (PATCH 0a + 6 보존).
  *
  * tipsTick 핵심 흐름 (host TZ 무관, R10 패턴):
- *   0) [cycle #31 PATCH 1] config read — enabled=false면 즉시 skip + history (S2)
+ *   0) [cycle #31 PATCH 1a] config read (fetch — 위치 변경 X)
+ *  0a) [cycle #32 PATCH 0a] schedule gate — daysOfWeek/hour/:30 미통과시 skip-out-of-schedule (S4)
+ *   0b) [cycle #31 PATCH 1b] enabled gate — false면 skip-disabled (위치 이동, 의미 보존)
  *   1) R16 — 일일 1건 제한 (KST 자정 기준) [+ PATCH 2 history]
  *   2) RAG anti-drift — 최근 20 tip title 회피
  *   3) 시즌 필터 + 라운드 로빈 topic 선정 (Firestore 우선 + static fallback,
@@ -31,11 +41,14 @@ import { appendTipsHistory } from "./lib/tips-history";
  *   6) post create — 항상 'draft' (R16), isAutoSeries=false (R17 명시)
  *      [+ PATCH 5 history published-draft]
  *
- * R15: cycle #19 partner-promo-generator 0줄 변경 11번째 (cycle #31).
- * R1: auto-series/runner.ts 0줄 변경 (nanoid16 로컬 복제 — NEW-C5).
+ * R15: cycle #19 partner-promo-generator 0줄 변경 12번째 (cycle #32).
+ * R1: auto-series/runner.ts 0줄 변경 14번째 (nanoid16 로컬 복제 — NEW-C5 보존).
  * NEW-R19: cron offset (autoSeriesTick :00 ↔ tipsTick :30, NEW-H6).
- * NEW-R23: 모든 종료 path가 tipsHistory append (cycle #31).
- * NEW-R24: dynamic topic pool Firestore 우선 + static fallback (cycle #31).
+ *   cycle #32: cron `30 9-17` → `30 * * * *` wide cron으로 변경됐지만 :30 invariant는
+ *   런타임 gate (`shouldTickNow`가 minutes !== 30이면 false)에서 영구 강제.
+ * NEW-R23: 모든 종료 path가 tipsHistory append (cycle #31). cycle #32에서 7번째 status
+ *   skip-out-of-schedule 추가.
+ * NEW-R24: dynamic topic pool Firestore 우선 + static fallback (cycle #31, 0줄 변경).
  */
 
 // NEW-C5 — nanoid16 로컬 복제 (auto-series runner.ts 0줄 변경 보존, R1 streak 기여).
@@ -56,8 +69,28 @@ void pickNextTopic;
 export async function runTipsTick(now: Date): Promise<void> {
   const db = getFirestore();
 
-  // [cycle #31 PATCH 1] config gate — S2 enabled 체크
+  // [cycle #31 PATCH 1a — config fetch] 위치 보존 (R-M5)
   const config = await readTipsAutoConfig(db);
+
+  // [cycle #32 PATCH 0a] schedule gate — NEW (G1·G6, OQ11·C-G1: schedule이 enabled보다 먼저)
+  // wide cron `30 * * * *`이 24/일 발화하므로 hour/dow/:30 미통과 시 skip-out-of-schedule.
+  // dayOfWeek는 KST wall date를 UTC 재구성 → getUTCDay (host TZ 무관, cycle #28 패턴).
+  const wall = toKstWallClock(now);
+  const kstNow = {
+    hours: wall.hours,
+    minutes: wall.minutes,
+    dayOfWeek: new Date(
+      Date.UTC(wall.year, wall.month, wall.date),
+    ).getUTCDay(),
+  };
+  if (!shouldTickNow(config, kstNow)) {
+    // wide cron 24/일 발화 중 ~23/일이 schedule out — console.log noise 회피.
+    // 추적은 tipsHistory에 기록 (NEW-R23 — admin이 /admin/tips에서 확인 가능).
+    await appendTipsHistory(db, { status: "skip-out-of-schedule" });
+    return;
+  }
+
+  // [cycle #31 PATCH 1b — enabled gate] 위치 이동 (의미 보존, R-M5 split)
   if (!config.enabled) {
     await appendTipsHistory(db, { status: "skip-disabled" });
     console.log("[tips] disabled by admin — skip");
