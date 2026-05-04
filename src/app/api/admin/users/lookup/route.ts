@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { connection } from "next/server";
-export const dynamic = "force-dynamic";
 import { z } from "zod";
+
+// Next.js 16 cacheComponents — `export const dynamic` 제거.
+// `connection()` 호출이 이미 route를 dynamic으로 만들어 force-dynamic 불필요.
 import { adminAuth } from "@/lib/firebase/admin";
 import { requireAdminApi } from "@/lib/auth/require-admin";
 import { AppError, type AppErrorCode } from "@/lib/errors";
