@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Shield, Clock } from "lucide-react";
+import { Shield, Clock, ArrowRight } from "lucide-react";
 import { shouldUnoptimizeImage } from "@/lib/image/should-unoptimize";
 import {
   QUOTE_CATEGORY_EMOJIS,
