@@ -6,6 +6,7 @@ import { rankRailPosts } from "@/lib/feed/ranking";
 import { matchesSearch } from "@/lib/feed/search";
 import { Rail } from "./Rail";
 import { EmptyFeed } from "./EmptyFeed";
+import { RegionQuickExplorer } from "./RegionQuickExplorer";
 import type { Category, Region } from "@/types/page";
 
 interface Props {
@@ -26,11 +27,25 @@ export async function FeedRails({ filter, query }: Props) {
     (filter.category !== undefined && filter.category !== "all");
 
   if (filtered.length === 0) {
-    return <EmptyFeed hasFilter={hasActiveFilter} />;
+    return (
+      <div className="pb-16">
+        <RegionQuickExplorer />
+        <EmptyFeed hasFilter={hasActiveFilter} />
+      </div>
+    );
   }
 
   const tc = currentTimeContext();
-  const rails = RAILS.filter((r) => !r.timeContext || r.timeContext === tc);
+  let rails = RAILS.filter((r) => !r.timeContext || r.timeContext === tc);
+
+  // If a region filter is active, float the 'nearby' rail to the very top
+  if (filter.region) {
+    const nearbyIndex = rails.findIndex((r) => r.id === "nearby");
+    if (nearbyIndex > -1) {
+      const [nearbyRail] = rails.splice(nearbyIndex, 1);
+      rails = [nearbyRail, ...rails];
+    }
+  }
 
   const rendered = rails
     .map((rail) => {
@@ -43,8 +58,18 @@ export async function FeedRails({ filter, query }: Props) {
     .filter((el): el is ReactElement => el !== null);
 
   if (rendered.length === 0) {
-    return <EmptyFeed hasFilter={hasActiveFilter} />;
+    return (
+      <div className="pb-16">
+        <RegionQuickExplorer />
+        <EmptyFeed hasFilter={hasActiveFilter} />
+      </div>
+    );
   }
 
-  return <div className="pb-16">{rendered}</div>;
+  return (
+    <div className="pb-16">
+      <RegionQuickExplorer />
+      {rendered}
+    </div>
+  );
 }

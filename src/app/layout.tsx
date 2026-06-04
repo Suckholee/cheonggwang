@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { BottomTabNavServer } from "@/components/nav/BottomTabNav";
+import { PageTransitionWrapper } from "@/components/nav/PageTransitionWrapper";
 import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import { buildOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 
@@ -49,9 +51,24 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-[#F9FAFB] dark:bg-black`}
     >
       <body className="flex min-h-full flex-col items-center justify-center font-sans text-[#111827] bg-[#F9FAFB] dark:bg-black dark:text-zinc-50 has-[[data-admin-shell]]:bg-[#F9FAFB] has-[[data-admin-shell]]:dark:bg-zinc-950">
-        <div className="w-full max-w-[480px] bg-[#F9FAFB] dark:bg-zinc-950 min-h-screen relative flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.03)] overflow-hidden has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible">
+        <NextTopLoader
+          color="#2563EB"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #2563EB,0 0 5px #2563EB"
+        />
+        <div className="w-full max-w-[480px] bg-[#F9FAFB] dark:bg-zinc-950 h-screen h-[100dvh] relative flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.03)] overflow-hidden has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:h-auto">
           <main className="flex-1 overflow-y-auto pb-[calc(var(--bottom-nav-height)+20px)] [&::-webkit-scrollbar]:hidden has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:pb-0">
-            {children}
+            <Suspense fallback={null}>
+              <PageTransitionWrapper>
+                {children}
+              </PageTransitionWrapper>
+            </Suspense>
           </main>
           <Suspense fallback={null}>
             <BottomTabNavServer />

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { ChevronLeft } from "lucide-react";
 import {
   SESSION_COOKIE_NAME,
   verifySessionCookie,
@@ -14,7 +15,7 @@ import {
   QUOTE_CATEGORY_EMOJIS,
   QUOTE_CATEGORY_LABELS,
 } from "@/domain/quote-category";
-import { QuoteStepper } from "@/components/received/QuoteStepper";
+import { RequestAccordion } from "@/components/received/RequestAccordion";
 import { QuoteCompareCard } from "@/components/received/QuoteCompareCard";
 
 export const metadata = {
@@ -27,7 +28,7 @@ export default function ComparePage(props: {
   params: Promise<Params>;
 }) {
   return (
-    <div className="mx-auto min-h-screen max-w-xl px-4 py-6">
+    <div className="mx-auto min-h-screen max-w-md bg-zinc-50 dark:bg-zinc-900 pb-12 shadow-2xl border-x border-zinc-200/50 dark:border-zinc-800/50 relative">
       <Suspense fallback={<CompareSkeleton />}>
         <CompareBody params={props.params} />
       </Suspense>
@@ -37,16 +38,23 @@ export default function ComparePage(props: {
 
 function CompareSkeleton() {
   return (
-    <div className="animate-pulse">
-      <div className="mb-4 h-4 w-24 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="mb-6 h-8 w-60 rounded bg-zinc-200 dark:bg-zinc-800" />
+    <div className="animate-pulse p-4">
+      <div className="mb-4 h-6 w-6 rounded bg-zinc-200 dark:bg-zinc-800" />
+      <div className="mb-6 h-32 w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
       <div className="mb-6 h-16 w-full rounded-xl bg-zinc-100 dark:bg-zinc-900" />
       <div className="flex flex-col gap-3">
-        <div className="h-48 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
-        <div className="h-48 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+        <div className="h-20 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+        <div className="h-20 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
       </div>
     </div>
   );
+}
+
+function formatDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}.${m}.${d}`;
 }
 
 async function CompareBody({ params }: { params: Promise<Params> }) {
@@ -72,7 +80,6 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
   const providers = await Promise.all(
     quotes.map((q) => providerRepository.get(q.providerId)),
   );
-  // v1.3 booking · quote당 1 booking (singleton)
   const bookings = await Promise.all(
     quotes.map((q) => bookingRepository.findByQuoteId(q.id)),
   );
@@ -81,57 +88,79 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
     if (b) bookingScheduledAtMsByQuoteId.set(quotes[i].id, b.scheduledAt.getTime());
   });
 
-  const emoji = QUOTE_CATEGORY_EMOJIS[request.category];
   const catLabel = QUOTE_CATEGORY_LABELS[request.category];
-  const sizeLabel = request.size
-    ? `${request.size}평${request.roomType ? ` · ${request.roomType}` : ""}`
-    : request.roomType ?? "";
+  const emoji = QUOTE_CATEGORY_EMOJIS[request.category];
+
+  // Category gradients matching premium aesthetics
+  const categoryGradients: Record<string, string> = {
+    "move-in": "from-sky-500 to-indigo-600 dark:from-sky-700 dark:to-indigo-900",
+    office: "from-slate-650 to-neutral-850 dark:from-slate-800 dark:to-neutral-950",
+    aircon: "from-cyan-500 to-teal-600 dark:from-cyan-700 dark:to-teal-900",
+    "move-out": "from-amber-500 to-orange-600 dark:from-amber-700 dark:to-orange-950",
+    special: "from-violet-500 to-fuchsia-600 dark:from-violet-700 dark:to-fuchsia-900",
+    regular: "from-emerald-500 to-teal-700 dark:from-emerald-700 dark:to-teal-900",
+  };
+  const gradient = categoryGradients[request.category] || "from-zinc-500 to-zinc-700";
 
   return (
     <>
-      <Link
-        href="/received"
-        className="mb-4 inline-block text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-      >
-        ← 받은 견적
-      </Link>
+      {/* Category Banner Header */}
+      <header className={`relative bg-gradient-to-br ${gradient} px-5 pb-16 pt-6 text-white overflow-hidden`}>
+        <div className="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4 select-none pointer-events-none text-9xl">
+          {emoji}
+        </div>
+        
+        <div className="flex items-center gap-2.5 mb-5 relative z-10">
+          <Link
+            href="/received"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm"
+          >
+            <ChevronLeft className="h-5 w-5 text-white" />
+          </Link>
+          <span className="text-xs font-medium text-white/80">받은 견적 목록</span>
+        </div>
 
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          {emoji} {catLabel} {sizeLabel}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          {request.region.district}
-        </p>
+        <div className="relative z-10">
+          <h1 className="text-2xl font-bold tracking-tight mb-1">
+            {catLabel}
+          </h1>
+          <p className="text-xs text-white/70">
+            {formatDateString(request.createdAt)} · {request.region.district}
+          </p>
+        </div>
       </header>
 
-      <div className="mb-6 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-        <QuoteStepper status={request.status} />
+      {/* Floating Request Metadata Accordion Card */}
+      <RequestAccordion request={request} />
+
+      {/* Received Quotes Section */}
+      <div className="px-4 mt-6">
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 pl-1">
+          받은 견적 <span className="text-emerald-600 dark:text-emerald-400">{quotes.length}</span>건
+        </h2>
+
+        {quotes.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-zinc-200 bg-white px-4 py-12 text-center dark:border-zinc-800 dark:bg-zinc-950">
+            <p className="text-sm text-zinc-400">아직 도착한 견적이 없습니다.</p>
+            <p className="text-xs text-zinc-400 mt-1">청명이 견적을 보내면 실시간으로 알림을 드립니다.</p>
+          </div>
+        ) : (
+          /* Continuous Quote Cards Container with dividers */
+          <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-950">
+            {quotes.map((quote, i) => (
+              <QuoteCompareCard
+                key={quote.id}
+                quote={quote}
+                provider={providers[i]}
+                requestStatus={request.status}
+                bookingScheduledAtMs={
+                  bookingScheduledAtMsByQuoteId.get(quote.id) ?? null
+                }
+              />
+            ))}
+          </div>
+        )}
       </div>
-
-      <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        받은 견적 {quotes.length}건
-      </h2>
-
-      {quotes.length === 0 ? (
-        <p className="rounded-xl bg-zinc-50 px-4 py-8 text-center text-sm text-zinc-500 dark:bg-zinc-900">
-          아직 도착한 견적이 없어요. 청명이 응답하면 여기에 표시됩니다.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {quotes.map((quote, i) => (
-            <QuoteCompareCard
-              key={quote.id}
-              quote={quote}
-              provider={providers[i]}
-              requestStatus={request.status}
-              bookingScheduledAtMs={
-                bookingScheduledAtMsByQuoteId.get(quote.id) ?? null
-              }
-            />
-          ))}
-        </div>
-      )}
     </>
   );
 }

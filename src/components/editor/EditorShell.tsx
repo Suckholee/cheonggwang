@@ -187,7 +187,7 @@ export function EditorShell({ initialPage, isPartner }: Props) {
             ← 내 페이지
           </Link>
           <h1 className="mt-0.5 text-xl font-bold tracking-tight">
-            {CATEGORY_LABELS[initialPage.category]} · {published ? "발행됨" : "초안"}
+            {(CATEGORY_LABELS as Record<string, string>)[initialPage.category] || initialPage.category} · {published ? "발행됨" : "초안"}
           </h1>
           {published && slug && (
             <Link

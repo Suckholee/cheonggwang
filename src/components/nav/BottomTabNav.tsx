@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { clientAuth, clientDb } from "@/lib/firebase/client";
 import { ChatUnreadWrapper } from "@/components/chat/ChatUnreadWrapper";
+import { TabNavClient } from "@/components/nav/TabNavClient";
 
 interface AuthContext {
   uid: string;
@@ -28,15 +29,17 @@ async function resolveAuthContext(uid: string): Promise<AuthContext> {
 }
 
 export function BottomTabNavServer() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [ctx, setCtx] = useState<AuthContext | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // Immediately set ready to true on client mount to render the navigation bar without waiting for Firebase
+    setReady(true);
+
     const unsub = onAuthStateChanged(clientAuth, async (user) => {
       if (!user) {
         setCtx(null);
-        setReady(true);
         return;
       }
 
@@ -46,15 +49,18 @@ export function BottomTabNavServer() {
       } catch (e) {
         console.warn("[bottom-tab-nav] auth resolve 실패", e);
         setCtx({ uid: user.uid, roleFromDoc: null });
-      } finally {
-        setReady(true);
       }
     });
 
     return () => unsub();
   }, []);
 
-  if (!ready || ctx === null) return null;
+  if (!ready) return null;
+
+  // Guest/Unauthenticated users default to client tabs
+  if (ctx === null) {
+    return <TabNavClient tabSetKey="client" chatUnreadCount={0} />;
+  }
 
   // v1.6 — URL 경로를 1순위로: `/provider/*` 면 Firestore 조회 실패/지연과 무관하게 PROVIDER 탭.
   // 그 외엔 user doc 의 providerId 판별 결과 사용. 둘 다 없으면 CLIENT 탭 폴백.

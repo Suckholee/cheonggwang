@@ -9,13 +9,14 @@ import {
   MIN_KEY_POINTS,
   CATEGORY_LABELS,
 } from "@/domain/constants";
+import type { Category } from "@/types/page";
 import type { EditorFormValues } from "./EditorShell";
 
 interface Props {
   register: UseFormRegister<EditorFormValues>;
   control: Control<EditorFormValues>;
   errors: FieldErrors<EditorFormValues>;
-  category: keyof typeof CATEGORY_LABELS;
+  category: Category;
 }
 
 export function InputForm({ register, control, errors, category }: Props) {
@@ -32,7 +33,7 @@ export function InputForm({ register, control, errors, category }: Props) {
         <input
           type="text"
           disabled
-          value={CATEGORY_LABELS[category]}
+          value={(CATEGORY_LABELS as Record<string, string>)[category] || category}
           className="w-full rounded border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900"
         />
       </Field>

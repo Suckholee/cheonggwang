@@ -31,7 +31,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await checkAndIncrement(uid);
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim()
+      || request.headers.get("x-real-ip")?.trim()
+      || "unknown-ip";
+
+    await checkAndIncrement(`uid:${uid}`);
+    if (ip !== "unknown-ip") {
+      // IP limit is slightly more generous (10/min) to accommodate shared office IPs
+      await checkAndIncrement(`ip:${ip}`, 10);
+    }
 
     const { sections, tags, region } = await generateService.run(pageId, uid);
     return NextResponse.json({ sections, tags, region });

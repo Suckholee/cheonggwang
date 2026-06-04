@@ -65,7 +65,7 @@ const HYGIENE_SYSTEM = `당신은 한국 지역 상권 소상공인의 홍보글
 
 function commonCtx(ctx: PromptBuilderContext): string {
   return `업체명: ${ctx.page.businessName}
-업종: ${CATEGORY_LABELS[ctx.page.category]}
+업종: ${(CATEGORY_LABELS as Record<string, string>)[ctx.page.category] || ctx.page.category}
 주소: ${ctx.page.address}
 주요 특징/키포인트: ${ctx.page.keyPoints.filter(Boolean).join(" / ") || "(미입력)"}
 트렌드 키워드(참고): ${ctx.trendKeywords.slice(0, 8).join(", ")}
@@ -226,7 +226,7 @@ export function buildHygienePrompt(
     call: {
       systemInstruction: HYGIENE_SYSTEM,
       prompt: `업체명: ${ctx.page.businessName}
-업종: ${CATEGORY_LABELS[ctx.page.category]}
+업종: ${(CATEGORY_LABELS as Record<string, string>)[ctx.page.category] || ctx.page.category}
 청광 청소 주기: ${freq}
 
 요청: 위생 안심 섹션 — body(${SECTION_MAX_LENGTHS.hygieneBody}자 이내의 한 문단)

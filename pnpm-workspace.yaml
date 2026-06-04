@@ -1,6 +1,7 @@
 packages:
   - '.'
   - 'functions'
+  - 'packages/*'
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver

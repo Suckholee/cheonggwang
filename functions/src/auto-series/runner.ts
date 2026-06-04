@@ -90,8 +90,10 @@ function partnerFromSnap(id: string, d: FirebaseFirestore.DocumentData): Partner
     },
     profile: d.profile ?? undefined,
     autoSeries,
-    // v1.14 cycle #27 partner-series-queue
     autoSeriesQueue: toQueueItems(d.autoSeriesQueue),
+    issuedAt: d.issuedAt ? (d.issuedAt as Timestamp).toDate() : new Date(),
+    issuedBy: String(d.issuedBy ?? "system"),
+    notes: d.notes ?? null,
   };
 }
 

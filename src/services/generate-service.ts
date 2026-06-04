@@ -145,7 +145,7 @@ async function extractTagsOrFallback(
   try {
     const prompt = buildTagExtractionPrompt({
       businessName: page.businessName,
-      categoryLabel: CATEGORY_LABELS[page.category],
+      categoryLabel: (CATEGORY_LABELS as Record<string, string>)[page.category] || page.category,
       keyPoints: page.keyPoints,
       hero: guarded.hero,
       intro: guarded.intro,

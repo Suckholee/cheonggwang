@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 
 const CATEGORIES: Array<{ value: string; label: string }> = [
   { value: "all", label: "전체" },
@@ -12,6 +12,7 @@ const CATEGORIES: Array<{ value: string; label: string }> = [
 
 export function CategoryTabs() {
   const sp = useSearchParams();
+  const pathname = usePathname();
   const current = sp.get("category") ?? "all";
 
   function hrefFor(value: string): string {
@@ -19,7 +20,8 @@ export function CategoryTabs() {
     if (value === "all") params.delete("category");
     else params.set("category", value);
     const qs = params.toString();
-    return qs ? `/?${qs}` : "/";
+    const targetPath = pathname || "/discover";
+    return qs ? `${targetPath}?${qs}` : targetPath;
   }
 
   return (

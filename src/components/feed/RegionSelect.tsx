@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { ChangeEvent } from "react";
 import { REGION_PRESETS } from "@/domain/region-presets";
 
 export function RegionSelect() {
   const router = useRouter();
   const sp = useSearchParams();
+  const pathname = usePathname();
   const current = sp.get("region") ?? "";
 
   function handleChange(e: ChangeEvent<HTMLSelectElement>) {
@@ -14,7 +15,8 @@ export function RegionSelect() {
     if (e.target.value) params.set("region", e.target.value);
     else params.delete("region");
     const qs = params.toString();
-    router.replace(qs ? `/?${qs}` : "/");
+    const targetPath = pathname || "/discover";
+    router.replace(qs ? `${targetPath}?${qs}` : targetPath);
   }
 
   return (

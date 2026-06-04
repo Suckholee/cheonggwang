@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 const DEBOUNCE_MS = 300;
 
 export function SearchInput() {
   const router = useRouter();
   const sp = useSearchParams();
+  const pathname = usePathname();
   const initial = sp.get("q") ?? "";
   const [value, setValue] = useState(initial);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -32,7 +33,8 @@ export function SearchInput() {
       if (trimmed) params.set("q", trimmed);
       else params.delete("q");
       const qs = params.toString();
-      router.replace(qs ? `/?${qs}` : "/");
+      const targetPath = pathname || "/discover";
+      router.replace(qs ? `${targetPath}?${qs}` : targetPath);
     }, DEBOUNCE_MS);
   }
 

@@ -16,8 +16,9 @@ interface Props {
 }
 
 export function TabNavClient({ tabSetKey, chatUnreadCount = 0 }: Props) {
-  const pathname = usePathname();
-  if (isHiddenPath(pathname)) return null;
+  const pathname = usePathname() ?? "";
+  const hidden = isHiddenPath(pathname);
+  if (hidden) return null;
 
   const tabs = getTabs(tabSetKey);
 

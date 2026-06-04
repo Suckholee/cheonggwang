@@ -25,8 +25,8 @@ export default function ReceivedPage(props: {
   searchParams: Promise<SearchParams>;
 }) {
   return (
-    <div className="mx-auto min-h-screen max-w-xl px-4 py-6">
-      <h1 className="mb-4 text-xl font-bold">받은 견적</h1>
+    <div className="mx-auto min-h-screen max-w-md bg-zinc-50 dark:bg-zinc-900 pb-24 shadow-2xl border-x border-zinc-200/50 dark:border-zinc-800/50 relative px-4 pt-6">
+      <h1 className="mb-4 text-xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">받은 견적</h1>
       <Suspense fallback={<ReceivedSkeleton />}>
         <ReceivedBody searchParams={props.searchParams} />
       </Suspense>

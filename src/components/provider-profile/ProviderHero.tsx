@@ -23,8 +23,19 @@ export function ProviderHero({ provider }: Props) {
           priority
         />
       ) : (
-        <div className="flex h-full items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700 text-7xl font-bold text-white">
-          {initial}
+        <div 
+          className="flex h-full flex-col items-center justify-center bg-cover bg-center relative text-white"
+          style={{ backgroundImage: "url('/images/clean_living_room.png')" }}
+        >
+          {/* Blur & Gradient Overlay */}
+          <div className="absolute inset-0 bg-indigo-950/60 dark:bg-zinc-950/80 backdrop-blur-xs" />
+          
+          <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-2xl border border-white/30 bg-white/20 text-4xl font-extrabold shadow-sm backdrop-blur-md">
+            {initial}
+          </div>
+          <span className="relative z-10 mt-3 text-sm font-semibold tracking-wider text-white/80">
+            {provider.companyName}
+          </span>
         </div>
       )}
       <div className="absolute right-3 top-3 z-10">

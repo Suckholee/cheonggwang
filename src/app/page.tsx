@@ -99,20 +99,24 @@ function HomeHeader() {
 
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-[#d8e6ff] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-6 shadow-[0_16px_40px_rgba(43,102,246,0.10)]">
-      <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-[#7fb4ff]/20 blur-2xl" />
-      <div className="absolute -bottom-16 left-0 h-32 w-32 rounded-full bg-[#2563EB]/10 blur-2xl" />
-      <div className="relative">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#2563EB]">
+    <section 
+      className="relative overflow-hidden rounded-[28px] border border-[#d8e6ff] px-5 py-6 shadow-[0_16px_40px_rgba(43,102,246,0.10)] bg-cover bg-center"
+      style={{ backgroundImage: "url('/images/clean_living_room.png')" }}
+    >
+      {/* Premium semi-transparent white/blue glassmorphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/60 dark:from-zinc-950/95 dark:via-zinc-950/85 dark:to-zinc-950/60" />
+      
+      <div className="relative z-10">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#2563EB] shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900/80 dark:text-[#3B82F6]">
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           믿고 맡길 수 있는 청소 연결
         </div>
-        <h1 className="max-w-xs text-[30px] font-black leading-[1.15] tracking-tight text-zinc-950">
+        <h1 className="max-w-xs text-[30px] font-black leading-[1.15] tracking-tight text-zinc-950 dark:text-zinc-50">
           가까운 청명을 찾고
           <br />
           견적을 바로 받아보세요
         </h1>
-        <p className="mt-3 max-w-sm text-[14px] leading-6 text-zinc-600">
+        <p className="mt-3 max-w-sm text-[14px] leading-6 text-zinc-700 dark:text-zinc-300 font-medium">
           입주청소, 에어컨 분해청소, 사무실 청소까지.
           <br />
           청광이 빠른 비교와 신뢰 정보까지 한 번에 정리해드려요.
@@ -127,7 +131,7 @@ function HeroSection() {
           </Link>
           <Link
             href="/search"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#cfe1ff] bg-white px-4 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-[#f7fbff]"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#cfe1ff]/85 bg-white/95 px-4 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-white backdrop-blur-xs shadow-sm dark:border-zinc-800/85 dark:bg-zinc-900/95 dark:text-zinc-200 dark:hover:bg-zinc-900"
           >
             <Search className="h-4 w-4" aria-hidden />
             청명 찾기
@@ -360,16 +364,16 @@ async function TodayCardSlot() {
         </div>
         <div className="flex gap-2">
           <Link
-            href="/quote/new"
-            className="flex-1 rounded-2xl bg-[#2563EB] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1D4ED8]"
+            href="/login"
+            className="flex-1 rounded-2xl bg-[#2563EB] px-4 py-3.5 text-center text-sm font-bold text-white shadow-[0_8px_20px_rgba(43,102,246,0.18)] transition-colors hover:bg-blue-700"
           >
-            + 새 견적 요청
+            로그인하기
           </Link>
           <Link
-            href="/login"
-            className="rounded-2xl border border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            href="/quote/new"
+            className="flex-1 rounded-2xl border border-zinc-200 bg-white px-4 py-3.5 text-center text-sm font-bold text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900"
           >
-            로그인
+            비회원 견적 요청
           </Link>
         </div>
       </section>

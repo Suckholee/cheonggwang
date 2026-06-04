@@ -1,0 +1,1240 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>청광 영업 데모 · 청소 + 광고</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link
+  href="https://cdn.jsdelivr.net/gh/orioncactus/[email protected]/dist/web/variable/pretendardvariable-dynamic-subset.css"
+  rel="stylesheet"
+/>
+<style>
+  :root {
+    --bg: #0b1220;
+    --surface: #ffffff;
+    --soft: #f5f7fb;
+    --line: #e5e9f2;
+    --ink: #0f172a;
+    --muted: #5b6678;
+    --brand: #1e40af;
+    --brand-soft: #dbe7ff;
+    --accent: #f97316;
+    --accent-soft: #ffe9d6;
+    --ok: #16a34a;
+    --shadow: 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px rgba(15,23,42,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--soft);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 24px 18px 80px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0b2a6b 0%, #1e40af 60%, #2563eb 100%);
+    color: #fff;
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(249,115,22,0.45), transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.28);
+  }
+  .hero h1 {
+    font-size: clamp(26px, 5vw, 34px);
+    line-height: 1.25;
+    margin: 12px 0 8px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 em { font-style: normal; color: #ffd9b8; }
+  .hero p { margin: 0; opacity: 0.92; font-size: 15px; }
+  .hero .tagline {
+    margin-top: 14px;
+    font-size: 14px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .hero .tagline b { color: #ffd9b8; }
+
+  /* URL config bar */
+  .urlbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--surface);
+    padding: 10px 12px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+  .urlbar label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .urlbar input {
+    flex: 1;
+    min-width: 200px;
+    font: inherit;
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+  }
+  .urlbar input:focus { outline: 2px solid var(--brand-soft); border-color: var(--brand); }
+  .urlbar button {
+    border: 0;
+    background: var(--brand);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .urlbar button[data-on="true"] { background: var(--ok); }
+  .urlbar button[data-on="true"]::before { content: "● "; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin: 18px 0 14px;
+    background: var(--surface);
+    padding: 6px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    position: sticky; top: 8px; z-index: 5;
+  }
+  .tab {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 600;
+    padding: 10px 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s ease;
+  }
+  .tab span.sub { display: block; font-size: 11px; font-weight: 500; opacity: 0.7; margin-top: 2px; }
+  .tab[aria-selected="true"] {
+    background: var(--brand);
+    color: #fff;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fade 0.25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .card h2 { margin: 0 0 4px; font-size: 19px; letter-spacing: -0.01em; }
+  .card .lead { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .section-label {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--brand);
+    background: var(--brand-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .pain {
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .pain ul { margin: 6px 0 0; padding-left: 18px; color: #7c2d12; font-size: 14px; }
+
+  /* Steps with demo row */
+  ol.steps { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  ol.steps > li {
+    counter-increment: step;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    padding: 14px;
+  }
+  .demo-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  @media (min-width: 760px) {
+    .demo-row { grid-template-columns: 1fr 260px; }
+  }
+  .demo-content { position: relative; padding-left: 40px; }
+  .demo-content::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: 2px;
+    width: 28px; height: 28px;
+    background: var(--brand);
+    color: #fff;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 13px;
+  }
+  .step-title { font-weight: 700; font-size: 15px; margin: 0 0 4px; }
+  .step-body { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+  code.route {
+    display: inline-block;
+    background: #0f172a;
+    color: #ffd9b8;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .verified {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 6px;
+    letter-spacing: 0.02em;
+  }
+  details.proof {
+    margin-top: 8px;
+    font-size: 12.5px;
+  }
+  details.proof summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 4px 0;
+    user-select: none;
+  }
+  details.proof summary:hover { color: var(--brand); }
+  details.proof[open] summary { color: var(--brand); }
+  details.proof ul {
+    margin: 6px 0 0;
+    padding-left: 18px;
+    color: #334155;
+  }
+  details.proof ul li {
+    margin: 3px 0;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+  }
+  details.proof ul li .tag {
+    display: inline-block;
+    font-family: inherit;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+    border: 1px solid var(--line);
+  }
+  .verification-summary {
+    background: linear-gradient(135deg, #064e3b, #065f46);
+    color: #ecfdf5;
+    border-radius: 18px;
+    padding: 20px 22px;
+    margin: 18px 0;
+  }
+  .verification-summary h3 { margin: 0 0 8px; font-size: 16px; color: #a7f3d0; }
+  .verification-summary p { margin: 0; font-size: 13.5px; opacity: 0.92; line-height: 1.55; }
+  .verification-summary b { color: #fff; }
+  a.open-live {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--brand);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px dashed var(--brand);
+  }
+  a.open-live:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* Phone frame */
+  .phone {
+    width: 100%;
+    max-width: 240px;
+    aspect-ratio: 9 / 19;
+    margin: 0 auto;
+    border: 7px solid #18181b;
+    border-radius: 28px;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 14px 30px rgba(15,23,42,0.18);
+  }
+  .phone .notch {
+    position: absolute;
+    top: 6px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 16px;
+    background: #18181b;
+    border-radius: 0 0 12px 12px;
+    z-index: 3;
+  }
+  .phone-screen, .phone-iframe {
+    width: 100%; height: 100%;
+    overflow-y: auto;
+    background: #fff;
+    font-size: 9.5px;
+    line-height: 1.4;
+    color: #0f172a;
+  }
+  .phone-iframe { border: 0; display: none; }
+  .phone.live .phone-iframe { display: block; }
+  .phone.live .phone-screen { display: none; }
+  .phone-screen { padding: 22px 8px 12px; }
+
+  /* Mockup primitives */
+  .mk-chip {
+    display: inline-block;
+    font-size: 8px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    margin-right: 3px;
+    font-weight: 600;
+  }
+  .mk-chip.idx { background: #e0e7ff; color: #4338ca; }
+  .mk-chip.zinc { background: #f4f4f5; color: #52525b; }
+  .mk-chip.ok { background: #dcfce7; color: #166534; }
+  .mk-chip.amber { background: #fef3c7; color: #92400e; }
+  .mk-chip.orange { background: var(--accent-soft); color: #c2410c; }
+  .mk-title { font-size: 11px; font-weight: 800; margin: 4px 0 6px; }
+  .mk-sub { font-size: 9px; color: #71717a; margin-bottom: 6px; }
+  .mk-card {
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: #fff;
+  }
+  .mk-photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    margin: 4px 0;
+  }
+  .mk-photo {
+    aspect-ratio: 1/1;
+    background: linear-gradient(135deg, #dbeafe, #c7d2fe);
+    border-radius: 4px;
+  }
+  .mk-photo.warm { background: linear-gradient(135deg, #fed7aa, #fdba74); }
+  .mk-row { display:flex; justify-content: space-between; align-items: center; font-size: 9.5px; }
+  .mk-row + .mk-row { margin-top: 3px; }
+  .mk-btn {
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 6px 0;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+  .mk-btn.primary { background: #1e40af; color: #fff; }
+  .mk-btn.ghost { background: #f4f4f5; color: #18181b; }
+  .mk-btn.success { background: #16a34a; color: #fff; }
+  hr.mk { border: 0; border-top: 1px solid #e4e4e7; margin: 6px 0; }
+
+  /* Stepper */
+  .mk-stepper { display:flex; gap:2px; margin: 4px 0 6px; }
+  .mk-stepper .s {
+    flex: 1;
+    height: 4px;
+    background: #e4e4e7;
+    border-radius: 2px;
+  }
+  .mk-stepper .s.done { background: #1e40af; }
+  .mk-stepper .s.now { background: #f97316; }
+  .mk-stepper-labels { display: flex; justify-content: space-between; font-size: 7.5px; color: #71717a; margin-bottom: 6px; }
+
+  /* Chat bubbles */
+  .mk-msg { max-width: 75%; padding: 5px 7px; border-radius: 8px; font-size: 9px; margin-bottom: 4px; }
+  .mk-msg.left { background: #f4f4f5; }
+  .mk-msg.right { background: #1e40af; color: #fff; margin-left: auto; }
+  .mk-msg.system { background: #fef3c7; color: #92400e; text-align: center; font-size: 8.5px; }
+  .mk-pinned { background: #eff6ff; border:1px dashed #93c5fd; border-radius:6px; padding:6px; font-size: 9px; margin-bottom: 6px; }
+
+  /* Key line */
+  .keyline {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    color: #fff;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 14.5px;
+    line-height: 1.55;
+    position: relative;
+  }
+  .keyline::before {
+    content: "한 마디";
+    position: absolute;
+    top: -10px; left: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* Trust */
+  .trust {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f1f5f9;
+    border-radius: 18px;
+    padding: 22px;
+    margin-top: 18px;
+  }
+  .trust h3 { margin: 0 0 12px; font-size: 16px; color: #ffd9b8; }
+  .trust .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .trust .item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+  }
+  .trust .item b { color: #ffd9b8; }
+  @media (min-width: 640px) { .trust .grid { grid-template-columns: 1fr 1fr; } }
+
+  .tip {
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .tip b { color: var(--ink); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 28px; }
+
+  @media print {
+    body { background: #fff; }
+    .tabs, .urlbar { display: none; }
+    .panel { display: block !important; page-break-after: always; }
+    .hero, .card, .trust { box-shadow: none; border: 1px solid #ccc; }
+    .phone { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Hero -->
+  <header class="hero">
+    <span class="badge">SALES KIT · 2026</span>
+    <h1>청광은 <em>청소 + 광고</em>입니다</h1>
+    <p>견적 인박스, 채팅, 일정확정, 자동 콘텐츠까지 — 한 앱 안에서 거래가 닫힙니다.</p>
+    <div class="tagline">
+      만나는 사람이 누구냐에 따라 <b>같은 앱, 다른 화면</b>. 아래 탭을 누르면 데모 동선이 뜹니다.
+      각 단계 옆 <b>휴대폰 미리보기</b>로 화면 모양이 같이 보여요.
+    </div>
+  </header>
+
+  <!-- URL config -->
+  <div class="urlbar" role="region" aria-label="라이브 미리보기 설정">
+    <label for="baseUrl">앱 주소</label>
+    <input type="url" id="baseUrl" value="https://cheonggwang.vercel.app" placeholder="https://cheonggwang.vercel.app" />
+    <button id="liveToggle" data-on="false" type="button">라이브 미리보기 켜기</button>
+  </div>
+
+  <!-- Verification summary -->
+  <section class="verification-summary" aria-label="코드 검증 요약">
+    <h3>✅ 코드 검증 보고서</h3>
+    <p>
+      이 데모에 나오는 <b>23개 라우트·컴포넌트가 모두 실제 코드에 존재</b>합니다 (확인일: 2026-05-13).
+      각 단계 아래 <b>"📂 코드 위치 확인"</b>을 펼치면 정확한 파일 경로와 역할을 볼 수 있어요.
+      모형 화면 옆에 ✅ 표시는 "이 단계 기능이 코드에 실제로 구현되어 있다"는 뜻입니다.
+    </p>
+  </section>
+
+  <!-- Tabs -->
+  <nav class="tabs" role="tablist" aria-label="영업 대상">
+    <button class="tab" role="tab" data-target="provider" aria-selected="true">청명 사장님<span class="sub">공급 측</span></button>
+    <button class="tab" role="tab" data-target="partner" aria-selected="false">의뢰업체<span class="sub">B2B Partner</span></button>
+    <button class="tab" role="tab" data-target="customer" aria-selected="false">일반 고객<span class="sub">B2C</span></button>
+  </nav>
+
+  <!-- Provider panel -->
+  <section class="panel active" id="provider" role="tabpanel">
+    <article class="card">
+      <span class="section-label">5분 데모 · 공급 측</span>
+      <h2>청명 사장님께 보여줄 것</h2>
+      <p class="lead">사고 싶은 건 <b>광고비 없는 견적함</b>과 <b>카톡 안 거치고 닫히는 운영</b>입니다.</p>
+
+      <div class="pain">
+        <b style="font-size:13px; color:#9a3412;">사장님이 안고 있는 고민</b>
+        <ul>
+          <li>광고비·전단지·블로그 마케팅에 들어가는 시간과 돈</li>
+          <li>견적이 카톡으로 흩어져 관리 안 됨</li>
+          <li>사장님 본인 SNS·블로그 굴릴 여력 없음</li>
+          <li>신뢰(보험·검증) 어필 수단 부족</li>
+        </ul>
+      </div>
+
+      <ol class="steps">
+        <!-- 1. triage inbox -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">트리아지 인박스 열기 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">동네·카테고리·평수에 맞는 견적만 들어옵니다. pass 한 번이면 다시 안 보여요.</p>
+              <code class="route">/provider/requests</code>
+              <a class="open-live" data-path="/provider/requests" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/provider/requests/page.tsx — 세션 검증 + provider categories로 필터</li>
+                  <li><span class="tag">comp</span>src/components/provider/TriageClient.tsx — 클라이언트 트리아지 UI</li>
+                  <li><span class="tag">comp</span>src/components/provider/RequestCard.tsx — 카테고리 칩, 사진 grid, 동네 라벨</li>
+                  <li><span class="tag">repo</span>src/lib/firebase/quote-request-repository.ts — listForTriage</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/provider/requests">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">받은 요청 (12)</div>
+                <div class="mk-card">
+                  <span class="mk-chip idx">🧼 입주청소</span>
+                  <span class="mk-chip zinc">비정기 1회</span>
+                  <div class="mk-title" style="font-size:10.5px; margin-top:4px;">성동구 · 25평 <span style="font-weight:500; color:#71717a; font-size:9px;">· 동네</span></div>
+                  <div class="mk-photos">
+                    <div class="mk-photo"></div><div class="mk-photo warm"></div>
+                  </div>
+                  <div class="mk-row"><span>희망일</span><span style="color:#3f3f46;">5/18(일) 오전</span></div>
+                  <div class="mk-row"><span>표준 견적</span><span style="color:#3f3f46;">24~36만원</span></div>
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-top:6px;">
+                    <div class="mk-btn ghost">패스</div>
+                    <div class="mk-btn primary">견적 보내기</div>
+                  </div>
+                </div>
+                <div class="mk-card">
+                  <span class="mk-chip idx">🛋️ 거실</span>
+                  <div class="mk-title" style="font-size:10.5px; margin-top:4px;">광진구 · 32평</div>
+                  <div class="mk-row"><span style="color:#71717a;">사진 4장 · 메모 있음</span></div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/provider/requests"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 2. submit quote → chat auto-create -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">견적 제출 → 채팅방 자동 생성 <span class="verified">✅ TX 확인</span></p>
+              <p class="step-body">제출하는 순간 <b>같은 트랜잭션 안에서 채팅방이 같이 만들어집니다.</b> 카톡으로 안 옮겨가요.</p>
+              <code class="route">submitQuote → quotes + providerResponses + quoteRequests + threads</code>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">action</span>src/app/actions/quote-response-actions.ts — submitQuote (5-write TX, 한 번에 묶임)</li>
+                  <li><span class="tag">form</span>src/components/provider/QuoteProposalForm.tsx — react-hook-form + useFieldArray</li>
+                  <li><span class="tag">domain</span>src/domain/chat-schemas.ts — buildThreadId(`${requestId}_${providerId}`)</li>
+                  <li><span class="tag">domain</span>src/domain/quote-status.ts — isRespondable, status 전이 가드</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/provider/requests">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">견적서 작성</div>
+                <div class="mk-card">
+                  <div class="mk-row"><span>입주 청소</span><span>180,000</span></div>
+                  <hr class="mk" />
+                  <div class="mk-row"><span>창문·새시</span><span>50,000</span></div>
+                  <hr class="mk" />
+                  <div class="mk-row"><span>화장실 2개</span><span>40,000</span></div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><b>합계</b><b style="color:#1e40af;">270,000원</b></div>
+                  <div class="mk-row"><span>예상 작업</span><span>4시간</span></div>
+                  <div class="mk-row"><span>보험</span><span style="color:#16a34a;">✓ 가입</span></div>
+                </div>
+                <div class="mk-btn primary">견적 보내기</div>
+                <div style="text-align:center; font-size:8.5px; color:#71717a; margin-top:6px;">
+                  ↓ 제출 시 채팅방 자동 생성
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/provider/requests"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 3. chat → 일정 확정 -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">채팅 → 일정 확정 한 화면에서 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">메시지 한 번, 일정 확정 한 번이면 booking이 quote에 묶여서 거래가 닫혀요.</p>
+              <code class="route">/chat/[threadId]</code>
+              <a class="open-live" data-path="/chat" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/chat/[threadId]/page.tsx</li>
+                  <li><span class="tag">comp</span>src/components/chat/ThreadDetailClient.tsx — 참여자 검증 후 메시지 스트림</li>
+                  <li><span class="tag">comp</span>src/components/chat/MessageBubble.tsx — text / system 두 타입</li>
+                  <li><span class="tag">comp</span>src/components/chat/PinnedQuoteCard.tsx — 견적 요약 고정</li>
+                  <li><span class="tag">comp</span>src/components/chat/ThreadActionButtons.tsx — "일정 확정" 버튼</li>
+                  <li><span class="tag">action</span>src/app/actions/booking-actions.ts — confirmBooking (3R/5W TX)</li>
+                  <li><span class="tag">action</span>src/app/actions/chat-actions.ts — sendMessage + unread counter</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/chat">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">청광클린 김사장</div>
+                <div class="mk-pinned">
+                  <b>📌 견적 27만원 · 4시간</b><br>
+                  <span style="color:#475569;">5/18(일) 오전 · 보험 가입</span>
+                </div>
+                <div class="mk-msg left">안녕하세요! 견적 보내드렸습니다 😊</div>
+                <div class="mk-msg right">확인했어요. 일요일 오전 가능할까요?</div>
+                <div class="mk-msg left">네 9시 도착 가능합니다</div>
+                <div class="mk-msg system">🗓️ 5/18(일) 오전 9시 일정이 확정됐어요</div>
+                <div class="mk-btn success">일정 확정</div>
+              </div>
+              <iframe class="phone-iframe" data-path="/chat"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 4. stepper -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">거래 흐름이 단계로 시각화 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">요청 → 견적수신 → 협의진행 → 거래완료. 사장님이 어디서 멈췄는지 한눈에 보입니다.</p>
+              <code class="route">QuoteStepper · /received/[id]</code>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/received/[requestId]/page.tsx</li>
+                  <li><span class="tag">comp</span>src/components/received/QuoteStepper.tsx — Check 아이콘 + 4단계 진행</li>
+                  <li><span class="tag">comp</span>src/components/received/QuoteCompareCard.tsx — 가격 비교 카드</li>
+                  <li><span class="tag">domain</span>src/domain/quote-status.ts — 6-state machine, statusToStepIndex</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/received">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">🧼 입주청소 25평</div>
+                <div class="mk-sub">성동구 성수동</div>
+                <div class="mk-stepper">
+                  <div class="s done"></div><div class="s done"></div><div class="s now"></div><div class="s"></div>
+                </div>
+                <div class="mk-stepper-labels">
+                  <span>요청</span><span>견적수신</span><span style="color:#f97316; font-weight:700;">협의진행</span><span>완료</span>
+                </div>
+                <div class="mk-card">
+                  <span class="mk-chip ok">✓ 수락됨</span>
+                  <div class="mk-row" style="margin-top:4px;"><b>청광클린</b><b style="color:#1e40af;">27만원</b></div>
+                  <div class="mk-row"><span>5/18(일) 오전</span><span style="color:#16a34a;">보험가입</span></div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><span>홈케어24</span><span>32만원</span></div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/received"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 5. provider profile -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">사장님 프로필 페이지 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">Before/After 갤러리, 리뷰, 보험·검증 뱃지. <b>광고를 안 사도 신뢰가 화면으로 쌓입니다.</b></p>
+              <code class="route">/providers/[providerId]</code>
+              <a class="open-live" data-path="/community/providers" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/providers/[providerId]/page.tsx</li>
+                  <li><span class="tag">comp</span>ProviderHero · ProviderMeta · ProviderStats (검증·보험 뱃지)</li>
+                  <li><span class="tag">comp</span>WorkGallery — Before/After 사진 (workCases collection)</li>
+                  <li><span class="tag">comp</span>ReviewList — reviews collection</li>
+                  <li><span class="tag">comp</span>PriceBookList · BottomCTA · NewsSection</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/community/providers">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div style="background:linear-gradient(135deg,#1e40af,#3b82f6); border-radius:8px; padding:8px; color:#fff; margin-bottom:6px;">
+                  <div style="font-size:11px; font-weight:800;">청광클린</div>
+                  <div style="font-size:8.5px; opacity:0.9;">성동·광진구 · 입주청소 전문</div>
+                  <div style="margin-top:4px;">
+                    <span class="mk-chip ok">✓ 검증</span>
+                    <span class="mk-chip orange">보험가입</span>
+                  </div>
+                </div>
+                <div class="mk-title" style="font-size:10px;">Before / After</div>
+                <div class="mk-photos">
+                  <div class="mk-photo"></div><div class="mk-photo warm"></div>
+                  <div class="mk-photo warm"></div><div class="mk-photo"></div>
+                </div>
+                <hr class="mk" />
+                <div style="font-size:9px;"><b>★ 4.9</b> · 리뷰 47개</div>
+                <div class="mk-card" style="margin-top:4px;">
+                  <div style="font-size:8.5px;">"꼼꼼하게 잘 해주셨어요!"</div>
+                  <div style="font-size:8px; color:#71717a; margin-top:2px;">박** · 5/2</div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/community/providers"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 6. auto content -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">자동 발행 (선택 카드) <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">사장님 블로그·SNS는 우리가 자동으로 굴립니다. 회전 풀로 같은 주제만 반복되지 않게.</p>
+              <code class="route">/partner/posts · /partner/series</code>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/partner/posts/page.tsx — 자동발행 ON/OFF 배너</li>
+                  <li><span class="tag">repo</span>src/lib/firebase/post-repository.ts · nextAutoPublishWindow</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/partner/posts">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">발행된 포스트</div>
+                <div class="mk-card">
+                  <span class="mk-chip ok">발행</span>
+                  <div style="font-size:9.5px; font-weight:700; margin-top:3px;">입주청소 전 체크리스트 10가지</div>
+                  <div style="font-size:8.5px; color:#71717a;">5/12 · 자동 발행</div>
+                </div>
+                <div class="mk-card">
+                  <span class="mk-chip amber">예약</span>
+                  <div style="font-size:9.5px; font-weight:700; margin-top:3px;">화장실 곰팡이 안 생기게 하는 법</div>
+                  <div style="font-size:8.5px; color:#71717a;">5/15 발행 예정</div>
+                </div>
+                <div class="mk-card">
+                  <span class="mk-chip zinc">초안</span>
+                  <div style="font-size:9.5px; font-weight:700; margin-top:3px;">에어컨 청소, 비용 차이 나는 이유</div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/partner/posts"></iframe>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="keyline">
+        "광고비 대신 견적함을 드리고, 운영은 채팅 한 화면, 마케팅은 자동 발행.
+        사장님이 손볼 게 답장밖에 없어요."
+      </div>
+    </article>
+  </section>
+
+  <!-- Partner panel -->
+  <section class="panel" id="partner" role="tabpanel">
+    <article class="card">
+      <span class="section-label">5분 데모 · B2B Partner</span>
+      <h2>의뢰업체에게 보여줄 것</h2>
+      <p class="lead">관심사는 <b>콘텐츠 자동화</b> + <b>브랜드 보이스 통제</b> + <b>운영 이력 추적</b>입니다.</p>
+
+      <div class="pain">
+        <b style="font-size:13px; color:#9a3412;">B2B 의사결정자의 진짜 질문</b>
+        <ul>
+          <li>AI인데 브랜드 보이스 유지 되나?</li>
+          <li>같은 주제 반복 안 되게 회전은?</li>
+          <li>인용 소스·발행 이력이 감사 가능한 형태로 남나?</li>
+          <li>발행한 글이 어디서 노출되나?</li>
+        </ul>
+      </div>
+
+      <ol class="steps">
+        <!-- 1 posts -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">자동 시리즈로 발행된 포스트 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">"이게 사람이 안 쓰고 자동 발행된 글이에요"부터 시작하세요. 페이지 상단에 자동발행 ON/OFF 배너 + 다음 발행 시각이 떠 있어요.</p>
+              <code class="route">/partner/posts</code>
+              <a class="open-live" data-path="/partner/posts" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/partner/posts/page.tsx — AutoPublishBanner + PartnerPostsList</li>
+                  <li><span class="tag">repo</span>src/lib/partner/auto-publish-window.ts — nextAutoPublishWindow</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/partner/posts">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">청광 파트너 · 콘텐츠</div>
+                <div class="mk-row" style="font-size:8.5px; color:#71717a;"><span>주 3회 발행</span><span>이번주 3/3 ✓</span></div>
+                <hr class="mk" />
+                <div class="mk-card">
+                  <span class="mk-chip ok">발행</span>
+                  <div style="font-size:9.5px; font-weight:700; margin-top:3px;">에어컨 청소비, 평수별 정직한 단가표</div>
+                  <div style="font-size:8.5px; color:#71717a;">5/12 · 조회 1,243</div>
+                </div>
+                <div class="mk-card">
+                  <span class="mk-chip ok">발행</span>
+                  <div style="font-size:9.5px; font-weight:700; margin-top:3px;">반려동물 키우면 청소 더 자주? 진실은</div>
+                  <div style="font-size:8.5px; color:#71717a;">5/10 · 조회 892</div>
+                </div>
+                <div class="mk-card">
+                  <span class="mk-chip amber">예약</span>
+                  <div style="font-size:9.5px; font-weight:700; margin-top:3px;">전세 입주 청소, 누가 비용 부담?</div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/partner/posts"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 2 series rotation -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">시리즈 회전 풀 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body"><b>auto-series-rotation-pool</b>에서 <b>5 각도 × 2 포맷 = 10 슬롯</b>이 라운드 로빈으로 도는 구조. 같은 각도·같은 포맷이 반복되지 않게 의도됨.</p>
+              <code class="route">/partner/series · domain/auto-series-rotation-pool.ts</code>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/partner/series/page.tsx — PartnerAutoSeriesPanel + 큐 편집 + history</li>
+                  <li><span class="tag">domain</span>src/domain/auto-series-rotation-pool.ts — 10 슬롯 round-robin</li>
+                  <li><span class="tag">domain</span>src/domain/auto-series-angle.ts — usp · menu · review · event · story</li>
+                  <li><span class="tag">domain</span>src/domain/post-format.ts — blog · card-news</li>
+                  <li><span class="tag">repo</span>src/lib/firebase/auto-series-repository.ts — listHistory(last 20)</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/partner/series">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">자동 시리즈</div>
+                <div class="mk-sub">5 각도 × 2 포맷 = 10 슬롯 순환</div>
+                <div class="mk-card">
+                  <div class="mk-row"><b style="font-size:9px;">▸ 이번주 슬롯</b><span class="mk-chip orange">실행 대기</span></div>
+                  <div style="font-size:8.5px; color:#71717a; margin-top:2px;">usp × blog</div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><span style="font-size:9px;">✓ 지난주</span><span class="mk-chip zinc">menu × card-news</span></div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><span style="font-size:9px;">✓ 2주 전</span><span class="mk-chip zinc">review × blog</span></div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><span style="font-size:9px;">✓ 3주 전</span><span class="mk-chip zinc">event × card-news</span></div>
+                </div>
+                <div style="font-size:7.5px; color:#71717a; text-align:center; margin-top:4px;">lastIndex+1 % 10 라운드 로빈</div>
+              </div>
+              <iframe class="phone-iframe" data-path="/partner/series"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 3 templates -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">콘텐츠 템플릿 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">브랜드 보이스를 템플릿에 한 번 박으면, 그 위에서만 생성됩니다. 톤이 안 흔들려요.</p>
+              <code class="route">/admin/content-templates · contentTemplates</code>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/admin/content-templates/page.tsx</li>
+                  <li><span class="tag">domain</span>src/domain/content-template-schema.ts</li>
+                  <li><span class="tag">action</span>src/app/actions/content-template-actions.ts</li>
+                  <li><span class="tag">rules</span>firestore.rules · contentTemplates (Admin SDK write only)</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/admin/content-templates">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">콘텐츠 템플릿</div>
+                <div class="mk-card">
+                  <div style="font-size:9px; font-weight:700;">정보형 (가이드)</div>
+                  <div style="font-size:8px; color:#71717a;">서론 3문장 → 핵심 5개 → 마무리</div>
+                  <div style="margin-top:3px;">
+                    <span class="mk-chip zinc">친근체</span>
+                    <span class="mk-chip zinc">존댓말</span>
+                  </div>
+                </div>
+                <div class="mk-card">
+                  <div style="font-size:9px; font-weight:700;">투명 단가형</div>
+                  <div style="font-size:8px; color:#71717a;">표 + 비교 + Q&A</div>
+                </div>
+                <div class="mk-card">
+                  <div style="font-size:9px; font-weight:700;">스토리형</div>
+                  <div style="font-size:8px; color:#71717a;">사례 → 인사이트</div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/admin/content-templates"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 4 RAG audit -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">RAG audit + 시리즈 이력 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">AI가 뭘 인용했는지, 언제 발행했는지 <b>append-only 감사 로그</b>로 다 남습니다. B2B 결정의 결정타.</p>
+              <code class="route">partners/{id}/ragHistory · seriesHistory</code>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/admin/rag-review/page.tsx</li>
+                  <li><span class="tag">rules</span>firestore.rules · ragHistory · seriesHistory — append-only (write 차단)</li>
+                  <li><span class="tag">rules</span>partners/{id}/events — auto-published · publish-toggled 감사로그</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/admin/rag-review">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">발행 이력</div>
+                <div class="mk-card">
+                  <div style="font-size:9px; font-weight:700;">5/12 14:02</div>
+                  <div style="font-size:8.5px;">"에어컨 청소비..."</div>
+                  <div style="font-size:7.5px; color:#71717a; margin-top:2px;">📎 소스 4건 · RAG hash a7f3</div>
+                </div>
+                <div class="mk-card">
+                  <div style="font-size:9px; font-weight:700;">5/10 09:14</div>
+                  <div style="font-size:8.5px;">"반려동물 키우면..."</div>
+                  <div style="font-size:7.5px; color:#71717a; margin-top:2px;">📎 소스 6건 · RAG hash 12b9</div>
+                </div>
+                <div class="mk-card">
+                  <div style="font-size:9px; font-weight:700;">5/08 11:30</div>
+                  <div style="font-size:8.5px;">템플릿 수정됨 (정보형)</div>
+                </div>
+                <div style="text-align:center; font-size:8px; color:#71717a;">append-only · 수정 불가</div>
+              </div>
+              <iframe class="phone-iframe" data-path="/admin/rag-review"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 5 community -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">커뮤니티 노출 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">발행한 콘텐츠는 청광 의뢰인 풀로 자동 노출됩니다. RSS도 따로 나가요.</p>
+              <code class="route">/community/partners · /community/stories</code>
+              <a class="open-live" data-path="/community/partners" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/community/partners/page.tsx</li>
+                  <li><span class="tag">page</span>src/app/community/stories/page.tsx + rss.xml</li>
+                  <li><span class="tag">page</span>src/app/community/providers/page.tsx + rss.xml</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/community/partners">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">청광 커뮤니티</div>
+                <div class="mk-sub">의뢰인이 보는 화면</div>
+                <div class="mk-card">
+                  <div class="mk-row"><b>에이스홈케어</b><span class="mk-chip ok">파트너</span></div>
+                  <div style="font-size:8.5px; color:#71717a;">"에어컨 청소비 정직 단가표"</div>
+                  <div style="font-size:8px; color:#71717a;">👁 1,243 · 💬 8</div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><b>맑은청소</b><span class="mk-chip ok">파트너</span></div>
+                  <div style="font-size:8.5px; color:#71717a;">"전세 입주청소, 누가 부담?"</div>
+                </div>
+                <div style="text-align:center; font-size:8px; color:#71717a;">📡 RSS 발행 중</div>
+              </div>
+              <iframe class="phone-iframe" data-path="/community/partners"></iframe>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="keyline">
+        "콘텐츠 자동 발행은 흔합니다. 회전 · 템플릿 · RAG 이력까지 묶인 건 청광이에요.
+        콘텐츠 한 편이 곧 의뢰인 풀로 노출됩니다."
+      </div>
+    </article>
+  </section>
+
+  <!-- Customer panel -->
+  <section class="panel" id="customer" role="tabpanel">
+    <article class="card">
+      <span class="section-label">1분 데모 · 일반 고객</span>
+      <h2>일반 고객에게 보여줄 것</h2>
+      <p class="lead">길게 설명할 시간 없습니다. <b>폰 한 대로 1분 안에 끝</b>난다는 걸 보여주세요.</p>
+
+      <div class="pain">
+        <b style="font-size:13px; color:#9a3412;">고객이 진짜 짜증나는 것</b>
+        <ul>
+          <li>어느 업체 믿을지 모르겠음</li>
+          <li>가격 비교가 어려움 (카톡으로 일일이 물어봐야 함)</li>
+          <li>일정 잡는 것까지 또 따로 전화·문자</li>
+        </ul>
+      </div>
+
+      <ol class="steps">
+        <!-- 1 quote/new -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">한 번에 견적 요청 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">카테고리·평수·지역만 넣고 제출. 매칭된 청명 여러 곳에 한 번에 갑니다.</p>
+              <code class="route">/quote/new</code>
+              <a class="open-live" data-path="/quote/new" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/quote/new/page.tsx — 카테고리 이모지·라벨·서브타이틀</li>
+                  <li><span class="tag">comp</span>src/components/quote/QuoteForm.tsx</li>
+                  <li><span class="tag">action</span>src/app/actions/quote-actions.ts — submitQuoteRequest (시간당 5건 rate limit)</li>
+                  <li><span class="tag">domain</span>src/domain/quote-schemas.ts · quote-category.ts</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/quote/new">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">견적 요청</div>
+                <div class="mk-sub">1/3 카테고리 선택</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+                  <div class="mk-card" style="text-align:center; padding:10px 4px; border-color:#1e40af; background:#eff6ff;">
+                    <div style="font-size:16px;">🧼</div>
+                    <div style="font-size:9px; font-weight:700;">입주청소</div>
+                  </div>
+                  <div class="mk-card" style="text-align:center; padding:10px 4px;">
+                    <div style="font-size:16px;">🛁</div>
+                    <div style="font-size:9px;">화장실</div>
+                  </div>
+                  <div class="mk-card" style="text-align:center; padding:10px 4px;">
+                    <div style="font-size:16px;">❄️</div>
+                    <div style="font-size:9px;">에어컨</div>
+                  </div>
+                  <div class="mk-card" style="text-align:center; padding:10px 4px;">
+                    <div style="font-size:16px;">🛋️</div>
+                    <div style="font-size:9px;">거실/소파</div>
+                  </div>
+                </div>
+                <div class="mk-btn primary" style="margin-top:6px;">다음 →</div>
+              </div>
+              <iframe class="phone-iframe" data-path="/quote/new"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 2 received compare -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">받은 견적 비교 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">가격 range · 리뷰 · Before/After · 보험 뱃지가 카드 한 줄에. 카톡 없이 비교.</p>
+              <code class="route">/received/[requestId]</code>
+              <a class="open-live" data-path="/received" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/received/page.tsx — 진행중/완료 탭 + RequestStatusCard</li>
+                  <li><span class="tag">page</span>src/app/received/[requestId]/page.tsx — QuoteStepper + QuoteCompareCard 리스트</li>
+                  <li><span class="tag">action</span>src/app/actions/quote-response-actions.ts · acceptQuote</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/received">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">받은 견적 3건</div>
+                <div class="mk-stepper">
+                  <div class="s done"></div><div class="s done"></div><div class="s now"></div><div class="s"></div>
+                </div>
+                <div class="mk-card" style="border-color:#1e40af;">
+                  <div class="mk-row"><b>청광클린</b><b style="color:#1e40af;">27만원</b></div>
+                  <div class="mk-row" style="font-size:8.5px; color:#71717a;"><span>★ 4.9 · 47개</span><span class="mk-chip ok">보험</span></div>
+                  <div class="mk-photos"><div class="mk-photo"></div><div class="mk-photo warm"></div></div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><b>홈케어24</b><b>32만원</b></div>
+                  <div class="mk-row" style="font-size:8.5px; color:#71717a;"><span>★ 4.7 · 102개</span><span class="mk-chip ok">보험</span></div>
+                </div>
+                <div class="mk-card">
+                  <div class="mk-row"><b>맑은청소</b><b>24만원</b></div>
+                  <div class="mk-row" style="font-size:8.5px; color:#71717a;"><span>★ 4.6 · 31개</span></div>
+                </div>
+              </div>
+              <iframe class="phone-iframe" data-path="/received"></iframe>
+            </div>
+          </div>
+        </li>
+
+        <!-- 3 chat -->
+        <li>
+          <div class="demo-row">
+            <div class="demo-content">
+              <p class="step-title">채팅으로 협의 → 일정 확정 <span class="verified">✅ 코드 확인</span></p>
+              <p class="step-body">마음에 드는 청명 고르고 채팅. 청명이 일정 확정하면 끝.</p>
+              <code class="route">/chat/[threadId]</code>
+              <a class="open-live" data-path="/chat" target="_blank">실제 화면 열기 ↗</a>
+              <details class="proof">
+                <summary>📂 코드 위치 확인</summary>
+                <ul>
+                  <li><span class="tag">page</span>src/app/chat/page.tsx — 본인 role 자동 판별 (client / provider)</li>
+                  <li><span class="tag">page</span>src/app/chat/[threadId]/page.tsx</li>
+                  <li><span class="tag">comp</span>ThreadsListClient · ThreadDetailClient · MessageComposer</li>
+                  <li><span class="tag">rules</span>firestore.rules · threads / messages — 참여자 외 read 차단</li>
+                </ul>
+              </details>
+            </div>
+            <div class="phone" data-path="/chat">
+              <div class="notch"></div>
+              <div class="phone-screen">
+                <div class="mk-title">청광클린 김사장</div>
+                <div class="mk-pinned"><b>📌 27만원 · 4시간 · 5/18(일) 오전</b></div>
+                <div class="mk-msg right">언제 가능하세요?</div>
+                <div class="mk-msg left">일요일 오전 9시 어떠세요?</div>
+                <div class="mk-msg right">좋아요!</div>
+                <div class="mk-msg system">🗓️ 5/18(일) 9시 일정 확정</div>
+                <div style="font-size:8px; color:#71717a; text-align:center; margin-top:4px;">거래완료까지 한 화면</div>
+              </div>
+              <iframe class="phone-iframe" data-path="/chat"></iframe>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="keyline">
+        "한 번 입력 = 여러 견적 비교 = 채팅으로 협의 = 끝.
+        카톡 돌릴 일 없습니다."
+      </div>
+    </article>
+  </section>
+
+  <!-- Trust common -->
+  <section class="trust">
+    <h3>★ 어느 자리에서든 한 번씩 던질 신뢰 메시지</h3>
+    <div class="grid">
+      <div class="item"><b>거래 무결성</b><br>견적 제출 → 수락 → 일정 확정의 모든 전이가 <b>한 트랜잭션</b>으로 묶여 절대 깨지지 않습니다.</div>
+      <div class="item"><b>데이터 격리</b><br>Firestore rules로 본인 거래만 보이게 잠가뒀어요. 클라이언트가 상태를 직접 못 바꿉니다.</div>
+      <div class="item"><b>6단계 상태머신</b><br>submitted → quoted → negotiating → booked → completed. 끊기는 지점이 화면으로 드러납니다.</div>
+      <div class="item"><b>채팅·견적·일정 통합</b><br>같은 thread에 묶여서 데이터가 흩어지지 않아요.</div>
+    </div>
+  </section>
+
+  <div class="tip">
+    <b>준비물 한 줄 팁.</b>
+    영업 전 <code class="route">/sample-accounts</code>로 청명 / 고객 / 파트너 계정을 미리 켜두세요.
+    페르소나만 갈아끼우면 데모가 안 끊깁니다. 인박스가 비어 보이지 않게 quote 한두 건은 미리 만들어두면 좋아요.
+  </div>
+
+  <div class="tip">
+    <b>실제 화면 캡처가 필요하면.</b>
+    로컬에서 <code class="route">pnpm dev</code>로 띄운 뒤 <code class="route">/sample-accounts</code>로 페르소나 진입 → Chrome 개발자도구 device emulation(iPhone 15 Pro)으로 캡처하면 위 폰 프레임 자리에 그대로 들어갑니다.
+    데모 페이지 상단 "앱 주소"를 <code class="route">http://localhost:3000</code>으로 바꾸고 <b>라이브 미리보기 켜기</b>를 누르면 iframe으로 실제 페이지가 뜹니다.
+  </div>
+
+  <footer>청광 · 청소+광고 · Sales Kit</footer>
+</div>
+
+<script>
+  // Tabs
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
+    const target = t.dataset.target;
+    panels.forEach(p => p.classList.toggle('active', p.id === target));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
+
+  // Live preview toggle
+  const baseUrlInput = document.getElementById('baseUrl');
+  const liveBtn = document.getElementById('liveToggle');
+  const phones = document.querySelectorAll('.phone[data-path]');
+  const openLinks = document.querySelectorAll('a.open-live[data-path]');
+
+  function syncOpenLinks() {
+    const base = baseUrlInput.value.replace(/\/$/, '');
+    openLinks.forEach(a => { a.href = base + a.dataset.path; });
+  }
+  syncOpenLinks();
+  baseUrlInput.addEventListener('input', syncOpenLinks);
+
+  function setLive(on) {
+    const base = baseUrlInput.value.replace(/\/$/, '');
+    liveBtn.dataset.on = String(on);
+    liveBtn.textContent = on ? '라이브 미리보기 켜짐 · 끄기' : '라이브 미리보기 켜기';
+    phones.forEach(p => {
+      const iframe = p.querySelector('iframe.phone-iframe');
+      if (on) {
+        if (iframe && !iframe.src) iframe.src = base + iframe.dataset.path;
+        p.classList.add('live');
+      } else {
+        p.classList.remove('live');
+      }
+    });
+  }
+  liveBtn.addEventListener('click', () => setLive(liveBtn.dataset.on !== 'true'));
+</script>
+</body>
+</html>

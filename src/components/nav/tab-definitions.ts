@@ -53,7 +53,8 @@ export function getTabs(key: TabSetKey): readonly TabDefinition[] {
 }
 
 /** active 판단: exact면 === · 아니면 href 또는 href+'/' prefix */
-export function isActiveTab(pathname: string, tab: TabDefinition): boolean {
+export function isActiveTab(pathname: string | null, tab: TabDefinition): boolean {
+  if (!pathname) return false;
   if (tab.exact) return pathname === tab.href;
   if (pathname === tab.href) return true;
   return pathname.startsWith(tab.href + "/");
@@ -69,6 +70,7 @@ const HIDDEN_PATTERNS: readonly RegExp[] = [
   /^\/admin(\/|$)/,
 ];
 
-export function isHiddenPath(pathname: string): boolean {
+export function isHiddenPath(pathname: string | null): boolean {
+  if (!pathname) return false;
   return HIDDEN_PATTERNS.some((p) => p.test(pathname));
 }

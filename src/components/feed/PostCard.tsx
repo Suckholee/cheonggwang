@@ -36,7 +36,7 @@ export function PostCard({ post }: Props) {
           <div className="h-full w-full bg-gradient-to-br from-zinc-200 to-zinc-100 dark:from-zinc-700 dark:to-zinc-900" />
         )}
         <span className="absolute left-2 top-2 rounded bg-white/90 px-2 py-0.5 text-[10px] font-medium text-zinc-700 shadow-sm backdrop-blur-sm dark:bg-zinc-950/80 dark:text-zinc-300">
-          {CATEGORY_LABELS[post.category]}
+          {(CATEGORY_LABELS as Record<string, string>)[post.category] || post.category}
         </span>
       </div>
       <h3 className="mt-2 line-clamp-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">

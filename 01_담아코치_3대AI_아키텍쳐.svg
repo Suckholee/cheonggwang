@@ -1,0 +1,129 @@
+<svg viewBox="0 0 1200 880" xmlns="http://www.w3.org/2000/svg" font-family="'NanumGothic', 'Apple SD Gothic Neo', sans-serif">
+  <defs>
+    <linearGradient id="aiGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EEF2FF"/>
+      <stop offset="100%" stop-color="#E0E7FF"/>
+    </linearGradient>
+    <linearGradient id="aiGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#FDE68A"/>
+    </linearGradient>
+    <linearGradient id="aiGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#DCFCE7"/>
+      <stop offset="100%" stop-color="#BBF7D0"/>
+    </linearGradient>
+    <linearGradient id="workflowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E3A8A"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="50" text-anchor="middle" font-size="30" font-weight="800" fill="#0F172A">담아코치 — 3대 핵심 AI 아키텍쳐</text>
+  <text x="600" y="80" text-anchor="middle" font-size="16" fill="#64748B">'기록–점검–피드백–개입–상담' 워크플로 위에 3개의 전문 AI를 결합한 학습코칭 OS</text>
+
+  <!-- Top: 학생 입력 layer -->
+  <rect x="80" y="120" width="1040" height="80" rx="12" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="120" y="153" font-size="18" font-weight="700" fill="#0F172A">학생 — 일상 학습 활동 입력</text>
+  <text x="120" y="178" font-size="14" fill="#475569">플래너 작성 · 오답 기록 · 개념 정리 · 학습 성찰 (별도 입력 부담 없이 일상에 묻혀 누적)</text>
+
+  <line x1="600" y1="210" x2="600" y2="240" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Workflow base bar -->
+  <rect x="80" y="250" width="1040" height="80" rx="12" fill="url(#workflowGrad)"/>
+  <text x="600" y="282" text-anchor="middle" font-size="14" fill="#DBEAFE" font-weight="700">워크플로 베이스 — 학원이 매일 굴리는 운영 흐름</text>
+  <text x="180" y="312" font-size="17" fill="white" font-weight="700">기록</text>
+  <text x="350" y="312" font-size="17" fill="white" font-weight="700">점검</text>
+  <text x="540" y="312" font-size="17" fill="white" font-weight="700">피드백</text>
+  <text x="740" y="312" font-size="17" fill="white" font-weight="700">개입</text>
+  <text x="950" y="312" font-size="17" fill="white" font-weight="700">상담</text>
+  <line x1="260" y1="295" x2="320" y2="295" stroke="#BFDBFE" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <line x1="420" y1="295" x2="490" y2="295" stroke="#BFDBFE" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <line x1="630" y1="295" x2="700" y2="295" stroke="#BFDBFE" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <line x1="800" y1="295" x2="900" y2="295" stroke="#BFDBFE" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+  <line x1="600" y1="340" x2="600" y2="370" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="615" y="360" font-size="12" fill="#64748B" font-style="italic">같은 포맷으로 누적된 데이터</text>
+
+  <!-- 3 AI Cards -->
+  <!-- AI 1 -->
+  <rect x="80" y="385" width="320" height="240" rx="14" fill="url(#aiGrad1)" stroke="#6366F1" stroke-width="2"/>
+  <circle cx="120" cy="425" r="22" fill="#4F46E5"/>
+  <text x="120" y="432" text-anchor="middle" font-size="22" fill="white" font-weight="700">①</text>
+  <text x="155" y="420" font-size="18" font-weight="800" fill="#3730A3">휴리스틱 학습 분석 AI</text>
+  <text x="155" y="441" font-size="13" fill="#4338CA">학생의 '사고 패턴'을 진단</text>
+  <text x="100" y="475" font-size="13" fill="#1E1B4B" font-weight="600">핵심 기능</text>
+  <text x="100" y="498" font-size="13" fill="#312E81">• 오답·풀이 경로·개념 이해를</text>
+  <text x="100" y="516" font-size="13" fill="#312E81">  패턴 단위로 분석</text>
+  <text x="100" y="540" font-size="13" fill="#312E81">• '왜 틀렸나' + '다음에 무엇을'</text>
+  <text x="100" y="558" font-size="13" fill="#312E81">  자동 판단</text>
+  <text x="100" y="582" font-size="13" fill="#312E81">• SRL-PRO 12종 진단 결합</text>
+  <rect x="100" y="595" width="280" height="20" rx="4" fill="#E0E7FF"/>
+  <text x="240" y="610" text-anchor="middle" font-size="11" fill="#3730A3" font-weight="700">특허 가출원 10-2026-0012213</text>
+
+  <!-- AI 2 -->
+  <rect x="440" y="385" width="320" height="240" rx="14" fill="url(#aiGrad2)" stroke="#D97706" stroke-width="2"/>
+  <circle cx="480" cy="425" r="22" fill="#B45309"/>
+  <text x="480" y="432" text-anchor="middle" font-size="22" fill="white" font-weight="700">②</text>
+  <text x="515" y="420" font-size="18" font-weight="800" fill="#92400E">상담 데이터 관리 AI</text>
+  <text x="515" y="441" font-size="13" fill="#B45309">흩어진 기록을 '상담 자료'로 변환</text>
+  <text x="460" y="475" font-size="13" fill="#451A03" font-weight="600">핵심 기능</text>
+  <text x="460" y="498" font-size="13" fill="#78350F">• 학습·실행·성찰 기록을</text>
+  <text x="460" y="516" font-size="13" fill="#78350F">  같은 포맷으로 구조화</text>
+  <text x="460" y="540" font-size="13" fill="#78350F">• 학부모 상담 리포트 자동 생성</text>
+  <text x="460" y="558" font-size="13" fill="#78350F">• 코치 회의록·상담 근거 자료</text>
+  <text x="460" y="576" font-size="13" fill="#78350F">  자동 작성</text>
+  <rect x="460" y="595" width="280" height="20" rx="4" fill="#FDE68A"/>
+  <text x="600" y="610" text-anchor="middle" font-size="11" fill="#92400E" font-weight="700">주당 6~8시간 기록 정리 → 30분 이내</text>
+
+  <!-- AI 3 -->
+  <rect x="800" y="385" width="320" height="240" rx="14" fill="url(#aiGrad3)" stroke="#16A34A" stroke-width="2"/>
+  <circle cx="840" cy="425" r="22" fill="#15803D"/>
+  <text x="840" y="432" text-anchor="middle" font-size="22" fill="white" font-weight="700">③</text>
+  <text x="875" y="420" font-size="18" font-weight="800" fill="#14532D">학습관리 AI</text>
+  <text x="875" y="441" font-size="13" fill="#166534">학생의 '한 주'를 자동으로 굴림</text>
+  <text x="820" y="475" font-size="13" fill="#052E16" font-weight="600">핵심 기능</text>
+  <text x="820" y="498" font-size="13" fill="#14532D">• 플래너·약점훈련·종합요약</text>
+  <text x="820" y="516" font-size="13" fill="#14532D">  멀티 에이전트</text>
+  <text x="820" y="540" font-size="13" fill="#14532D">• 위험 신호 자동 탐지 → 원장</text>
+  <text x="820" y="558" font-size="13" fill="#14532D">  콘솔 즉시 알림</text>
+  <text x="820" y="582" font-size="13" fill="#14532D">• 의도 기반 'Vibe UI' 조작</text>
+  <rect x="820" y="595" width="280" height="20" rx="4" fill="#BBF7D0"/>
+  <text x="960" y="610" text-anchor="middle" font-size="11" fill="#14532D" font-weight="700">50대 원장도 첫날부터 운영 가능</text>
+
+  <!-- Arrows to output -->
+  <line x1="240" y1="640" x2="350" y2="680" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="600" y1="640" x2="600" y2="680" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="960" y1="640" x2="850" y2="680" stroke="#475569" stroke-with="2" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Bottom: 원장 콘솔 — 박스 키우고 텍스트 색 밝게 -->
+  <rect x="80" y="690" width="1040" height="160" rx="12" fill="#0F172A"/>
+  <text x="120" y="722" font-size="19" font-weight="800" fill="#FFFFFF">원장 콘솔 — AI가 정리해주는 통합 운영 화면</text>
+
+  <!-- Output items: 2 rows x 3 columns, 색상 점 + 라벨 -->
+  <text x="120" y="760" font-size="16" fill="#60A5FA" font-weight="700">●</text>
+  <text x="142" y="760" font-size="14" fill="#F1F5F9" font-weight="600">주간 학생 요약</text>
+
+  <text x="460" y="760" font-size="16" fill="#F87171" font-weight="700">▲</text>
+  <text x="482" y="760" font-size="14" fill="#F1F5F9" font-weight="600">위험 신호 알림</text>
+
+  <text x="800" y="760" font-size="16" fill="#FBBF24" font-weight="700">◆</text>
+  <text x="822" y="760" font-size="14" fill="#F1F5F9" font-weight="600">학부모 상담 포인트</text>
+
+  <text x="120" y="790" font-size="16" fill="#34D399" font-weight="700">★</text>
+  <text x="142" y="790" font-size="14" fill="#F1F5F9" font-weight="600">피드백 초안</text>
+
+  <text x="460" y="790" font-size="16" fill="#22D3EE" font-weight="700">↗</text>
+  <text x="482" y="790" font-size="14" fill="#F1F5F9" font-weight="600">도입 효과 리포트</text>
+
+  <text x="800" y="790" font-size="16" fill="#F87171" font-weight="700">※</text>
+  <text x="822" y="790" font-size="14" fill="#F1F5F9" font-weight="600">미이행·반복오답 알림</text>
+
+  <!-- 인용구 -->
+  <line x1="120" y1="808" x2="1080" y2="808" stroke="#334155" stroke-width="1"/>
+  <text x="120" y="833" font-size="13" fill="#FBBF24" font-style="italic" font-weight="700">"이 도구 없으면 다시 못 돌아갑니다."</text>
+  <text x="475" y="833" font-size="13" fill="#CBD5E1">— 파일럿 학원 원장님 (중랑구·청량리, 4주째 사용 중)</text>
+</svg>

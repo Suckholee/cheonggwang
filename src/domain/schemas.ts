@@ -8,7 +8,7 @@ import {
   MIN_KEY_POINTS,
 } from "./constants";
 
-export const categorySchema = z.enum(["restaurant", "salon", "cafe"]);
+export const categorySchema = z.string().min(1);
 
 export const photoSchema = z.object({
   url: z.string().url(),

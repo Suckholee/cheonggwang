@@ -7,6 +7,6 @@
  * research 모듈은 secret 등록 후 별도 deploy. 현재는 auto-series만 active.
  */
 
-// export * from "./research"; // cycle #20 — secret 등록 후 활성화
+export * from "./research"; // cycle #20 — secret 등록 후 활성화
 export * from "./auto-series";
 export * from "./tips"; // cycle #30 cleaning-tips-content — tipsTick scheduled function
