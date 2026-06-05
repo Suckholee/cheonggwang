@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { X, MessageCircle, Check } from "lucide-react";
+import { X, MessageCircle, Check, Inbox } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { RequestCard } from "./RequestCard";
 import { passRequest } from "@/app/actions/quote-response-actions";
 import type { QuoteRequest } from "@/types/quote-request";
@@ -74,7 +76,7 @@ export function TriageClient({ initialRequests, provider }: Props) {
         className="fixed inset-x-0 z-30 border-t border-zinc-200 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95"
         style={{ bottom: "var(--bottom-nav-height)" }}
       >
-        <div className="mx-auto flex max-w-xl items-center justify-around px-4 py-3">
+        <div className="mx-auto flex max-w-[480px] items-center justify-between gap-3 px-5 py-4">
           <ActionButton
             icon={<X className="h-5 w-5" />}
             label="관심없음"
@@ -130,13 +132,15 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-xs font-semibold transition-colors ${
+      className={`flex flex-1 flex-col items-center gap-1.5 rounded-2xl py-3 px-2 text-xs font-extrabold transition-all duration-200 shadow-xs border ${
         isPrimary
-          ? "bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
-          : "text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          ? "bg-indigo-650 text-white border-indigo-700 border-b-[4px] border-b-indigo-800 hover:bg-indigo-500 hover:scale-[1.03] active:scale-[0.97] active:translate-y-[2px] active:border-b-[2px] disabled:opacity-50 disabled:pointer-events-none"
+          : "bg-white text-zinc-750 border-zinc-200 border-b-[4px] border-b-zinc-300 hover:border-zinc-300 hover:scale-[1.03] active:scale-[0.97] active:translate-y-[2px] active:border-b-[2px] disabled:opacity-30 disabled:pointer-events-none dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800 dark:border-b-zinc-950"
       }`}
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-current">
+      <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
+        isPrimary ? "bg-white/10" : "bg-zinc-50 dark:bg-zinc-950"
+      }`}>
         {icon}
       </span>
       <span>{label}</span>
@@ -146,14 +150,40 @@ function ActionButton({
 
 function EmptyQueue() {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-      <span className="text-5xl" aria-hidden>
-        🎉
-      </span>
-      <h2 className="text-lg font-bold">모두 확인했어요!</h2>
-      <p className="text-sm text-zinc-500">
-        새 요청이 도착하면 알려드릴게요
-      </p>
+    <div className="overflow-hidden flex flex-col items-center rounded-[24px] border border-zinc-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:bg-zinc-900 dark:border-zinc-800">
+      <div className="relative h-44 w-full bg-zinc-100 dark:bg-zinc-950">
+        <Image
+          src="/images/clean_office_cafe.png"
+          alt="받은 요청 없음"
+          fill
+          sizes="(max-width: 640px) 100vw, 400px"
+          className="object-cover"
+        />
+        {/* Soft mask overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent dark:from-zinc-900 dark:via-zinc-900/40" />
+
+        {/* Floating icon badge */}
+        <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-white bg-[#2563EB] text-white shadow-md dark:border-zinc-900 dark:bg-[#3B82F6]">
+          <Inbox className="h-6 w-6" strokeWidth={2.5} />
+        </div>
+      </div>
+
+      <div className="px-5 pb-6 pt-10 text-center flex flex-col items-center">
+        <h2 className="text-[16px] font-extrabold text-zinc-900 dark:text-zinc-50">
+          모든 요청을 확인했어요!
+        </h2>
+        <p className="mt-1.5 max-w-xs text-xs font-bold text-zinc-400 dark:text-zinc-500 leading-normal">
+          주변 지역에 새로운 청소 견적 요청이 등록되면 가장 먼저 알려드릴게요.
+        </p>
+
+        <Link
+          href="/provider/home"
+          className="mt-6 inline-flex w-full min-w-[200px] items-center justify-center gap-1.5 rounded-xl bg-white text-zinc-750 font-extrabold border border-zinc-200 border-b-[3px] border-b-zinc-300 px-4 py-2.5 text-xs shadow-xs hover:border-[#2563EB]/40 hover:scale-[1.02] active:scale-[0.96] active:translate-y-[1px] transition-all dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800 dark:border-b-zinc-950"
+        >
+          대시보드로 돌아가기
+        </Link>
+      </div>
     </div>
   );
 }
+

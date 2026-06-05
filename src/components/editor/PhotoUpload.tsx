@@ -104,14 +104,14 @@ export function PhotoUpload({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">
-          사진 <span className="text-xs text-zinc-500">({photos.length} / {maxPhotos})</span>
+        <label className="text-[13px] font-extrabold text-zinc-700 dark:text-zinc-300">
+          업로드된 사진 <span className="text-xs font-medium text-zinc-450">({photos.length} / {maxPhotos})</span>
         </label>
         <button
           type="button"
           disabled={!canAdd || uploading}
           onClick={() => inputRef.current?.click()}
-          className="rounded bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="shrink-0 flex items-center justify-center gap-1 rounded-xl bg-white text-zinc-700 font-extrabold border border-zinc-200 border-b-[3px] border-b-zinc-300 px-3.5 py-1.5 text-xs shadow-xs hover:border-[#2563EB]/40 hover:scale-[1.02] active:scale-[0.96] active:translate-y-[1px] disabled:opacity-50 transition-all dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800 dark:border-b-zinc-950"
         >
           {uploading ? "업로드 중..." : "사진 추가"}
         </button>
@@ -124,17 +124,14 @@ export function PhotoUpload({
           onChange={(e) => handleFiles(e.target.files)}
         />
       </div>
-      <p className="text-xs text-zinc-500">
-        JPEG/PNG/WebP, 파일당 최대 5MB. 첫 번째 사진이 대표 사진으로 사용됩니다.
-      </p>
       {error && (
-        <p className="rounded bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950 dark:text-red-300">
-          {error}
+        <p className="rounded-xl bg-red-50 border border-red-100 px-3 py-2 text-xs font-semibold text-red-700 dark:bg-red-950/20 dark:border-red-900/50 dark:text-red-300">
+          ⚠️ {error}
         </p>
       )}
       {photos.length === 0 ? (
-        <div className="rounded border border-dashed border-zinc-300 p-8 text-center text-xs text-zinc-500 dark:border-zinc-800">
-          아직 사진이 없어요
+        <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 p-8 text-center text-xs font-bold text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/30">
+          📸 아직 업로드된 사진이 없어요
         </div>
       ) : (
         <ul className="grid grid-cols-3 gap-2">
@@ -143,7 +140,7 @@ export function PhotoUpload({
             return (
               <li
                 key={photo.path + photo.order}
-                className="relative aspect-square overflow-hidden rounded border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900"
+                className="relative aspect-square overflow-hidden rounded-xl border border-zinc-200/60 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900"
               >
                 {isPlaceholder ? (
                   <div className="flex h-full items-center justify-center text-[10px] text-zinc-400">
@@ -161,7 +158,7 @@ export function PhotoUpload({
                 <button
                   type="button"
                   onClick={() => handleRemove(photo)}
-                  className="absolute right-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white hover:bg-black"
+                  className="absolute right-1.5 top-1.5 rounded-lg bg-black/60 hover:bg-black px-2 py-1 text-[10px] font-bold text-white backdrop-blur-xs transition-colors"
                 >
                   삭제
                 </button>

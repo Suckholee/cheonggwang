@@ -49,3 +49,17 @@ export interface BookingListItemDTO {
   memo: string | null;
   bucket: DayBucket;
 }
+
+export interface QuoteRequestCalendarDTO {
+  id: string;
+  category: QuoteCategory;
+  regionLabel: string;
+  sizeLabel: string;
+  preferredDateMs: number | null;
+  preferredDateLabel: string;
+  distanceLabel: string;
+  competitorsCount: number;
+  priceRange: string | null;
+  note: string | null;
+  photos: Array<{ url: string }>;
+}

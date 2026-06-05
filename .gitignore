@@ -45,3 +45,10 @@ scripts/.sample-credentials.txt
 
 # bkit PDCA 런타임 상태 (cycle 진행 시 잦은 갱신 — 추적 불필요)
 .bkit/
+
+# IDEs
+.idea/
+*.iml
+.idea_modules/
+**/android/.idea/
+**/ios/.idea/

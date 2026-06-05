@@ -35,7 +35,7 @@ export function ThreadRow({ thread }: Props) {
       href={`/chat/${id}`}
       role="listitem"
       aria-label={`${counterpartName}${unreadCount > 0 ? ` · 미읽음 ${unreadCount}건` : ""}`}
-      className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 transition-colors hover:border-indigo-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-indigo-700"
+      className="flex items-center gap-3 rounded-2xl border border-zinc-200 border-b-4 border-b-zinc-300 bg-white p-3.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] transition-all duration-200 hover:border-zinc-300 hover:scale-[1.01] active:scale-[0.98] active:translate-y-[2px] active:border-b-2 dark:border-zinc-800 dark:border-b-zinc-950 dark:bg-zinc-900/60 dark:hover:border-zinc-700"
     >
       <div
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${initialGradient(

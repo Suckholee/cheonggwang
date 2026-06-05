@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
   UserPen,
@@ -13,47 +11,66 @@ interface Props {
   requestBadgeCount: number;
 }
 
-interface Shortcut {
-  href: string;
-  label: string;
-  Icon: LucideIcon;
-  badge?: number;
-}
-
 export function ShortcutGrid({ requestBadgeCount }: Props) {
-  const shortcuts: Shortcut[] = [
-    { href: "/provider/profile", label: "프로필 편집", Icon: UserPen },
+  const shortcuts = [
+    {
+      href: "/provider/profile",
+      label: "프로필 편집",
+      Icon: UserPen,
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-50/70 dark:bg-blue-950/40",
+    },
     {
       href: "/provider/requests",
       label: "받은 요청",
       Icon: Inbox,
       badge: requestBadgeCount,
+      color: "text-rose-600 dark:text-rose-450",
+      bg: "bg-rose-50/70 dark:bg-rose-950/40",
     },
-    { href: "/provider/works", label: "작업 관리", Icon: Briefcase },
-    { href: "/provider/settings", label: "설정", Icon: Settings },
+    {
+      href: "/provider/works",
+      label: "작업 관리",
+      Icon: Briefcase,
+      color: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-50/70 dark:bg-amber-950/40",
+    },
+    {
+      href: "/provider/settings",
+      label: "설정",
+      Icon: Settings,
+      color: "text-zinc-650 dark:text-zinc-400",
+      bg: "bg-zinc-100 dark:bg-zinc-800",
+    },
   ];
 
   return (
     <section aria-labelledby="shortcut-heading" className="mb-6">
       <h2
         id="shortcut-heading"
-        className="mb-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+        className="mb-3 text-[14px] font-extrabold text-zinc-800 dark:text-zinc-200"
       >
         빠른 이동
       </h2>
-      <div className="grid grid-cols-2 gap-2">
-        {shortcuts.map(({ href, label, Icon, badge }) => (
+      <div className="grid grid-cols-2 gap-2.5">
+        {shortcuts.map(({ href, label, Icon, badge, color, bg }) => (
           <Link
             key={href}
             href={href}
-            className="relative flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3 transition-colors hover:border-indigo-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-indigo-700"
+            className="relative flex items-center gap-3.5 rounded-[24px] border border-zinc-200 border-b-4 border-b-zinc-300 bg-white p-4.5 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.97] active:translate-y-[2px] shadow-sm transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:border-b-zinc-950"
           >
-            <Icon className="h-5 w-5 shrink-0 text-indigo-600 dark:text-indigo-400" />
-            <span className="flex-1 text-sm font-medium">{label}</span>
+            <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${bg} ${color}`}
+            >
+              <Icon className="h-5 w-5" strokeWidth={2.5} />
+            </div>
+            <span className="flex-1 text-[13px] font-extrabold text-zinc-850 dark:text-zinc-200 leading-tight">
+              {label}
+            </span>
             {badge && badge > 0 ? (
               <span
                 aria-label={`${label} ${badge}건`}
-                className="flex h-5 min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1.5 text-[11px] font-medium text-white"
+                className="flex h-5.5 min-w-[22px] items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-black text-white border-2 border-white dark:border-zinc-900 shadow-xs"
               >
                 {badge}
               </span>

@@ -11,13 +11,45 @@ import { quoteRequestRepository } from "@/lib/firebase/quote-request-repository"
 import { providerResponseRepository } from "@/lib/firebase/provider-response-repository";
 import { TriageClient } from "@/components/provider/TriageClient";
 
+import { BrandLogo } from "@/components/ui/BrandLogo";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+
 export const metadata = {
   title: "받은 요청 · 청광",
 };
 
 export default function ProviderRequestsPage() {
   return (
-    <div className="mx-auto min-h-screen max-w-xl px-4 py-6">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
+      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Link
+              href="/provider/home"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 border border-zinc-200 text-zinc-600 hover:text-zinc-900 shadow-sm transition-all hover:scale-105 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+              aria-label="홈으로 가기"
+            >
+              <ChevronLeft className="h-4.5 w-4.5" strokeWidth={2.5} />
+            </Link>
+            <BrandLogo />
+          </div>
+          <span className="rounded-full border border-[#d8e6ff] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/80 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+            Partner
+          </span>
+        </div>
+        <div className="mt-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
+            Requests
+          </p>
+          <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+            받은 요청 목록
+          </h1>
+          <p className="mt-2 text-[13px] leading-5 text-zinc-650 dark:text-zinc-400">
+            지정된 지역의 매칭 대기 중인 청소 요청서들을 빠르게 확인하세요.
+          </p>
+        </div>
+      </header>
       <Suspense fallback={<TriageSkeleton />}>
         <TriageBody />
       </Suspense>
@@ -27,12 +59,9 @@ export default function ProviderRequestsPage() {
 
 function TriageSkeleton() {
   return (
-    <div className="animate-pulse">
-      <div className="mb-4 flex justify-between">
-        <div className="h-6 w-24 rounded bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-4 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
-      </div>
-      <div className="h-96 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+    <div className="animate-pulse space-y-4" aria-label="요청서 로딩 중">
+      <div className="h-44 w-full rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
+      <div className="h-40 w-full rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
     </div>
   );
 }

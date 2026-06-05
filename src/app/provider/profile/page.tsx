@@ -20,6 +20,9 @@ import { PriceBookTab } from "@/components/provider-profile-editor/PriceBookTab"
 import { PortfolioTab } from "@/components/provider-profile-editor/PortfolioTab";
 import { PromoTab } from "@/components/provider-profile-editor/PromoTab";
 
+import { BrandLogo } from "@/components/ui/BrandLogo";
+import { ChevronLeft } from "lucide-react";
+
 export const metadata = {
   title: "청명 프로필 편집 · 청광",
 };
@@ -38,7 +41,46 @@ interface PageProps {
 
 export default function ProviderProfilePage(props: PageProps) {
   return (
-    <div className="mx-auto min-h-screen max-w-2xl px-4 py-8 pb-24">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-32 dark:bg-none">
+      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Link
+              href="/provider/home"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 border border-zinc-200 text-zinc-600 hover:text-zinc-900 shadow-sm transition-all hover:scale-105 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-450"
+              aria-label="청명 홈으로 가기"
+            >
+              <ChevronLeft className="h-4.5 w-4.5" strokeWidth={2.5} />
+            </Link>
+            <BrandLogo />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full border border-[#d8e6ff] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/80 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+              Profile
+            </span>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="rounded-xl border border-zinc-200 bg-white/85 px-3 py-1.5 text-xs font-bold text-zinc-650 transition-all hover:bg-white hover:text-zinc-950 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-450 dark:hover:text-zinc-200"
+              >
+                로그아웃
+              </button>
+            </form>
+          </div>
+        </div>
+        <div className="mt-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
+            Partner Profile
+          </p>
+          <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+            청명 프로필
+          </h1>
+          <p className="mt-2 text-[13px] leading-5 text-zinc-650 dark:text-zinc-400">
+            매력적인 프로필 정보를 등록하여 우리 동네 고객에게 신뢰를 전달해보세요.
+          </p>
+        </div>
+      </header>
+
       <Suspense fallback={<EditorSkeleton />}>
         <EditorBody searchParams={props.searchParams} />
       </Suspense>
@@ -48,14 +90,12 @@ export default function ProviderProfilePage(props: PageProps) {
 
 function EditorSkeleton() {
   return (
-    <div className="animate-pulse">
-      <div className="mb-4 h-8 w-64 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="mb-8 h-4 w-80 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="h-64 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+    <div className="animate-pulse space-y-4">
+      <div className="h-28 w-full rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
+      <div className="h-64 w-full rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
     </div>
   );
 }
-
 
 async function EditorBody({
   searchParams,
@@ -90,24 +130,8 @@ async function EditorBody({
       : [];
 
   return (
-    <div className="space-y-8">
-      <header className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-black tracking-tight text-[#111827]">청명 프로필</h1>
-          <p className="text-[14px] font-medium text-[#6B7280]">매력적인 프로필로 더 많은 고객을 만나보세요</p>
-        </div>
-        <form action={signOut}>
-          <button
-            type="submit"
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-bold text-[#6B7280] transition-colors hover:bg-[#F3F4F6] hover:text-[#111827]"
-          >
-            <LogOut className="h-4 w-4" />
-            로그아웃
-          </button>
-        </form>
-      </header>
-
-      <section className="flex items-center justify-between rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] p-5 shadow-lg shadow-blue-500/20 text-white">
+    <div className="space-y-6">
+      <section className="flex items-center justify-between rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] p-5 shadow-lg shadow-blue-500/20 text-white dark:from-[#3B82F6] dark:to-[#1D4ED8] dark:shadow-none">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-blue-200" />
@@ -129,7 +153,7 @@ async function EditorBody({
         </Link>
       </section>
 
-      <div className="chg-card">
+      <div className="chg-card p-5 bg-white border border-zinc-200/50 rounded-[24px] shadow-sm dark:bg-zinc-950 dark:border-zinc-850">
         <ProfileEditorTabs currentTab={currentTab} />
 
         <div className="mt-6">
@@ -140,17 +164,17 @@ async function EditorBody({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Link
           href="/provider/requests"
-          className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#111827] py-4 text-[15px] font-bold text-white transition-all hover:bg-[#1F2937] shadow-xl shadow-zinc-900/10 active:scale-[0.98]"
+          className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-zinc-900 border-b-4 border-b-black py-4 text-[15px] font-extrabold text-white transition-all hover:bg-zinc-850 active:scale-[0.98] active:translate-y-[2px] shadow-sm dark:bg-zinc-100 dark:border-b-zinc-300 dark:text-zinc-950 dark:hover:bg-white"
         >
           <LayoutGrid className="h-5 w-5" />
           <span>전체 요청 확인하기</span>
         </Link>
         <Link
-          href="/"
-          className="flex-1 flex items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white py-4 text-[15px] font-bold text-[#374151] transition-all hover:bg-[#F9FAFB] active:scale-[0.98]"
+          href="/provider/home"
+          className="flex-1 flex items-center justify-center rounded-2xl border border-zinc-200 border-b-4 border-b-zinc-300 bg-white py-4 text-[15px] font-extrabold text-zinc-700 transition-all hover:border-zinc-350 hover:scale-[1.01] active:scale-[0.98] active:translate-y-[2px] shadow-sm dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800 dark:border-b-zinc-950"
         >
           홈으로
         </Link>

@@ -35,7 +35,7 @@ export function ActiveRequestsSection({
       <section aria-labelledby="active-requests-heading" className="mb-6">
         <h2
           id="active-requests-heading"
-          className="mb-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+          className="mb-3 text-[14px] font-extrabold text-zinc-800 dark:text-zinc-200"
         >
           수신 요청
         </h2>
@@ -57,16 +57,16 @@ export function ActiveRequestsSection({
       <div className="mb-3 flex items-center justify-between">
         <h2
           id="active-requests-heading"
-          className="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+          className="text-[14px] font-extrabold text-zinc-800 dark:text-zinc-200"
         >
           수신 요청{" "}
-          <span className="text-xs font-normal text-zinc-500">
+          <span className="ml-1 text-[11px] font-bold text-zinc-400 dark:text-zinc-500">
             ({totalCount}건)
           </span>
         </h2>
         <Link
           href="/provider/requests"
-          className="text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+          className="text-xs font-extrabold text-[#2563EB] hover:text-[#1D4ED8] dark:text-[#3B82F6]"
         >
           전체 보기 →
         </Link>

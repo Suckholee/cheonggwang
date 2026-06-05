@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "294434409701",
+    "project_id": "cheonggwang-e4e33",
+    "storage_bucket": "cheonggwang-e4e33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294434409701:android:a47493931a70c2721f980c",
+        "android_client_info": {
+          "package_name": "kr.co.cheonggwang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294434409701-s90q6ic8o5ot0b1uja3kcjopeqao21f9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkZ87mT5QBdzR_dAIt8chvDhV0R2Ikck4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294434409701-s90q6ic8o5ot0b1uja3kcjopeqao21f9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

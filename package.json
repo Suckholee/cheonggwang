@@ -10,6 +10,10 @@
     "test:tips": "npx tsx src/lib/llm/tips-generator.test.ts && npx tsx src/lib/tips/topic-pool.test.ts && npx tsx src/lib/tips/next-tick-time.test.ts && npx tsx src/lib/tips/schedule-gate.test.ts && npx tsx src/lib/tips/schedule-preview.test.ts"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/ios": "^8.4.0",
     "@cheonggwang/shared": "workspace:*",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.2.2",
