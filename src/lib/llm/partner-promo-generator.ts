@@ -155,7 +155,7 @@ const composeSchema: Schema = {
     bodyMarkdown: {
       type: SchemaType.STRING,
       description:
-        "800~1200자 한국어 홍보 블로그 본문 (markdown — h2/h3/p/ul/li/strong 허용).",
+        "800~1200자 한국어 홍보 블로그 본문 (markdown — h2/h3/p/blockquote/ul/li/strong/em 허용).",
     },
     coverImageAlt: {
       type: SchemaType.STRING,
@@ -219,7 +219,7 @@ function buildComposePrompt(args: {
   const isCardNews = args.format === "card-news";
   const formatRule = isCardNews
     ? buildCardNewsInstruction()
-    : "- 800~1200자 한국어 본문 (markdown — h2/h3/p/ul/li/strong 허용).";
+    : "- 800~1200자 한국어 본문 (markdown — h2/h3/p/blockquote/ul/li/strong/em 허용).";
 
   // v1.15 cycle #28 partner-aeo-boost · §3.1 (G1, H1) — AEO 콘텐츠 패턴.
   // blog format에만 적용 (카드뉴스는 슬라이드 형식 미적합).
@@ -230,6 +230,10 @@ function buildComposePrompt(args: {
 - **H2 헤더**: "{서비스} 비용은?", "어떻게 {서비스}하나요?" 처럼 자연어 질문 형식 1~2개 포함.
 - **마지막에 [자주 묻는 질문] 섹션**: \`## 자주 묻는 질문\` + \`### Q1./Q2./Q3.\` 형식 + 답변은 단락으로.
 - **구조**: 답변(첫 단락) → 근거(중단 H2들) → 자주 묻는 질문 (마지막).
+- **네이버 블로그 감성의 글 스타일**:
+  - 모바일 가독성을 높이기 위해 각 문단(paragraph)은 1~3줄로 매우 짧게 구성하고 줄바꿈을 자주 하세요.
+  - 강조하고 싶은 단어, 핵심 장소, 고객 혜택 등에는 이탤릭체(\`*텍스트*\` 즉, em 태그)를 사용하여 본문 내 형광펜 하이라이트 효과를 연출하세요.
+  - 중요한 메시지, 슬로건, 업체 이름 강조, 주의 사항 등은 인용구(\`> 텍스트\` 즉, blockquote 태그)를 적극적으로 활용하여 큰 따옴표 인용구 블록(“ ... ”)으로 만들어 진짜 블로그 본문처럼 느껴지게 구성하세요.
 - FAQ 답변에서도 가격·할인율·전화번호를 사실로 단정하지 않습니다 (예: "가격은 매장에 문의" OK).`;
 
   return `[사진 설명]

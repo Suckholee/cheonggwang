@@ -199,55 +199,127 @@ main > * {
  * Tailwind v4 preflight가 기본 strong/em/h2/h3 스타일을 모두 제거하므로
  * markdown으로 작성된 굵음/기울기/헤더가 visible하게 렌더되도록 명시적 규칙 추가.
  */
+.prose-promo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 100%;
+  margin: 0 auto;
+  word-break: keep-all;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 .prose-promo h2 {
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   line-height: 1.4;
-  margin: 1.75rem 0 0.5rem;
+  margin: 2.5rem 0 1rem;
   color: rgb(17 24 39);
+  text-align: center;
+  width: 100%;
 }
 .prose-promo h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   line-height: 1.4;
-  margin: 1.25rem 0 0.375rem;
+  margin: 2rem 0 0.8rem;
   color: rgb(17 24 39);
+  text-align: center;
+  width: 100%;
 }
 .prose-promo p {
-  margin: 0 0 0.875rem;
-  line-height: 1.75;
+  margin: 0 0 1.75rem;
+  line-height: 1.85;
+  font-size: 15px;
+  color: rgb(55 65 81);
+  text-align: center;
+  width: 100%;
 }
 .prose-promo strong {
   font-weight: 700;
   color: rgb(15 23 42);
 }
 .prose-promo em {
-  font-style: italic;
-  background: linear-gradient(transparent 60%, rgba(254, 240, 138, 0.6) 60%);
-  padding: 0 1px;
-  font-weight: 500;
+  font-style: normal;
+  font-weight: 700;
+  background: linear-gradient(to top, rgba(217, 249, 157, 0.8) 40%, transparent 40%);
+  padding: 1px 4px;
+  margin: 0 2px;
+  border-radius: 4px;
+  color: rgb(17 24 39);
+}
+.prose-promo blockquote {
+  margin: 2.5rem auto;
+  padding: 1.5rem 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+.prose-promo blockquote::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 20' fill='none'%3E%3Cpath d='M10 20H0V10C0 4.47715 4.47715 0 10 0V4C6.68629 4 4 6.68629 4 10H10V20ZM28 20H18V10C18 4.47715 22.4772 0 28 0V4C24.6863 4 22 6.68629 22 10H28V20Z' fill='%233B82F6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 0.875rem;
+  opacity: 0.6;
+}
+.prose-promo blockquote::after {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 20' fill='none'%3E%3Cpath d='M18 0H28V10C28 15.5228 23.5228 20 18 20V16C21.3137 16 24 13.3137 24 10H18V0ZM0 0H10V10C10 15.5228 5.52285 20 0 20V16C3.31371 16 6 13.3137 6 10H0V0Z' fill='%233B82F6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 0.875rem;
+  opacity: 0.6;
+}
+.prose-promo blockquote p {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  margin: 0;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  font-style: normal;
+  text-align: center;
 }
 .prose-promo ul {
   list-style: disc;
-  padding-left: 1.5rem;
-  margin: 0 0 1rem;
+  list-style-position: inside;
+  padding-left: 0;
+  margin: 0 0 1.5rem;
+  text-align: center;
+  width: 100%;
 }
 .prose-promo ol {
   list-style: decimal;
-  padding-left: 1.5rem;
-  margin: 0 0 1rem;
+  list-style-position: inside;
+  padding-left: 0;
+  margin: 0 0 1.5rem;
+  text-align: center;
+  width: 100%;
 }
 .prose-promo li {
-  margin: 0.25rem 0;
-  line-height: 1.7;
+  margin: 0.375rem 0;
+  line-height: 1.75;
+  text-align: center;
 }
 .prose-promo a {
-  color: rgb(8 145 178); /* cyan-600 */
+  color: rgb(37 99 235);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 .prose-promo a:hover {
-  color: rgb(14 116 144); /* cyan-700 */
+  color: rgb(29 78 216);
 }
 
 /* dark mode */
@@ -255,17 +327,28 @@ main > * {
 .dark .prose-promo h3 {
   color: rgb(244 244 245);
 }
+.dark .prose-promo p {
+  color: rgb(209 213 219);
+}
 .dark .prose-promo strong {
   color: rgb(250 250 250);
 }
 .dark .prose-promo em {
-  background: linear-gradient(transparent 60%, rgba(253, 224, 71, 0.25) 60%);
+  background: linear-gradient(to top, rgba(132, 204, 22, 0.35) 40%, transparent 40%);
+  color: rgb(244 244 245);
+}
+.dark .prose-promo blockquote p {
+  color: #60a5fa;
+}
+.dark .prose-promo blockquote::before,
+.dark .prose-promo blockquote::after {
+  filter: brightness(1.5) opacity(0.8);
 }
 .dark .prose-promo a {
-  color: rgb(103 232 249); /* cyan-300 */
+  color: rgb(96 165 250);
 }
 .dark .prose-promo a:hover {
-  color: rgb(165 243 252); /* cyan-200 */
+  color: rgb(147 197 253);
 }
 
 /* ==========================================================================

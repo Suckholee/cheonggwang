@@ -36,6 +36,7 @@ export function renderMarkdown(md: string): string {
       "h2",
       "h3",
       "p",
+      "blockquote",
       "ul",
       "ol",
       "li",
