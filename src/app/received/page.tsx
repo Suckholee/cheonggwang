@@ -27,25 +27,25 @@ export default function ReceivedPage(props: {
 }) {
   return (
     <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
-      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:bg-zinc-950/90 dark:border-zinc-900">
+      <header className="sticky top-0 z-40 -mx-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:bg-zinc-950/90 dark:border-zinc-900">
         <div className="flex items-center justify-between">
           <BrandLogo />
           <span className="rounded-full border border-[#d8e6ff] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/80">
             Quotes
           </span>
         </div>
-        <div className="mt-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
-            Inbox
-          </p>
-          <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-            받은 견적
-          </h1>
-          <p className="mt-2 text-[13px] leading-5 text-zinc-650 dark:text-zinc-400">
-            청명들로부터 도착한 견적서와 예약 진행 상황을 확인하세요.
-          </p>
-        </div>
       </header>
+      <div className="mt-4 mb-4 rounded-2xl border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-4 py-4 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
+          Inbox
+        </p>
+        <h1 className="mt-0.5 text-[20px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+          받은 견적
+        </h1>
+        <p className="mt-1 text-[12px] leading-5 text-zinc-600 dark:text-zinc-400">
+          청명들로부터 도착한 견적서와 예약 진행 상황을 확인하세요.
+        </p>
+      </div>
       <Suspense fallback={<ReceivedSkeleton />}>
         <ReceivedBody searchParams={props.searchParams} />
       </Suspense>
