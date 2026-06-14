@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 
 export default function PostBySlugPage(props: PageProps) {
   return (
-    <div className="mx-auto min-h-screen max-w-2xl px-4 py-6 pb-24">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
       <Suspense fallback={<PostSkeleton />}>
         <PostBody params={props.params} />
       </Suspense>
@@ -133,14 +133,22 @@ async function PostBody({
         <meta property="og:image" content={ogImageFallback} />
       )}
       <JsonLdScript data={jsonLd} />
-      {/* v1.15 cycle #28 hotfix — 뒤로 가기 nav. 패널별로 다른 라벨 표시. */}
-      <Link
-        href={`/community/${panelSlug}`}
-        className="inline-flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        <span>{panelLabel}</span>
-      </Link>
+      {/* Sticky App Header */}
+      <header className="sticky top-0 z-40 -mx-5 -mt-3 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3.5 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+        <div className="flex items-center justify-between">
+          <Link
+            href={`/community/${panelSlug}`}
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 border border-zinc-200 text-zinc-600 hover:text-zinc-900 shadow-sm transition-all hover:scale-105 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+            aria-label="이전 화면으로 가기"
+          >
+            <ChevronLeft className="h-4.5 w-4.5" strokeWidth={2.5} />
+          </Link>
+          <h1 className="text-[17px] font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
+            {panelLabel}
+          </h1>
+          <div className="w-8" />
+        </div>
+      </header>
       {isPreview && (
         <div
           role="status"

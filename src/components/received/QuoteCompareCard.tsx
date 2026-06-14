@@ -17,6 +17,7 @@ interface Props {
   provider: Provider | null;
   requestStatus: QuoteStatus;
   bookingScheduledAtMs?: number | null;
+  index?: number;
 }
 
 function formatWon(value: number): string {
@@ -39,6 +40,7 @@ export function QuoteCompareCard({
   provider,
   requestStatus,
   bookingScheduledAtMs,
+  index = 0,
 }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -77,7 +79,10 @@ export function QuoteCompareCard({
     : "청광";
 
   return (
-    <div className="border-b border-zinc-100 last:border-b-0 dark:border-zinc-900">
+    <div 
+      className="border-b border-zinc-100 last:border-b-0 dark:border-zinc-900 animate-[slideUp_0.5s_cubic-bezier(0.16,1,0.3,1)_both]"
+      style={{ animationDelay: `${index * 120}ms` }}
+    >
       {/* Clickable Header Row */}
       <div
         onClick={() => setIsOpenAccordion()}

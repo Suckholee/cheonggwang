@@ -27,9 +27,19 @@ export function ProviderSignupForm() {
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Phone verification states
+  const [smsSent, setSmsSent] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState<any>(null);
+  const [smsSending, setSmsSending] = useState(false);
+  const [codeConfirming, setCodeConfirming] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+
   const {
     register,
     handleSubmit,
+    getValues,
+    trigger,
     formState: { errors },
   } = useForm<ProviderSignupFormInput>({
     resolver: zodResolver(providerSignupFormSchema),
@@ -45,24 +55,94 @@ export function ProviderSignupForm() {
     },
   });
 
+  async function handleSendSms() {
+    setSubmitError(null);
+    const isValid = await trigger(["username", "password", "passwordConfirm", "companyName", "contactPhone"]);
+    if (!isValid) return;
+
+    setSmsSending(true);
+
+    try {
+      const username = getValues("username");
+      const password = getValues("password");
+      const phone = getValues("contactPhone");
+
+      const syntheticEmail = usernameToSyntheticEmail(username);
+      const { toE164 } = await import("@/lib/format/phone");
+      const e164Phone = toE164(phone);
+
+      const { RecaptchaVerifier, linkWithPhoneNumber } = await import("firebase/auth");
+      
+      let user = clientAuth.currentUser;
+      if (user && user.email !== syntheticEmail) {
+        await clientAuth.signOut();
+        user = null;
+      }
+
+      if (!user) {
+        const cred = await createUserWithEmailAndPassword(clientAuth, syntheticEmail, password);
+        user = cred.user;
+      }
+
+      let verifier = (window as any).recaptchaVerifier;
+      if (!verifier) {
+        verifier = new RecaptchaVerifier(clientAuth, "recaptcha-container", {
+          size: "invisible",
+        });
+        (window as any).recaptchaVerifier = verifier;
+      }
+
+      const confirmation = await linkWithPhoneNumber(user, e164Phone, verifier);
+      setConfirmationResult(confirmation);
+      setSmsSent(true);
+      alert("인증번호가 발송되었습니다. 문자를 확인해 주세요.");
+    } catch (err: any) {
+      console.error("[provider-phone-auth] Send SMS error:", err);
+      setSubmitError(readableFirebaseAuthError(err.code) || err.message);
+    } finally {
+      setSmsSending(false);
+    }
+  }
+
+  async function handleVerifyCode() {
+    setSubmitError(null);
+    setCodeConfirming(true);
+
+    try {
+      if (!verificationCode || verificationCode.length !== 6) {
+        throw new Error("6자리 인증번호를 입력해 주세요");
+      }
+      if (!confirmationResult) {
+        throw new Error("인증번호 발송을 먼저 진행해 주세요");
+      }
+
+      await confirmationResult.confirm(verificationCode);
+      setPhoneVerified(true);
+      alert("휴대폰 인증이 성공적으로 완료되었습니다!");
+    } catch (err: any) {
+      console.error("[provider-phone-auth] Confirm code error:", err);
+      setSubmitError("인증번호가 일치하지 않거나 만료되었습니다. 다시 시도해 주세요.");
+    } finally {
+      setCodeConfirming(false);
+    }
+  }
+
   async function onSubmit(data: ProviderSignupFormInput) {
     setSubmitError(null);
 
-    // 1. Firebase Auth client create (합성 이메일로 변환)
+    if (!phoneVerified) {
+      setSubmitError("휴대폰 인증을 먼저 완료해 주세요");
+      return;
+    }
+
     try {
-      const syntheticEmail = usernameToSyntheticEmail(data.username);
-      const cred = await createUserWithEmailAndPassword(
-        clientAuth,
-        syntheticEmail,
-        data.password,
-      );
+      const user = clientAuth.currentUser;
+      if (!user) {
+        throw new Error("가입 세션이 유효하지 않습니다. 다시 시도해 주세요.");
+      }
 
-      // 이메일 인증 발송은 합성 이메일이라 실제로 도달할 수 없으므로 스킵.
+      const idToken = await user.getIdToken();
 
-      // 2. idToken 획득
-      const idToken = await cred.user.getIdToken();
-
-      // 4. Server Action dispatch
       startTransition(async () => {
         const result = await registerProvider({
           idToken,
@@ -79,9 +159,8 @@ export function ProviderSignupForm() {
           setSubmitError(result.message);
         }
       });
-    } catch (err) {
-      const authErr = err as AuthError;
-      setSubmitError(readableFirebaseAuthError(authErr.code));
+    } catch (err: any) {
+      setSubmitError(readableFirebaseAuthError(err.code) || err.message);
     }
   }
 
@@ -90,6 +169,8 @@ export function ProviderSignupForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="flex w-full max-w-md flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
     >
+      <div id="recaptcha-container"></div>
+
       <Field
         label="아이디"
         hint="영문 소문자로 시작 · 영문/숫자/_ (4-20자)"
@@ -98,10 +179,11 @@ export function ProviderSignupForm() {
         <input
           {...register("username")}
           type="text"
+          disabled={phoneVerified}
           autoComplete="username"
           inputMode="text"
           placeholder="sebombhome"
-          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
         />
       </Field>
 
@@ -113,8 +195,9 @@ export function ProviderSignupForm() {
         <input
           {...register("password")}
           type="password"
+          disabled={phoneVerified}
           autoComplete="new-password"
-          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
         />
       </Field>
 
@@ -125,8 +208,9 @@ export function ProviderSignupForm() {
         <input
           {...register("passwordConfirm")}
           type="password"
+          disabled={phoneVerified}
           autoComplete="new-password"
-          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
         />
       </Field>
 
@@ -135,8 +219,9 @@ export function ProviderSignupForm() {
           {...register("companyName")}
           type="text"
           maxLength={40}
+          disabled={phoneVerified}
           placeholder="예: 새봄홈서비스"
-          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
         />
       </Field>
 
@@ -147,7 +232,8 @@ export function ProviderSignupForm() {
       >
         <select
           {...register("primaryCategory")}
-          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          disabled={phoneVerified}
+          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
         >
           {QUOTE_CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -157,18 +243,64 @@ export function ProviderSignupForm() {
         </select>
       </Field>
 
-      <Field
-        label="전화번호"
-        hint="010-1234-5678 형식"
-        error={errors.contactPhone?.message}
-      >
-        <input
-          {...register("contactPhone")}
-          type="tel"
-          placeholder="010-1234-5678"
-          className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
-        />
-      </Field>
+      <div className="flex flex-col gap-1.5">
+        <span className="flex items-baseline justify-between text-sm font-medium">
+          <span>전화번호</span>
+          <span className="text-xs font-normal text-zinc-500">010-1234-5678 형식</span>
+        </span>
+        <div className="flex gap-2">
+          <input
+            {...register("contactPhone")}
+            type="tel"
+            disabled={phoneVerified}
+            placeholder="010-1234-5678"
+            className="flex-1 rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
+          />
+          <button
+            type="button"
+            disabled={phoneVerified || smsSending}
+            onClick={handleSendSms}
+            className="shrink-0 rounded border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-semibold text-zinc-700 transition-all hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-850 disabled:opacity-50"
+          >
+            {smsSending ? "전송 중..." : smsSent ? "재전송" : "인증 요청"}
+          </button>
+        </div>
+        {errors.contactPhone?.message && (
+          <span className="text-xs text-red-600">{errors.contactPhone.message}</span>
+        )}
+      </div>
+
+      {smsSent && (
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium">인증번호 입력</span>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              required
+              disabled={phoneVerified}
+              maxLength={6}
+              placeholder="6자리 인증번호"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              className="flex-1 rounded border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
+            />
+            <button
+              type="button"
+              disabled={phoneVerified || codeConfirming}
+              onClick={handleVerifyCode}
+              className="shrink-0 rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
+            >
+              {codeConfirming ? "확인 중..." : phoneVerified ? "인증 완료" : "인증 확인"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {phoneVerified && (
+        <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+          ✓ 휴대폰 인증이 완료되었습니다.
+        </p>
+      )}
 
       <label className="flex items-start gap-2 text-sm">
         <input
@@ -218,7 +350,7 @@ export function ProviderSignupForm() {
 
       <button
         type="submit"
-        disabled={isPending}
+        disabled={isPending || !phoneVerified}
         className="rounded bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
       >
         {isPending ? "가입 중..." : "청명으로 가입하기"}

@@ -19,7 +19,7 @@ export const QUOTE_CATEGORY_LABELS: Record<QuoteCategory, string> = {
   "move-in": "입주청소",
   office: "사무실청소",
   aircon: "에어컨청소",
-  "move-out": "이사청소",
+  "move-out": "퇴거청소",
   special: "특수청소",
   regular: "정기청소",
 };

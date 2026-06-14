@@ -15,6 +15,7 @@ export function MessageComposer({ threadId }: Props) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const isComposingRef = useRef(false);
 
   const trimmed = text.trim();
   const canSend = trimmed.length > 0 && trimmed.length <= MAX_LEN && !isPending;
@@ -34,6 +35,7 @@ export function MessageComposer({ threadId }: Props) {
   }
 
   function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (isComposingRef.current) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -63,6 +65,13 @@ export function MessageComposer({ threadId }: Props) {
           value={text}
           onChange={(e) => setText(e.target.value.slice(0, MAX_LEN))}
           onKeyDown={handleKey}
+          onCompositionStart={() => {
+            isComposingRef.current = true;
+          }}
+          onCompositionEnd={(e) => {
+            isComposingRef.current = false;
+            setText(e.currentTarget.value.slice(0, MAX_LEN));
+          }}
           aria-label="메시지 입력"
           placeholder="메시지를 입력하세요"
           className="max-h-32 min-h-10 flex-1 resize-none rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:border-zinc-700 dark:bg-zinc-950"

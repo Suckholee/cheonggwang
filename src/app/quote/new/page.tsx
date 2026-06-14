@@ -17,7 +17,7 @@ import {
 import { providerRepository } from "@/lib/firebase/provider-repository";
 import { QuoteForm } from "@/components/quote/QuoteForm";
 import { BrandLogo } from "@/components/ui/BrandLogo";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Home, Sparkles } from "lucide-react";
 
 const nanoRequestId = customAlphabet(
   "0123456789abcdefghijklmnopqrstuvwxyz",
@@ -51,16 +51,31 @@ export default function QuoteNewPage(props: {
             Request
           </span>
         </div>
-        <div className="mt-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
-            Get a Quote
-          </p>
-          <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-            견적 요청
-          </h1>
-          <p className="mt-2 text-[13px] leading-5 text-zinc-650 dark:text-zinc-400">
-            필요한 청소 정보를 입력하고 2분 만에 최적의 견적 제안을 받아보세요.
-          </p>
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-5px) scale(1.02); }
+          }
+        `}} />
+        <div className="mt-4 flex items-center justify-between gap-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950 animate-[page-fade-in_0.35s_ease-out]">
+          <div className="flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
+              Get a Quote
+            </p>
+            <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+              견적 요청
+            </h1>
+            <p className="mt-2 text-[13px] leading-5 text-zinc-650 dark:text-zinc-400">
+              필요한 청소 정보를 입력하고 2분 만에 최적의 견적 제안을 받아보세요.
+            </p>
+          </div>
+          
+          {/* Animated illustration on the right */}
+          <div className="relative shrink-0 flex items-center justify-center w-20 h-20 bg-white/60 dark:bg-zinc-800/40 rounded-2xl border border-white/80 dark:border-zinc-700/30 shadow-[inset_0_2px_4px_rgba(255,255,255,0.6)] overflow-hidden animate-[float_3.5s_ease-in-out_infinite] z-10">
+            <Home className="h-10 w-10 text-[#2563EB]/95 dark:text-blue-400/90" strokeWidth={1.5} />
+            <Sparkles className="absolute top-2.5 right-2.5 h-4.5 w-4.5 text-amber-400 animate-[pulse_1.5s_ease-in-out_infinite]" />
+            <Sparkles className="absolute bottom-3 left-3 h-3.5 w-3.5 text-amber-300 animate-[pulse_2s_ease-in-out_infinite]" />
+          </div>
         </div>
       </header>
 

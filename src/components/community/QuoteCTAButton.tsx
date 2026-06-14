@@ -15,7 +15,7 @@ export function QuoteCTAButton({ providerId, category }: Props) {
       href={href}
       className="block w-full rounded-xl bg-indigo-600 px-4 py-3.5 text-center text-sm font-bold text-white transition-colors hover:bg-indigo-700"
     >
-      💰 이 청명에게 견적 요청하기
+      💰 견적 요청하러 가기
     </Link>
   );
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { cookies } from "next/headers";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase/admin";
@@ -172,6 +173,57 @@ export async function confirmBooking(
     }
 
     return { ok: true, data: { bookingId: createdBookingId } };
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "issues" in e) {
+      return actionError("INVALID_INPUT", "입력 정보가 올바르지 않습니다");
+    }
+    return toActionError(e);
+  }
+}
+
+const submitWorkReportInputSchema = z.object({
+  bookingId: z.string(),
+  completionStatus: z.string(),
+  checklist: z.array(z.string()),
+  note: z.string().nullable(),
+  photos: z.array(z.string()),
+});
+
+export type SubmitWorkReportInput = z.infer<typeof submitWorkReportInputSchema>;
+
+export async function submitWorkReport(
+  rawInput: SubmitWorkReportInput,
+): Promise<ActionResult<{ bookingId: string }>> {
+  try {
+    const input = submitWorkReportInputSchema.parse(rawInput);
+    const uid = await resolveUid();
+
+    const bookingRef = adminDb.collection("bookings").doc(input.bookingId);
+    
+    await adminDb.runTransaction(async (tx) => {
+      const snap = await tx.get(bookingRef);
+      if (!snap.exists) {
+        throw new AppError("INVALID_STATE", "일정을 찾을 수 없어요");
+      }
+      const b = snap.data()!;
+      if (b.providerOwnerUid !== uid) {
+        throw new AppError("FORBIDDEN", "본인의 일정에만 보고서를 작성할 수 있어요");
+      }
+
+      tx.update(bookingRef, {
+        status: "completed",
+        report: {
+          completionStatus: input.completionStatus,
+          checklist: input.checklist,
+          note: input.note,
+          photos: input.photos,
+          submittedAt: FieldValue.serverTimestamp(),
+        },
+      });
+    });
+
+    revalidatePath("/provider/works");
+    return { ok: true, data: { bookingId: input.bookingId } };
   } catch (e) {
     if (typeof e === "object" && e !== null && "issues" in e) {
       return actionError("INVALID_INPUT", "입력 정보가 올바르지 않습니다");

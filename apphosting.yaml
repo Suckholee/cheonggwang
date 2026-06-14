@@ -1,0 +1,52 @@
+# apphosting.yaml
+# v1.0 — 구글 클라우드 Firebase App Hosting 배포 설정
+
+# Cloud Run 서비스 자원 스펙 정의
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 100
+  concurrency: 80
+
+# Next.js 환경 변수 매핑
+env:
+  # ─── Public Firebase Client Config ───
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyBYybKcHZwzDk8pKpGDfIjOR4q162cdgEU"
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "cheonggwang-e4e33.firebaseapp.com"
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "cheonggwang-e4e33"
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "cheonggwang-e4e33.firebasestorage.app"
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "294434409701"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:294434409701:web:447dc6d6928f6a651f980c"
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: "G-M07M4EPEG5"
+
+  # ─── LLM Models Config ───
+  - variable: OPENAI_API_MODEL
+    value: "gpt-5.2-2025-12-11"
+  - variable: GOOGLE_GENERATIVE_AI_MODEL
+    value: "gemini-3-flash-preview"
+
+  # ─── Admin Config ───
+  - variable: ADMIN_USERNAME
+    value: "admin"
+
+  # ─── Secrets (GCP Secret Manager 연동) ───
+  - variable: FIREBASE_ADMIN_SA_BASE64
+    secret: firebase-admin-sa-base64
+  - variable: OPENAI_API_KEY
+    secret: openai-api-key
+  - variable: GOOGLE_GENERATIVE_AI_API_KEY
+    secret: google-generative-ai-api-key
+  - variable: CRON_SECRET
+    secret: cron-secret
+  - variable: ADMIN_PASSWORD_HASH
+    secret: admin-password-hash
+  - variable: ADMIN_SESSION_SECRET
+    secret: admin-session-secret

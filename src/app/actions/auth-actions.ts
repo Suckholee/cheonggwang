@@ -25,12 +25,15 @@ export async function signInWithEmail(idToken: string): Promise<ActionResult> {
 
   try {
     const decoded = await adminAuth.verifyIdToken(idToken, true);
-    const { uid, email, name } = decoded;
+    const { uid, email, name, phone_number } = decoded;
 
     // v1.6 (post-merge): 합성 이메일이면 username 추출해서 따로 저장.
     // 레거시 실제 이메일은 email 필드에 그대로 저장.
     const synthetic = isSyntheticEmail(email);
     const username = synthetic ? syntheticEmailToUsername(email) : null;
+
+    const { fromE164 } = await import("@/lib/format/phone");
+    const contactPhone = phone_number ? fromE164(phone_number) : "";
 
     const userRef = adminDb.collection("users").doc(uid);
     const snap = await userRef.get();
@@ -41,11 +44,20 @@ export async function signInWithEmail(idToken: string): Promise<ActionResult> {
         displayName:
           name ?? username ?? (email ? email.split("@")[0] : "사용자"),
         isCheonggwangPartner: false,
+        contactPhone,
         createdAt: FieldValue.serverTimestamp(),
       });
-    } else if (username && !snap.data()?.username) {
-      // 기존 문서에 username 보강 (레거시 사용자 로그인 시 1회)
-      await userRef.update({ username });
+    } else {
+      const updateData: Record<string, any> = {};
+      if (username && !snap.data()?.username) {
+        updateData.username = username;
+      }
+      if (contactPhone && !snap.data()?.contactPhone) {
+        updateData.contactPhone = contactPhone;
+      }
+      if (Object.keys(updateData).length > 0) {
+        await userRef.update(updateData);
+      }
     }
 
     const session = await createSessionCookie(idToken);

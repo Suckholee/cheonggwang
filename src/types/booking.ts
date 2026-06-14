@@ -5,7 +5,7 @@ import type { QuoteCategory } from "@/domain/quote-category";
  * v1 status 단일 'confirmed' · v1.3b에서 'in_progress/completed/cancelled' 전이 추가.
  */
 
-export type BookingStatus = "confirmed";
+export type BookingStatus = "confirmed" | "completed" | "cancelled";
 
 export interface Booking {
   id: string;
@@ -25,6 +25,13 @@ export interface Booking {
   status: BookingStatus;
   createdBy: string;
   createdAt: Date;
+  report?: {
+    completionStatus: string;
+    checklist: string[];
+    note: string | null;
+    photos: string[];
+    submittedAt: Date;
+  } | null;
 }
 
 export type DayBucket = "today" | "tomorrow" | "thisWeek" | "later" | "past";
@@ -48,6 +55,14 @@ export interface BookingListItemDTO {
   totalAmount: number;
   memo: string | null;
   bucket: DayBucket;
+  status: BookingStatus;
+  report?: {
+    completionStatus: string;
+    checklist: string[];
+    note: string | null;
+    photos: string[];
+    submittedAtMs: number;
+  } | null;
 }
 
 export interface QuoteRequestCalendarDTO {

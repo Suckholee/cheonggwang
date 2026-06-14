@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   collection,
+  doc,
   limit,
   onSnapshot,
   orderBy,
@@ -19,6 +20,8 @@ import type { MessageBubbleDTO } from "@/types/chat";
 interface Props {
   threadId: string;
   uid: string;
+  bookingId: string | null;
+  initialBookingStatus: string | null;
 }
 
 const MAX_MESSAGES = 200;
@@ -36,24 +39,47 @@ function toDTO(
   uid: string,
 ): MessageBubbleDTO {
   const rawType = d.type;
-  const type: MessageBubbleDTO["type"] = rawType === "system" ? "system" : "text";
+  const type: MessageBubbleDTO["type"] =
+    rawType === "system"
+      ? "system"
+      : rawType === "paymentRequest"
+      ? "paymentRequest"
+      : "text";
   return {
     id,
     text: String(d.text ?? ""),
     mine: d.senderUid === uid,
     createdAtMs: tsToMs(d.createdAt as Timestamp | null | undefined),
     type,
+    amount: d.amount ? Number(d.amount) : undefined,
+    bookingId: d.bookingId ? String(d.bookingId) : undefined,
   };
 }
 
-export function ThreadDetailClient({ threadId, uid }: Props) {
+export function ThreadDetailClient({
+  threadId,
+  uid,
+  bookingId,
+  initialBookingStatus,
+}: Props) {
   const [messages, setMessages] = useState<MessageBubbleDTO[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [bookingStatus, setBookingStatus] = useState<string | null>(initialBookingStatus);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     void markThreadAsRead({ threadId });
   }, [threadId]);
+
+  useEffect(() => {
+    if (!bookingId) return;
+    const unsub = onSnapshot(doc(clientDb, "bookings", bookingId), (snap) => {
+      if (snap.exists()) {
+        setBookingStatus(snap.data().status as string);
+      }
+    });
+    return () => unsub();
+  }, [bookingId]);
 
   useEffect(() => {
     const q = query(
@@ -101,7 +127,12 @@ export function ThreadDetailClient({ threadId, uid }: Props) {
               </p>
             )}
             {messages.map((m) => (
-              <MessageBubble key={m.id} message={m} />
+              <MessageBubble
+                key={m.id}
+                message={m}
+                bookingStatus={bookingStatus}
+                threadId={threadId}
+              />
             ))}
           </>
         )}

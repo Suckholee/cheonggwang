@@ -32,7 +32,7 @@ interface PageProps {
 
 export default function ChatThreadPage(props: PageProps) {
   return (
-    <div className="mx-auto flex min-h-screen max-w-xl flex-col bg-zinc-50 pb-[var(--bottom-nav-height)] dark:bg-black">
+    <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col bg-zinc-50 pb-[var(--bottom-nav-height)] dark:bg-black">
       <Suspense fallback={<ThreadSkeleton />}>
         <ThreadBody params={props.params} />
       </Suspense>
@@ -78,6 +78,10 @@ async function ThreadBody({
 
   let summary: QuoteSummaryForThread | null = null;
   let bookingBanner: BookingBannerDTO | null = null;
+  let bookingId: string | null = null;
+  let bookingStatus: string | null = null;
+  let bookingAmount: number | null = null;
+
   if (thread.quoteId) {
     const [quote, request, booking] = await Promise.all([
       quoteRepository.get(thread.quoteId),
@@ -97,6 +101,9 @@ async function ThreadBody({
       };
     }
     if (booking) {
+      bookingId = booking.id;
+      bookingStatus = booking.status;
+      bookingAmount = booking.totalAmount;
       bookingBanner = {
         scheduledAtMs: booking.scheduledAt.getTime(),
         scheduledLabel: "", // BookingStatusBanner가 내부에서 포맷
@@ -117,13 +124,20 @@ async function ThreadBody({
       />
       {bookingBanner && <BookingStatusBanner banner={bookingBanner} />}
       {summary && <PinnedQuoteCard summary={summary} role={role} />}
-      {canConfirmBooking && (
-        <ThreadActionButtons
-          threadId={threadId}
-          canConfirmBooking={canConfirmBooking}
-        />
-      )}
-      <ThreadDetailClient threadId={threadId} uid={uid} />
+      <ThreadActionButtons
+        threadId={threadId}
+        role={role}
+        bookingId={bookingId}
+        bookingStatus={bookingStatus as any}
+        bookingAmount={bookingAmount}
+        canConfirmBooking={canConfirmBooking}
+      />
+      <ThreadDetailClient
+        threadId={threadId}
+        uid={uid}
+        bookingId={bookingId}
+        initialBookingStatus={bookingStatus}
+      />
     </>
   );
 }

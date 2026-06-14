@@ -8,7 +8,7 @@ export type ThreadRole = "client" | "provider";
  * v1.2 #1 chat은 "text"만 · v1.3 #1 booking에서 "system" 확장.
  * 시스템 메시지는 중앙 정렬 gray bg + icon prefix (MessageBubble branch).
  */
-export type MessageType = "text" | "system";
+export type MessageType = "text" | "system" | "paymentRequest";
 
 export interface Thread {
   id: string;
@@ -54,4 +54,6 @@ export interface MessageBubbleDTO {
   mine: boolean;
   createdAtMs: number;
   type: MessageType; // v1.3 "system" 지원
+  amount?: number;
+  bookingId?: string;
 }

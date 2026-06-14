@@ -1,7 +1,7 @@
 import "server-only";
 import { Timestamp, type DocumentData } from "firebase-admin/firestore";
 import { adminDb } from "./admin";
-import type { ReviewView } from "@/types/review";
+import type { Review, ReviewView } from "@/types/review";
 
 const COLLECTION = "reviews";
 const col = () => adminDb.collection(COLLECTION);
@@ -67,4 +67,30 @@ export const reviewRepository = {
         (data.providerReply as string | null | undefined) ?? null,
     }));
   },
+
+  async create(review: Omit<Review, "id" | "createdAt">): Promise<string> {
+    const docRef = col().doc();
+    await docRef.set({
+      ...review,
+      createdAt: Timestamp.now(),
+    });
+    return docRef.id;
+  },
+
+  async findByBookingId(bookingId: string): Promise<Review | null> {
+    const snap = await col().where("bookingId", "==", bookingId).limit(1).get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    const data = doc.data();
+    return {
+      id: doc.id,
+      providerId: String(data.providerId ?? ""),
+      clientUid: String(data.clientUid ?? ""),
+      bookingId: (data.bookingId as string | null | undefined) ?? null,
+      rating: Number(data.rating ?? 0),
+      text: String(data.text ?? ""),
+      createdAt: (data.createdAt as Timestamp | undefined)?.toDate?.() ?? new Date(),
+      providerReply: (data.providerReply as string | null | undefined) ?? null,
+    };
+  }
 };

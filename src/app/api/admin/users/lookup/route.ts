@@ -44,8 +44,8 @@ const querySchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
+  await connection();
   try {
-    await connection();
     await requireAdminApi();
     const url = new URL(request.url);
     const parsed = querySchema.safeParse({ email: url.searchParams.get("email") });

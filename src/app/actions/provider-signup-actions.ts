@@ -38,9 +38,21 @@ export async function registerProvider(
 
     // 2. idToken 검증
     const decoded = await adminAuth.verifyIdToken(input.idToken, true);
-    const { uid, email } = decoded;
+    const { uid, email, phone_number } = decoded;
     if (!email) {
       throw new AppError("UNAUTHORIZED", "계정 정보가 확인되지 않았습니다");
+    }
+
+    if (!phone_number) {
+      throw new AppError("UNAUTHORIZED", "휴대폰 인증이 완료되지 않았습니다");
+    }
+
+    const { toE164 } = await import("@/lib/format/phone");
+    if (toE164(input.contactPhone) !== phone_number) {
+      throw new AppError(
+        "INVALID_INPUT",
+        "인증된 휴대폰 번호와 입력한 전화번호가 일치하지 않습니다"
+      );
     }
 
     // v1.6 (post-merge): 합성 이메일이면 username 추출, 외부 이메일 발송 대상에선 제외.

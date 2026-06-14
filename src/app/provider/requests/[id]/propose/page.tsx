@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { ChevronLeft } from "lucide-react";
 import {
   SESSION_COOKIE_NAME,
   verifySessionCookie,
@@ -22,7 +23,23 @@ export default function ProposePage(props: {
   params: Promise<Params>;
 }) {
   return (
-    <div className="mx-auto min-h-screen max-w-xl px-4 py-6">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
+      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3.5 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/provider/requests"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 border border-zinc-200 text-zinc-600 hover:text-zinc-900 shadow-sm transition-all hover:scale-105 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+            aria-label="받은 요청으로 가기"
+          >
+            <ChevronLeft className="h-4.5 w-4.5" strokeWidth={2.5} />
+          </Link>
+          <h1 className="text-[17px] font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
+            견적 작성
+          </h1>
+          <div className="w-8" />
+        </div>
+      </header>
+
       <Suspense fallback={<ProposeSkeleton />}>
         <ProposeBody params={props.params} />
       </Suspense>
@@ -32,10 +49,10 @@ export default function ProposePage(props: {
 
 function ProposeSkeleton() {
   return (
-    <div className="animate-pulse">
-      <div className="mb-6 h-4 w-24 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="h-8 w-40 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="mt-6 h-96 w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+    <div className="animate-pulse space-y-4">
+      <div className="h-32 w-full rounded-[22px] bg-[#eef5ff] dark:bg-zinc-900" />
+      <div className="h-44 w-full rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
+      <div className="h-64 w-full rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
     </div>
   );
 }
@@ -70,16 +87,5 @@ async function ProposeBody({ params }: { params: Promise<Params> }) {
     redirect("/provider/requests");
   }
 
-  return (
-    <>
-      <Link
-        href="/provider/requests"
-        className="mb-4 inline-block text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-      >
-        ← 받은 요청
-      </Link>
-      <h1 className="mb-6 text-2xl font-bold">견적 작성</h1>
-      <QuoteProposalForm request={request} providerId={providerId} />
-    </>
-  );
+  return <QuoteProposalForm request={request} providerId={providerId} />;
 }

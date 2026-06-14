@@ -31,6 +31,13 @@ function toBooking(id: string, d: DocumentData): Booking {
     status: ((d.status as string) ?? "confirmed") as BookingStatus,
     createdBy: String(d.createdBy ?? ""),
     createdAt: tsToDate(d.createdAt as Timestamp | undefined),
+    report: d.report ? {
+      completionStatus: String(d.report.completionStatus ?? "완료"),
+      checklist: Array.isArray(d.report.checklist) ? d.report.checklist.map(String) : [],
+      note: (d.report.note as string | null | undefined) ?? null,
+      photos: Array.isArray(d.report.photos) ? d.report.photos.map(String) : [],
+      submittedAt: tsToDate(d.report.submittedAt as Timestamp | undefined),
+    } : null,
   };
 }
 

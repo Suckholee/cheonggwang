@@ -25,14 +25,22 @@ export default function ProviderProfilePage(props: {
   params: Promise<Params>;
 }) {
   return (
-    <div className="mx-auto min-h-screen max-w-xl px-4 py-4">
-      <Link
-        href="/received"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-      >
-        <ChevronLeft className="h-4 w-4" aria-hidden />
-        돌아가기
-      </Link>
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
+      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3.5 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/received"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 border border-zinc-200 text-zinc-600 hover:text-zinc-900 shadow-sm transition-all hover:scale-105 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+            aria-label="돌아가기"
+          >
+            <ChevronLeft className="h-4.5 w-4.5" strokeWidth={2.5} />
+          </Link>
+          <h1 className="text-[17px] font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
+            청명 프로필
+          </h1>
+          <div className="w-8" />
+        </div>
+      </header>
       <Suspense fallback={<ProfileSkeleton />}>
         <ProfileBody params={props.params} />
       </Suspense>

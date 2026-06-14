@@ -135,6 +135,18 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
 
       {/* Received Quotes Section */}
       <div className="px-4 mt-6">
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes slideUp {
+            from {
+              transform: translateY(24px);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
+          }
+        `}} />
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 pl-1">
           받은 견적 <span className="text-emerald-600 dark:text-emerald-400">{quotes.length}</span>건
         </h2>
@@ -156,6 +168,7 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
                 bookingScheduledAtMs={
                   bookingScheduledAtMsByQuoteId.get(quote.id) ?? null
                 }
+                index={i}
               />
             ))}
           </div>

@@ -15,7 +15,10 @@ export default function LoginPage() {
       style={{ backgroundImage: "url('/images/cozy_login_bg.png')" }}
     >
       {/* Soft overlay to darken slightly and maintain high readability */}
-      <div className="absolute inset-0 bg-zinc-900/30 dark:bg-zinc-950/65 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 bg-zinc-900/15 dark:bg-zinc-950/50 backdrop-blur-[3px]" />
+
+      {/* Subtle blue glow behind the card for a premium aesthetic */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] bg-blue-500/10 rounded-full blur-[80px] pointer-events-none z-0" />
 
       {/* Floating Back Button */}
       <div className="absolute top-4 left-4 z-20">
@@ -27,12 +30,12 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      <div className="relative z-10 flex w-full max-w-md flex-col items-center gap-6 rounded-[32px] border border-white/45 bg-white/90 px-6 py-8 shadow-[0_24px_64px_rgba(0,0,0,0.15)] backdrop-blur-md dark:border-zinc-800/40 dark:bg-zinc-950/85">
-        <div className="text-center mb-1">
-          <h1 className="text-[32px] font-black tracking-tight text-[#2563EB] dark:text-[#5B8DF6]">
+      <div className="relative z-10 flex w-full max-w-[390px] flex-col items-center gap-5 rounded-[24px] border border-white/50 bg-white/90 px-5 py-7 shadow-[0_16px_48px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-950/85">
+        <div className="text-center mb-0.5">
+          <h1 className="text-[30px] font-black tracking-tight text-[#2563EB] dark:text-[#5B8DF6]">
             청광
           </h1>
-          <p className="mt-1.5 text-[14px] font-semibold text-zinc-650 dark:text-zinc-350">
+          <p className="mt-1 text-[13.5px] font-semibold text-zinc-655 dark:text-zinc-350">
             당신의 완벽한 파트너, 청명 찾기
           </p>
         </div>
@@ -41,9 +44,9 @@ export default function LoginPage() {
         </Suspense>
         <Link
           href="/"
-          className="text-[13px] font-semibold text-zinc-500 hover:text-[#2563EB] transition-colors dark:text-zinc-400 dark:hover:text-[#5B8DF6] underline underline-offset-4"
+          className="text-[13px] font-semibold text-zinc-550 hover:text-[#2563EB] transition-colors dark:text-zinc-400 dark:hover:text-[#5B8DF6] underline underline-offset-4"
         >
-          둘러보기 먼저 할래요
+          서비스 둘러보기
         </Link>
       </div>
     </main>

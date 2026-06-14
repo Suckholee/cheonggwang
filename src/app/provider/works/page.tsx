@@ -93,6 +93,14 @@ function toListItemDTO(b: Booking): BookingListItemDTO {
     totalAmount: b.totalAmount,
     memo: b.memo,
     bucket: computeDayBucket(scheduledAtMs),
+    status: b.status,
+    report: b.report ? {
+      completionStatus: b.report.completionStatus,
+      checklist: b.report.checklist,
+      note: b.report.note,
+      photos: b.report.photos,
+      submittedAtMs: b.report.submittedAt.getTime(),
+    } : null,
   };
 }
 
