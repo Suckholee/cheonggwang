@@ -43,11 +43,19 @@ export default function PartnersPanelPage() {
 function FeedSkeleton() {
   return (
     <div
-      className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+      className="flex flex-col divide-y divide-[#edf4ff]/60 border-t border-b border-[#edf4ff]/50 dark:divide-zinc-800 dark:border-zinc-800 animate-pulse"
       aria-label="불러오는 중"
     >
-      <div className="h-72 animate-pulse rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
-      <div className="h-72 animate-pulse rounded-[24px] bg-[#eef5ff] dark:bg-zinc-900" />
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="flex items-start justify-between gap-4 py-4 px-1">
+          <div className="flex flex-1 flex-col gap-2.5 min-w-0">
+            <div className="h-3 w-1/4 rounded bg-[#eef5ff] dark:bg-zinc-900" />
+            <div className="h-5 w-3/4 rounded bg-[#eef5ff] dark:bg-zinc-900" />
+            <div className="h-4 w-5/6 rounded bg-[#eef5ff] dark:bg-zinc-900" />
+          </div>
+          <div className="h-20 w-20 shrink-0 rounded-[16px] bg-[#eef5ff] dark:bg-zinc-900" />
+        </div>
+      ))}
     </div>
   );
 }

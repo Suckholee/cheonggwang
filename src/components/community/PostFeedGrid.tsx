@@ -24,7 +24,7 @@ export function PostFeedGrid({ posts }: Props) {
   return (
     <div
       role="list"
-      className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+      className="flex flex-col divide-y divide-[#edf4ff]/60 border-t border-b border-[#edf4ff]/50 dark:divide-zinc-800 dark:border-zinc-800"
     >
       {dtos.map((dto) => (
         <PostFeedCard key={dto.id} post={dto} />

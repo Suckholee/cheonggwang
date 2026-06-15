@@ -47,15 +47,35 @@ export function PostFeedCard({ post }: Props) {
       href={href}
       role="listitem"
       aria-label={title}
-      className="flex flex-col overflow-hidden rounded-[24px] border border-[#dbe8fb] bg-white shadow-[0_10px_26px_rgba(43,102,246,0.06)] transition-all hover:-translate-y-0.5 hover:border-[#bfd6fb] hover:shadow-[0_16px_34px_rgba(43,102,246,0.10)] dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
+      className="flex items-start justify-between gap-4 py-4 px-1 transition-all duration-200 hover:bg-[#f4f8ff]/40 active:scale-[0.99] dark:hover:bg-zinc-900/20"
     >
-      <div className="relative aspect-[16/10] w-full bg-[#eef5ff] dark:bg-zinc-900">
+      <div className="flex flex-1 flex-col gap-1.5 min-w-0">
+        <div className="flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-450">
+          <span className="rounded-[6px] bg-[#edf4ff] px-1.5 py-0.5 font-bold text-[#2563EB] dark:bg-zinc-800/80 dark:text-zinc-350 shrink-0">
+            {QUOTE_CATEGORY_EMOJIS[category]} {QUOTE_CATEGORY_LABELS[category]}
+          </span>
+          <span className="truncate max-w-[120px] font-semibold text-zinc-600 dark:text-zinc-405">{companyName}</span>
+          {isSample && <SampleBadge />}
+          <span className="text-zinc-300 dark:text-zinc-700">•</span>
+          <span className="shrink-0">{formatRelativeTime(createdAtMs)}</span>
+        </div>
+        
+        <h2 className="line-clamp-2 text-[15px] font-black leading-snug tracking-tight text-zinc-950 dark:text-zinc-50">
+          {title}
+        </h2>
+        
+        <p className="line-clamp-2 text-[12.5px] leading-relaxed text-zinc-550 dark:text-zinc-400">
+          {summary80}
+        </p>
+      </div>
+
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[16px] border border-[#dbe8fb]/50 bg-[#eef5ff] dark:border-zinc-850 dark:bg-zinc-900 shadow-[0_4px_12px_rgba(43,102,246,0.03)]">
         {coverImageUrl ? (
           <Image
             src={coverImageUrl}
             alt={title}
             fill
-            sizes="(max-width: 640px) 100vw, 400px"
+            sizes="80px"
             unoptimized={shouldUnoptimizeImage(coverImageUrl)}
             className="object-cover"
           />
@@ -66,30 +86,11 @@ export function PostFeedCard({ post }: Props) {
             )}`}
             aria-hidden
           >
-            <span className="text-5xl">
+            <span className="text-2xl">
               {QUOTE_CATEGORY_EMOJIS[category]}
             </span>
           </div>
         )}
-      </div>
-      <div className="flex flex-1 flex-col gap-1.5 p-4">
-        <p className="truncate text-[15px] font-black tracking-tight text-zinc-900 dark:text-zinc-50">
-          {title}
-        </p>
-        <p className="line-clamp-2 text-[12px] leading-5 text-zinc-600 dark:text-zinc-400">
-          {summary80}
-        </p>
-        <div className="mt-1 flex items-center justify-between text-[11px] text-zinc-500">
-          <span className="flex min-w-0 items-center gap-1">
-            <span className="truncate font-medium">{companyName}</span>
-            {isSample && <SampleBadge />}
-          </span>
-          <span className="shrink-0">{formatRelativeTime(createdAtMs)}</span>
-        </div>
-        <span className="self-start rounded-full bg-[#edf4ff] px-2.5 py-1 text-[10px] font-semibold text-[#2563EB] dark:bg-zinc-800 dark:text-zinc-300">
-          {QUOTE_CATEGORY_EMOJIS[category]}{" "}
-          {QUOTE_CATEGORY_LABELS[category]}
-        </span>
       </div>
     </Link>
   );
