@@ -46,6 +46,7 @@ export interface ThreadRowDTO {
   unreadCount: number;
   quoteAmount: number | null;
   isNew: boolean; // lastMessageAt === null
+  requestId?: string;
 }
 
 export interface MessageBubbleDTO {
