@@ -57,20 +57,20 @@ export function ShortcutGrid({ requestBadgeCount }: Props) {
           <Link
             key={href}
             href={href}
-            className="relative flex items-center gap-3.5 rounded-[24px] border border-zinc-200 border-b-4 border-b-zinc-300 bg-white p-4.5 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.97] active:translate-y-[2px] shadow-sm transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:border-b-zinc-950"
+            className="relative flex items-center gap-2.5 rounded-[24px] border border-zinc-200 border-b-4 border-b-zinc-300 bg-white px-3.5 py-4 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.97] active:translate-y-[2px] shadow-sm transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:border-b-zinc-950"
           >
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${bg} ${color}`}
             >
               <Icon className="h-5 w-5" strokeWidth={2.5} />
             </div>
-            <span className="flex-1 text-[13px] font-extrabold text-zinc-850 dark:text-zinc-200 leading-tight">
+            <span className="flex-1 text-[13px] font-extrabold text-zinc-850 dark:text-zinc-200 leading-tight whitespace-nowrap">
               {label}
             </span>
             {badge && badge > 0 ? (
               <span
                 aria-label={`${label} ${badge}건`}
-                className="flex h-5.5 min-w-[22px] items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-black text-white border-2 border-white dark:border-zinc-900 shadow-xs"
+                className="absolute top-2.5 right-2.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1.5 text-[9px] font-black text-white border border-white dark:border-zinc-900 shadow-xs"
               >
                 {badge}
               </span>
