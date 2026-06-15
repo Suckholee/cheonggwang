@@ -65,47 +65,83 @@ export function ThreadActionButtons({
   const showRequestPayment = role === "provider" && currentBookingStatus === "confirmed";
   const showWriteReview = role === "client" && currentBookingStatus === "completed" && !hasReview;
 
-  if (!showConfirmBooking && !showRequestPayment && !showWriteReview) return null;
+  // Determine status card text and pill style
+  let statusTitle = "일정 협의 중";
+  let statusDesc = role === "provider" 
+    ? "고객님과 대화하여 청소 일정을 제안하거나 확정해 주세요."
+    : "업체와 대화하여 원하시는 청소 일정을 조율해 주세요.";
+  let badgeBgColor = "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-100/50";
+
+  if (currentBookingStatus === "confirmed") {
+    statusTitle = "일정 확정 완료";
+    statusDesc = role === "provider"
+      ? "청소 일정이 확정되었습니다. 작업 완료 후 결제를 요청하세요."
+      : "청소 일정이 확정되었습니다. 작업 완료 후 결제를 진행해 주세요.";
+    badgeBgColor = "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100/50";
+  } else if (currentBookingStatus === "completed") {
+    statusTitle = "작업 및 결제 완료";
+    statusDesc = "청소 작업 및 에스크로 안전 결제가 모두 완료되었습니다.";
+    badgeBgColor = "bg-zinc-100 text-zinc-700 dark:bg-zinc-805 dark:text-zinc-350 border border-zinc-200/50";
+  } else if (currentBookingStatus === "cancelled") {
+    statusTitle = "예약 취소됨";
+    statusDesc = "본 예약이 취소되었습니다.";
+    badgeBgColor = "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 border border-red-100/50";
+  }
 
   return (
     <>
       <div
-        role="toolbar"
-        aria-label="빠른 액션"
-        className="mx-4 mb-3 flex justify-center gap-2 rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-2 dark:border-blue-900/30 dark:bg-blue-950/10"
+        role="region"
+        aria-label="거래 상태 정보"
+        className="mx-4 mb-3 rounded-2xl border border-zinc-200 bg-white p-3.5 shadow-xs dark:border-zinc-800 dark:bg-zinc-950"
       >
-        {showConfirmBooking && (
-          <button
-            type="button"
-            onClick={() => setConfirmModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-3.5 py-1.5 text-xs font-bold text-white transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 shadow-sm"
-          >
-            <Calendar className="h-4 w-4" aria-hidden />
-            📅 일정 확정
-          </button>
-        )}
+        <div className="flex items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-extrabold tracking-wide ${badgeBgColor}`}>
+                {statusTitle}
+              </span>
+            </div>
+            <p className="text-[11px] font-bold text-zinc-400 leading-relaxed dark:text-zinc-500">
+              {statusDesc}
+            </p>
+          </div>
 
-        {showRequestPayment && (
-          <button
-            type="button"
-            onClick={() => setPaymentModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-3.5 py-1.5 text-xs font-bold text-white transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 shadow-sm"
-          >
-            <CreditCard className="h-4 w-4" aria-hidden />
-            💳 결제 요청
-          </button>
-        )}
+          <div className="shrink-0">
+            {showConfirmBooking && (
+              <button
+                type="button"
+                onClick={() => setConfirmModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-3 py-1.5 text-[11px] font-extrabold text-white transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 shadow-sm"
+              >
+                <Calendar className="h-3.5 w-3.5" aria-hidden />
+                일정 확정
+              </button>
+            )}
 
-        {showWriteReview && (
-          <button
-            type="button"
-            onClick={() => setReviewModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-3.5 py-1.5 text-xs font-bold text-white transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 shadow-sm"
-          >
-            <Star className="h-4 w-4 fill-white" aria-hidden />
-            ⭐️ 후기 작성하기
-          </button>
-        )}
+            {showRequestPayment && (
+              <button
+                type="button"
+                onClick={() => setPaymentModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-3 py-1.5 text-[11px] font-extrabold text-white transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 shadow-sm"
+              >
+                <CreditCard className="h-3.5 w-3.5" aria-hidden />
+                결제 요청
+              </button>
+            )}
+
+            {showWriteReview && (
+              <button
+                type="button"
+                onClick={() => setReviewModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-3 py-1.5 text-[11px] font-extrabold text-white transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 shadow-sm"
+              >
+                <Star className="h-3.5 w-3.5 fill-white" aria-hidden />
+                후기 작성
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       <BookingConfirmModal

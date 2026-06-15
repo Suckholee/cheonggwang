@@ -35,7 +35,7 @@ export function MessageBubble({ message, bookingStatus, threadId }: Props) {
       <div className={`flex ${mine ? "justify-end" : "justify-start"} mb-3`}>
         <div className="w-[85%] max-w-[320px] rounded-2xl border border-zinc-200 bg-white p-4.5 shadow-md dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5 dark:border-zinc-850">
-            <span className="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+            <span className="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               <Sparkles className="h-3 w-3 animate-pulse" />
               안전 결제 요청
             </span>
@@ -63,7 +63,7 @@ export function MessageBubble({ message, bookingStatus, threadId }: Props) {
             ) : (
               <Link
                 href={`/payment/checkout?bookingId=${bookingId}&threadId=${threadId}`}
-                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2.5 text-center text-xs font-bold text-white shadow-sm transition-all hover:bg-indigo-700 active:scale-95"
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#2563EB] py-2.5 text-center text-xs font-bold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95"
               >
                 <CreditCard className="h-3.5 w-3.5" />
                 결제하기
@@ -80,14 +80,14 @@ export function MessageBubble({ message, bookingStatus, threadId }: Props) {
       <div
         className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap break-words ${
           mine
-            ? "bg-indigo-600 text-white"
+            ? "bg-[#2563EB] text-white"
             : "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
         }`}
       >
         <p>{text}</p>
         <p
           className={`mt-1 text-[10px] ${
-            mine ? "text-indigo-100" : "text-zinc-500"
+            mine ? "text-blue-100" : "text-zinc-500"
           }`}
         >
           {formatRelativeTime(createdAtMs)}

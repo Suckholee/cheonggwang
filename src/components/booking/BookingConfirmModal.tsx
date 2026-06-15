@@ -146,7 +146,7 @@ export function BookingConfirmModal({ threadId, open, onClose }: Props) {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            className="w-full rounded-xl bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
           >
             {isPending ? "확정 중..." : "일정 확정"}
           </button>

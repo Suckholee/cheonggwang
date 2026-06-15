@@ -240,6 +240,7 @@ export function ThreadDetailClient({
             ))}
           </div>
         )}
+        <div className="h-6 shrink-0" />
         <div ref={endRef} />
       </div>
       <MessageComposer threadId={threadId} role={role} requestId={requestId} />

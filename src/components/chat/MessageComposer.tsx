@@ -119,7 +119,7 @@ export function MessageComposer({ threadId, role, requestId }: Props) {
           <button
             type="button"
             onClick={handlePhotoClick}
-            className="flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
+            className="shrink-0 whitespace-nowrap flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
           >
             <Camera className="h-3.5 w-3.5 text-zinc-400" />
             📷 사진 첨부
@@ -128,27 +128,27 @@ export function MessageComposer({ threadId, role, requestId }: Props) {
           <button
             type="button"
             onClick={handleScheduleClick}
-            className="flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
+            className="shrink-0 whitespace-nowrap flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
           >
             <Calendar className="h-3.5 w-3.5 text-zinc-400" />
             📅 일정 제안
           </button>
-
+ 
           {requestId && (
             <>
               <button
                 type="button"
                 onClick={handleQuoteClick}
-                className="flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
+                className="shrink-0 whitespace-nowrap flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
               >
                 <FileText className="h-3.5 w-3.5 text-zinc-400" />
                 📄 견적 보기
               </button>
-
+ 
               <button
                 type="button"
                 onClick={handleRequestClick}
-                className="flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
+                className="shrink-0 whitespace-nowrap flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[11px] font-extrabold text-zinc-700 shadow-xs hover:border-blue-400 hover:text-blue-600 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700"
               >
                 <Clipboard className="h-3.5 w-3.5 text-zinc-400" />
                 📋 요청서 보기
