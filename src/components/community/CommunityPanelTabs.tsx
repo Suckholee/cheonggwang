@@ -13,7 +13,7 @@ export function CommunityPanelTabs({ active }: Props) {
     <nav
       role="tablist"
       aria-label="커뮤니티 패널"
-      className="flex gap-5 px-1"
+      className="flex flex-row flex-nowrap overflow-x-auto gap-5 px-1 pb-1.5 scrollbar-none"
     >
       {PANEL_ORDER.map((slug) => {
         const cfg = PANELS[slug];
@@ -26,7 +26,7 @@ export function CommunityPanelTabs({ active }: Props) {
             aria-selected={isActive}
             aria-current={isActive ? "page" : undefined}
             className={[
-              "relative pb-2 text-[14.5px] transition-all duration-200 font-bold",
+              "relative pb-2 text-[14.5px] transition-all duration-200 font-bold shrink-0",
               isActive
                 ? "text-[#2563EB] dark:text-[#5B8DF6] after:absolute after:bottom-0 after:left-0 after:h-[2.5px] after:w-full after:rounded-full after:bg-[#2563EB] dark:after:bg-[#5B8DF6]"
                 : "text-zinc-500 hover:text-zinc-850 dark:text-zinc-400 dark:hover:text-zinc-200",
