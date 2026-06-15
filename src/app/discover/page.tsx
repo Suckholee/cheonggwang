@@ -36,30 +36,12 @@ export default function DiscoverPage(props: {
 }) {
   return (
     <>
-      <Suspense fallback={<FeedControlsSkeleton />}>
-        <FeedHeader />
-      </Suspense>
+      <FeedControls />
       <Suspense fallback={<FeedSkeleton />}>
         <FeedBody searchParams={props.searchParams} />
       </Suspense>
     </>
   );
-}
-
-async function FeedHeader() {
-  const jar = await cookies();
-  const uid = await tryVerifySessionCookie(
-    jar.get(SESSION_COOKIE_NAME)?.value
-  );
-  const authSlot = (
-    <Link
-      href={uid ? "/dashboard" : "/login"}
-      className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-    >
-      {uid ? "대시보드" : "로그인"}
-    </Link>
-  );
-  return <FeedControls authSlot={authSlot} />;
 }
 
 async function FeedBody({

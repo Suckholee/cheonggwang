@@ -44,7 +44,7 @@ export function SearchInput() {
         type="search"
         value={value}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder="업체명·태그·키워드 검색"
+        placeholder="청소 업체 검색"
         aria-label="검색"
         className="w-full rounded-[14px] border border-transparent bg-zinc-100 py-2.5 pl-10 pr-4 text-[14px] font-medium outline-none transition-colors focus:bg-zinc-200 dark:bg-zinc-900 dark:focus:bg-zinc-800"
       />

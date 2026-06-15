@@ -22,7 +22,7 @@ export interface TabDefinition {
 
 export const CLIENT_TABS: readonly TabDefinition[] = [
   { href: "/", label: "홈", Icon: Home, exact: true },
-  { href: "/search", label: "청명찾기", Icon: Search },
+  { href: "/search", label: "업체찾기", Icon: Search },
   { href: "/received", label: "받은견적", Icon: ClipboardList },
   {
     href: "/chat",

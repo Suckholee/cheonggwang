@@ -32,7 +32,7 @@ export const metadata = {
 export default function MarketplaceHome() {
   return (
     <>
-      <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_16%,#ffffff_100%)] px-4 pt-2 pb-40">
+      <div className="min-h-screen w-full bg-[#F7F9FC] px-4 pt-2 pb-40">
         <HomeHeader />
 
         <main className="space-y-8">
@@ -94,41 +94,41 @@ function HomeHeader() {
 function HeroSection() {
   return (
     <section 
-      className="relative overflow-hidden rounded-[28px] border border-[#d8e6ff] px-5 py-6 shadow-[0_16px_40px_rgba(43,102,246,0.10)] bg-cover bg-center"
+      className="relative overflow-hidden rounded-[30px] border border-[#b0cfff] px-6 py-7 shadow-[0_12px_36px_rgba(43,102,246,0.08)] bg-cover bg-center"
       style={{ backgroundImage: "url('/images/clean_living_room.png')" }}
     >
       {/* Premium semi-transparent white/blue glassmorphism overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/60 dark:from-zinc-950/95 dark:via-zinc-950/85 dark:to-zinc-950/60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-white/92 via-white/82 to-white/50 dark:from-zinc-950/92 dark:via-zinc-950/82 dark:to-zinc-950/50" />
       
       <div className="relative z-10">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#2563EB] shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900/80 dark:text-[#3B82F6]">
+        <div className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-[#2563EB] shadow-xs dark:border-zinc-800/80 dark:bg-zinc-900/80 dark:text-[#3B82F6]">
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           믿고 맡길 수 있는 청소 연결
         </div>
-        <h1 className="max-w-xs text-[30px] font-black leading-[1.15] tracking-tight text-zinc-950 dark:text-zinc-50">
-          오늘 필요한 청소를
+        <h1 className="max-w-xs text-[32px] font-extrabold leading-[1.25] tracking-[-0.2px] text-zinc-950 dark:text-zinc-50">
+          오늘 필요한 청소,
           <br />
           빠르게 연결해드려요
         </h1>
-        <p className="mt-3 max-w-sm text-[14px] leading-6 text-zinc-700 dark:text-zinc-300 font-medium">
-          입주청소, 에어컨 분해청소, 사무실 청소까지
+        <p className="mt-3.5 max-w-sm text-[14px] leading-[1.6] text-zinc-600 dark:text-zinc-300 font-medium tracking-normal">
+          입주청소부터 사무실 청소까지
           <br />
-          비교 견적과 신뢰 정보까지 한 번에 확인하세요.
+          비교 견적과 업체 정보를 한 번에 확인하세요.
         </p>
-        <div className="mt-5 flex gap-2">
+        <div className="mt-5 flex flex-col gap-2.5">
           <Link
             href="/quote/new"
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(43,102,246,0.28)] transition-colors hover:bg-[#1D4ED8]"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2563EB] px-5 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(43,102,246,0.24)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_10px_24px_rgba(43,102,246,0.32)] active:scale-[0.99]"
           >
-            견적 받기
+            청소 견적 받기
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <Link
             href="/search"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#cfe1ff]/85 bg-white/95 px-4 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-white backdrop-blur-xs shadow-sm dark:border-zinc-800/85 dark:bg-zinc-900/95 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            className="inline-flex w-full items-center justify-center gap-1.5 py-2 text-sm font-bold text-[#2563EB] transition-colors hover:text-[#1D4ED8] dark:text-[#3B82F6] dark:hover:text-[#60A5FA]"
           >
             <Search className="h-4 w-4" aria-hidden />
-            청명 찾기
+            업체 찾기
           </Link>
         </div>
       </div>
@@ -154,7 +154,7 @@ function TrustMetricsSection() {
         {metrics.map((metric) => (
           <article
             key={metric.label}
-            className="rounded-[22px] border border-zinc-200/80 bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] dark:border-zinc-800 dark:bg-zinc-950"
+            className="rounded-[24px] border border-[#E5EAF1] bg-white p-4 shadow-[0_4px_14px_rgba(15,23,42,0.06)] dark:border-zinc-800 dark:bg-zinc-950"
           >
             <p className="text-[11px] font-medium text-zinc-500">{metric.label}</p>
             <p className="mt-2 text-[22px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
@@ -191,7 +191,7 @@ function CommunityPreviewSection() {
   ];
 
   return (
-    <section className="rounded-[28px] border border-zinc-200 bg-white p-5 shadow-[0_10px_28px_rgba(15,23,42,0.05)] dark:border-zinc-800 dark:bg-zinc-950">
+    <section className="rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_4px_14px_rgba(15,23,42,0.06)] dark:border-zinc-800 dark:bg-zinc-950">
       <HomeSectionHeader
         eyebrow="Explore"
         title="청소 팁과 작업 맥락까지 한 번에"
@@ -288,7 +288,7 @@ async function MarketplaceFooter() {
   );
 
   return (
-    <footer className="rounded-[28px] border border-zinc-200 bg-white p-5 text-sm shadow-[0_10px_28px_rgba(15,23,42,0.05)] dark:border-zinc-800 dark:bg-zinc-950">
+    <footer className="rounded-[24px] border border-[#E5EAF1] bg-white p-5 text-sm shadow-[0_4px_14px_rgba(15,23,42,0.06)] dark:border-zinc-800 dark:bg-zinc-950">
       <div className="flex items-start gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e7f0ff] text-[#2563EB]">
           <Sparkles className="h-5 w-5" aria-hidden />
@@ -342,7 +342,7 @@ async function TodayCardSlot() {
 
   if (!uid) {
     return (
-      <section className="rounded-[26px] border border-zinc-200 bg-white p-5 shadow-[0_10px_28px_rgba(15,23,42,0.05)] dark:border-zinc-800 dark:bg-zinc-950">
+      <section className="rounded-[24px] border border-[#E5EAF1] bg-white p-5 shadow-[0_4px_14px_rgba(15,23,42,0.06)] dark:border-zinc-800 dark:bg-zinc-950">
         <div className="mb-4 flex items-start gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#e8f1ff] text-[#2563EB]">
             <FileText className="h-5 w-5" aria-hidden />
@@ -379,7 +379,7 @@ async function TodayCardSlot() {
 
 function TodayCardSkeleton() {
   return (
-    <section className="animate-pulse rounded-[26px] border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+    <section className="animate-pulse rounded-[24px] border border-[#E5EAF1] bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
       <div className="mb-4 flex justify-between">
         <div className="h-5 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
         <div className="h-4 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />

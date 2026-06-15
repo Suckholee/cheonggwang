@@ -132,15 +132,15 @@ export function ProfileMenuButton() {
   const infoHref = profile?.providerId ? "/provider/profile" : "/dashboard";
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative flex items-center">
       <button
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-[#d8e6ff] bg-white pl-2 pr-2.5 py-1.5 text-zinc-700 shadow-sm transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className="flex items-center justify-center rounded-full border border-[#dbe8fb] bg-white p-1 text-zinc-700 shadow-sm transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 shrink-0"
       >
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-[11px] font-bold text-white shadow-sm">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-[11px] font-bold text-white shadow-sm">
           {ready && profile ? initial : (
             <svg
               className="h-3.5 w-3.5 text-white"
@@ -153,10 +153,6 @@ export function ProfileMenuButton() {
             </svg>
           )}
         </span>
-        <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-          {ready && profile ? `${profile.displayName}님` : "로그인"}
-        </span>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-zinc-400" aria-hidden />
       </button>
 
       {open ? (

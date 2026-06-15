@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { REGION_PRESETS } from "@/domain/region-presets";
-import { MapPin } from "lucide-react";
+import { MapPin, ChevronDown } from "lucide-react";
 
 export function HeaderRegionSelect() {
   const router = useRouter();
@@ -21,11 +21,11 @@ export function HeaderRegionSelect() {
   }
 
   const activePreset = REGION_PRESETS.find((p) => p.value === current);
-  const currentLabel = activePreset ? activePreset.label : "서울 성동구";
+  const currentLabel = activePreset ? activePreset.label : "전국";
 
   return (
-    <div className="relative flex items-center gap-1.5 rounded-full border border-[#d8e6ff] bg-white pl-2.5 pr-7 py-1.5 text-zinc-700 shadow-sm transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer">
-      <MapPin className="h-3.5 w-3.5 text-[#2563EB]" aria-hidden />
+    <div className="relative flex items-center gap-1 rounded-full bg-zinc-100/80 px-2.5 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-200/60 dark:bg-zinc-900/80 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer">
+      <MapPin className="h-3.5 w-3.5 text-[#2563EB] shrink-0" aria-hidden />
       <select
         value={current}
         onChange={handleChange}
@@ -41,17 +41,7 @@ export function HeaderRegionSelect() {
       <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 select-none">
         {currentLabel}
       </span>
-      <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center">
-        <svg
-          className="h-3 w-3 text-zinc-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={3}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
+      <ChevronDown className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
     </div>
   );
 }
