@@ -11,7 +11,7 @@ export function ReceivedRequestsCta({ count }: Props) {
       href="/provider/requests"
       className="group relative flex items-center justify-between rounded-[24px] border border-blue-100 bg-gradient-to-r from-[#eef6ff] to-[#e0eaff] p-5 shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] dark:border-blue-950/30 dark:from-blue-950/20 dark:to-blue-900/10 mb-6"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 min-w-0">
         <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform dark:bg-blue-500">
           <Inbox className="h-5.5 w-5.5" strokeWidth={2.5} />
           {count > 0 && (

@@ -36,7 +36,7 @@ export function DashboardHero({ provider, totalCount }: Props) {
 
         {/* Bottom Actions Area */}
         <div className="flex flex-col gap-2.5 sm:flex-row sm:items-stretch">
-          <div className="flex-1 flex items-center rounded-2xl border border-zinc-200/60 bg-white/70 px-4 py-3 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/60 backdrop-blur-xs">
+          <div className="flex-1 min-w-0 flex items-center rounded-2xl border border-zinc-200/60 bg-white/70 px-4 py-3 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/60 backdrop-blur-xs">
             <AvailabilityToggle initial={isAvailable} />
           </div>
           <Link

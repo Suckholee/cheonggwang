@@ -64,7 +64,7 @@ export function ShortcutGrid({ requestBadgeCount }: Props) {
             >
               <Icon className="h-5 w-5" strokeWidth={2.5} />
             </div>
-            <span className="flex-1 text-[13px] font-extrabold text-zinc-850 dark:text-zinc-200 leading-tight whitespace-nowrap">
+            <span className="flex-1 min-w-0 text-[13px] font-extrabold text-zinc-850 dark:text-zinc-200 leading-tight">
               {label}
             </span>
             {badge && badge > 0 ? (
