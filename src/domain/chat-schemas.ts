@@ -6,7 +6,7 @@ import { z } from "zod";
  *   · requestId = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 16)
  *   · providerId = Firestore auto ID [A-Za-z0-9]{20}
  */
-export const THREAD_ID_REGEX = /^[a-z0-9]{16}_[A-Za-z0-9]{20}$/;
+export const THREAD_ID_REGEX = /^[A-Za-z0-9_-]+$/;
 
 const threadIdSchema = z
   .string()

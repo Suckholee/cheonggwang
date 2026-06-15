@@ -118,13 +118,16 @@ export function ThreadDetailClient({
 
   const handleSendPreset = async (presetText: string) => {
     if (sendingPreset) return;
+    setError(null);
     setSendingPreset(true);
     try {
       const result = await sendMessage({ threadId, text: presetText });
       if (!result.ok) {
+        setError(result.message ?? "메시지 전송에 실패했습니다.");
         console.error("[chat] send preset failed:", result.message);
       }
-    } catch (err) {
+    } catch (err: any) {
+      setError(err?.message ?? "메시지 전송 중 오류가 발생했습니다.");
       console.error("[chat] send preset error:", err);
     } finally {
       setSendingPreset(false);

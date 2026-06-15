@@ -31,7 +31,7 @@ interface PageProps {
 
 export default function ChatThreadPage(props: PageProps) {
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col bg-zinc-50 pb-0 dark:bg-black">
+    <div data-chat-room className="mx-auto flex h-full min-h-0 w-full max-w-xl flex-col bg-zinc-50 pb-0 dark:bg-black">
       <Suspense fallback={<ThreadSkeleton />}>
         <ThreadBody params={props.params} />
       </Suspense>
