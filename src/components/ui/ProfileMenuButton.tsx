@@ -138,12 +138,25 @@ export function ProfileMenuButton() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-[#d8e6ff] bg-white px-2 py-2 text-zinc-700 shadow-sm transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className="flex items-center gap-2 rounded-full border border-[#d8e6ff] bg-white pl-2 pr-2.5 py-1.5 text-zinc-700 shadow-sm transition-colors hover:bg-[#f7fbff] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2563EB] text-sm font-bold text-white shadow-sm">
-          {ready ? initial : ""}
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-[11px] font-bold text-white shadow-sm">
+          {ready && profile ? initial : (
+            <svg
+              className="h-3.5 w-3.5 text-white"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+          )}
         </span>
-        <ChevronDown className="h-4 w-4 text-zinc-400" aria-hidden />
+        <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
+          {ready && profile ? `${profile.displayName}님` : "로그인"}
+        </span>
+        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-zinc-400" aria-hidden />
       </button>
 
       {open ? (

@@ -20,6 +20,7 @@ import { AveragePriceSection } from "@/components/client-dashboard/AveragePriceS
 import { TopProvidersSection } from "@/components/client-dashboard/TopProvidersSection";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { ProfileMenuButton } from "@/components/ui/ProfileMenuButton";
+import { HeaderRegionSelect } from "@/components/ui/HeaderRegionSelect";
 import PartnerApplyCTA from "@/components/landing/PartnerApplyCTA";
 
 export const metadata = {
@@ -78,20 +79,13 @@ export default function MarketplaceHome() {
 
 function HomeHeader() {
   return (
-    <header className="sticky top-0 z-50 -mx-4 mb-5 border-b border-white/60 bg-[#f4f9ff]/90 px-4 py-3 backdrop-blur">
+    <header className="sticky top-0 z-50 -mx-4 mb-5 border-b border-[#e7f0ff] bg-[#f4f9ff]/95 px-4 py-3 backdrop-blur">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <BrandLogo />
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2563EB]/70">
-              Cheonggwang
-            </p>
-            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              오늘 필요한 청소를 빠르게 연결해요
-            </p>
-          </div>
+        <BrandLogo />
+        <div className="flex items-center gap-2">
+          <HeaderRegionSelect />
+          <ProfileMenuButton />
         </div>
-        <ProfileMenuButton />
       </div>
     </header>
   );
@@ -112,14 +106,14 @@ function HeroSection() {
           믿고 맡길 수 있는 청소 연결
         </div>
         <h1 className="max-w-xs text-[30px] font-black leading-[1.15] tracking-tight text-zinc-950 dark:text-zinc-50">
-          가까운 청명을 찾고
+          오늘 필요한 청소를
           <br />
-          견적을 바로 받아보세요
+          빠르게 연결해드려요
         </h1>
         <p className="mt-3 max-w-sm text-[14px] leading-6 text-zinc-700 dark:text-zinc-300 font-medium">
-          입주청소, 에어컨 분해청소, 사무실 청소까지.
+          입주청소, 에어컨 분해청소, 사무실 청소까지
           <br />
-          청광이 빠른 비교와 신뢰 정보까지 한 번에 정리해드려요.
+          비교 견적과 신뢰 정보까지 한 번에 확인하세요.
         </p>
         <div className="mt-5 flex gap-2">
           <Link
