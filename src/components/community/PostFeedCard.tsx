@@ -76,7 +76,7 @@ export function PostFeedCard({ post }: Props) {
       href={href}
       role="listitem"
       aria-label={title}
-      className="flex items-start justify-between gap-4 py-5 px-1 transition-all duration-200 hover:bg-[#f4f8ff]/40 active:scale-[0.99] dark:hover:bg-zinc-900/20"
+      className="flex items-start justify-between gap-4 py-[22px] px-1 transition-all duration-200 hover:bg-[#f4f8ff]/40 active:scale-[0.99] dark:hover:bg-zinc-900/20"
     >
       <div className="flex flex-1 flex-col min-w-0">
         {/* 1순위: 제목 */}
@@ -85,12 +85,12 @@ export function PostFeedCard({ post }: Props) {
         </h2>
         
         {/* 2순위: 본문 요약 */}
-        <p className="line-clamp-2 text-[12.5px] leading-relaxed text-zinc-550 dark:text-zinc-400 mt-1">
+        <p className="line-clamp-1 text-[12.5px] leading-relaxed text-zinc-550 dark:text-zinc-400 mt-2">
           {summary80}
         </p>
 
         {/* 3순위: 카테고리 / 작성자 / 날짜 */}
-        <div className="flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-450 mt-2.5">
+        <div className="flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-450 mt-3">
           <span className={`rounded-[4px] px-1.5 py-0.5 font-bold shrink-0 ${getCategoryBadgeClass(category)}`}>
             {QUOTE_CATEGORY_EMOJIS[category]} {QUOTE_CATEGORY_LABELS[category]}
           </span>
@@ -102,12 +102,12 @@ export function PostFeedCard({ post }: Props) {
       </div>
 
       {/* 4순위: 썸네일 */}
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[16px] border border-[#dbe8fb]/50 bg-[#eef5ff] dark:border-zinc-850 dark:bg-zinc-900 shadow-[0_4px_12px_rgba(43,102,246,0.03)]">
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[16px] border border-[#dbe8fb]/50 bg-[#eef5ff] dark:border-zinc-850 dark:bg-zinc-900 shadow-[0_4px_12px_rgba(43,102,246,0.03)]">
         <Image
           src={displayImage}
           alt={title}
           fill
-          sizes="80px"
+          sizes="96px"
           unoptimized={shouldUnoptimizeImage(displayImage)}
           className="object-cover"
         />
