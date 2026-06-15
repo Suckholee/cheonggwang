@@ -4,7 +4,7 @@ import { pageRepository } from "@/lib/firebase/page-repository";
 import type { Category, Page } from "@/types/page";
 
 export interface FeedFilter {
-  category?: Category | "all";
+  categories?: Category[];
 }
 
 const FEED_LIMIT = 500;
@@ -24,12 +24,12 @@ export async function getFeedPosts(filter: FeedFilter = {}): Promise<Page[]> {
   cacheLife("minutes");
 
   const posts = await pageRepository.listPublished({
-    category:
-      filter.category && filter.category !== "all"
-        ? filter.category
-        : undefined,
     limit: FEED_LIMIT,
   });
+
+  if (filter.categories && filter.categories.length > 0) {
+    return posts.filter((p) => filter.categories!.includes(p.category));
+  }
 
   if (posts.length >= FEED_LIMIT) {
     console.warn(

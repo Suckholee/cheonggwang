@@ -6,7 +6,7 @@ import {
   tryVerifySessionCookie,
 } from "@/lib/firebase/auth-admin";
 import { decodeRegionParam } from "@/domain/region";
-import type { Category } from "@/types/page";
+import type { Category, Region } from "@/types/page";
 import { FeedControls } from "@/components/feed/FeedControls";
 import { FeedRails } from "@/components/feed/FeedRails";
 import {
@@ -50,8 +50,19 @@ async function FeedBody({
   searchParams: Promise<SearchParams>;
 }) {
   const sp = await searchParams;
-  const region = decodeRegionParam(sp.region);
-  const category = parseCategory(sp.category);
+  
+  // Decode comma-separated regions
+  const regionParams = sp.region ? sp.region.split(",") : [];
+  const regions = regionParams
+    .map(decodeRegionParam)
+    .filter((r): r is Region => r !== null);
+
+  // Decode comma-separated categories
+  const categoryParams = sp.category ? sp.category.split(",") : [];
+  const categories = categoryParams
+    .map(parseCategory)
+    .filter((c): c is Category => c !== "all");
+
   const q = sp.q ?? "";
-  return <FeedRails filter={{ region, category }} query={q} />;
+  return <FeedRails filter={{ regions, categories }} query={q} />;
 }

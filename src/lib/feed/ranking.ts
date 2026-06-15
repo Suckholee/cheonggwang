@@ -6,16 +6,17 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 export function matchesRail(
   post: Page,
   rail: RailDef,
-  userRegion?: Region | null
+  userRegions?: Region[]
 ): boolean {
   switch (rail.match.kind) {
     case "tags-any":
       return rail.match.tags.some((t) => post.tags.includes(t));
     case "region":
-      if (!userRegion || !post.region) return false;
-      return (
-        post.region.city === userRegion.city &&
-        post.region.district === userRegion.district
+      if (!userRegions || userRegions.length === 0 || !post.region) return false;
+      return userRegions.some(
+        (ur) =>
+          post.region!.city === ur.city &&
+          post.region!.district === ur.district
       );
     case "freshness": {
       const ms = rail.match.withinDays * 24 * 60 * 60 * 1000;
@@ -39,11 +40,11 @@ interface Scored {
 export function rankRailPosts(
   posts: readonly Page[],
   rail: RailDef,
-  userRegion?: Region | null
+  userRegions?: Region[]
 ): Page[] {
   const now = Date.now();
   const scored: Scored[] = posts
-    .filter((p) => matchesRail(p, rail, userRegion))
+    .filter((p) => matchesRail(p, rail, userRegions))
     .map((p) => {
       const matchCount =
         rail.match.kind === "tags-any"

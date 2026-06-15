@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Check } from "lucide-react";
 
 const CATEGORIES: Array<{ value: string; label: string }> = [
   { value: "all", label: "전체" },
@@ -11,39 +11,61 @@ const CATEGORIES: Array<{ value: string; label: string }> = [
 ];
 
 export function CategoryTabs() {
+  const router = useRouter();
   const sp = useSearchParams();
   const pathname = usePathname();
-  const current = sp.get("category") ?? "all";
 
-  function hrefFor(value: string): string {
+  const currentParam = sp.get("category") ?? "";
+  const selectedCategories = currentParam ? currentParam.split(",") : [];
+
+  function handleToggle(value: string) {
     const params = new URLSearchParams(sp);
-    if (value === "all") params.delete("category");
-    else params.set("category", value);
+
+    if (value === "all") {
+      params.delete("category");
+    } else {
+      let nextSelected: string[];
+      if (selectedCategories.includes(value)) {
+        nextSelected = selectedCategories.filter((v) => v !== value);
+      } else {
+        nextSelected = [...selectedCategories, value];
+      }
+
+      if (nextSelected.length > 0) {
+        params.set("category", nextSelected.join(","));
+      } else {
+        params.delete("category");
+      }
+    }
+
     const qs = params.toString();
     const targetPath = pathname || "/discover";
-    return qs ? `${targetPath}?${qs}` : targetPath;
+    router.replace(qs ? `${targetPath}?${qs}` : targetPath, { scroll: false });
   }
+
+  const isAllActive = selectedCategories.length === 0;
 
   return (
     <nav
       aria-label="업종 필터"
-      className="flex items-center gap-1 overflow-x-auto"
+      className="flex items-center gap-1.5 overflow-x-auto select-none"
     >
       {CATEGORIES.map((c) => {
-        const active = current === c.value;
+        const active = c.value === "all" ? isAllActive : selectedCategories.includes(c.value);
         return (
-          <Link
+          <button
             key={c.value}
-            href={hrefFor(c.value)}
-            scroll={false}
-            className={`rounded-[12px] px-3.5 py-1.5 text-[14px] font-bold whitespace-nowrap transition-colors ${
+            type="button"
+            onClick={() => handleToggle(c.value)}
+            className={`inline-flex items-center gap-1 rounded-xl px-3.5 py-1.5 text-xs font-bold whitespace-nowrap transition-all duration-150 border ${
               active
-                ? "bg-[#2563EB] text-white dark:bg-[#5B8DF6]"
-                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                ? "bg-[#2563EB] border-[#2563EB] text-white shadow-xs dark:bg-blue-600 dark:border-blue-600"
+                : "bg-zinc-100/80 border-transparent text-zinc-600 hover:bg-zinc-200/80 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >
+            {active && c.value !== "all" && <Check className="h-3 w-3 shrink-0" />}
             {c.label}
-          </Link>
+          </button>
         );
       })}
     </nav>

@@ -11,20 +11,20 @@ import type { Category, Region } from "@/types/page";
 
 interface Props {
   filter: {
-    category: Category | "all";
-    region: Region | null;
+    categories: Category[];
+    regions: Region[];
   };
   query: string;
 }
 
 export async function FeedRails({ filter, query }: Props) {
-  const posts = await getFeedPosts({ category: filter.category });
+  const posts = await getFeedPosts({ categories: filter.categories });
   const filtered = query ? posts.filter((p) => matchesSearch(p, query)) : posts;
 
   const hasActiveFilter =
     !!query ||
-    !!filter.region ||
-    (filter.category !== undefined && filter.category !== "all");
+    filter.regions.length > 0 ||
+    filter.categories.length > 0;
 
   if (filtered.length === 0) {
     return (
@@ -39,7 +39,7 @@ export async function FeedRails({ filter, query }: Props) {
   let rails = RAILS.filter((r) => !r.timeContext || r.timeContext === tc);
 
   // If a region filter is active, float the 'nearby' rail to the very top
-  if (filter.region) {
+  if (filter.regions.length > 0) {
     const nearbyIndex = rails.findIndex((r) => r.id === "nearby");
     if (nearbyIndex > -1) {
       const [nearbyRail] = rails.splice(nearbyIndex, 1);
@@ -49,9 +49,12 @@ export async function FeedRails({ filter, query }: Props) {
 
   const rendered = rails
     .map((rail) => {
-      const ranked = rankRailPosts(filtered, rail, filter.region);
+      const ranked = rankRailPosts(filtered, rail, filter.regions);
       if (ranked.length === 0) return null;
-      const districtLabel = filter.region?.district ?? "내 지역";
+      const districtLabel =
+        filter.regions.length > 0
+          ? filter.regions.map((r) => r.district).join(", ")
+          : "선택 지역";
       const title = rail.title.replace("{district}", districtLabel);
       return <Rail key={rail.id} title={title} posts={ranked} />;
     })
