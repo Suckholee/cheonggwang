@@ -18,7 +18,6 @@ import {
   type QuoteSummaryForThread,
 } from "@/components/chat/PinnedQuoteCard";
 import { ThreadDetailClient } from "@/components/chat/ThreadDetailClient";
-import { ThreadActionButtons } from "@/components/chat/ThreadActionButtons";
 import { BookingStatusBanner } from "@/components/booking/BookingStatusBanner";
 import type { BookingBannerDTO } from "@/types/booking";
 
@@ -32,7 +31,7 @@ interface PageProps {
 
 export default function ChatThreadPage(props: PageProps) {
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col bg-zinc-50 pb-[var(--bottom-nav-height)] dark:bg-black">
+    <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col bg-zinc-50 pb-0 dark:bg-black">
       <Suspense fallback={<ThreadSkeleton />}>
         <ThreadBody params={props.params} />
       </Suspense>
@@ -124,19 +123,15 @@ async function ThreadBody({
       />
       {bookingBanner && <BookingStatusBanner banner={bookingBanner} />}
       {summary && <PinnedQuoteCard summary={summary} role={role} />}
-      <ThreadActionButtons
-        threadId={threadId}
-        role={role}
-        bookingId={bookingId}
-        bookingStatus={bookingStatus as any}
-        bookingAmount={bookingAmount}
-        canConfirmBooking={canConfirmBooking}
-      />
       <ThreadDetailClient
         threadId={threadId}
         uid={uid}
+        role={role}
         bookingId={bookingId}
         initialBookingStatus={bookingStatus}
+        bookingAmount={bookingAmount}
+        canConfirmBooking={canConfirmBooking}
+        requestId={thread.requestId}
       />
     </>
   );

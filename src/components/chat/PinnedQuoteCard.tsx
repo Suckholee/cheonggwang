@@ -43,30 +43,31 @@ export function PinnedQuoteCard({ summary, role }: Props) {
   const linkLabel = role === "client" ? "견적 상세 →" : "내 견적 보기 →";
 
   return (
-    <aside className="border-b border-zinc-200 bg-indigo-50/50 px-3 py-2 dark:border-zinc-800 dark:bg-indigo-950/20">
-      <div className="flex items-start gap-2">
-        <FileText
-          className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-400"
-          aria-hidden
-        />
+    <aside className="border-b border-zinc-200 bg-[#f4f9ff]/50 px-4 py-2.5 dark:border-zinc-800 dark:bg-zinc-900/30">
+      <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="mb-0.5 flex items-center gap-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 leading-none">
             <span aria-hidden>{QUOTE_CATEGORY_EMOJIS[summary.category]}</span>
             <span>{QUOTE_CATEGORY_LABELS[summary.category]}</span>
             {summary.sizeLabel && (
-              <span className="text-zinc-500">· {summary.sizeLabel}</span>
+              <>
+                <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                <span>{summary.sizeLabel}</span>
+              </>
             )}
-          </p>
-          <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-            {formatMan(summary.totalAmount)}{" "}
-            <span className="text-[11px] font-normal text-zinc-500">
-              · {formatSchedule(summary.scheduledAtMs)}
+          </div>
+          <div className="mt-1 flex items-baseline gap-2 leading-none">
+            <span className="text-[15px] font-black text-zinc-950 dark:text-zinc-50">
+              {formatMan(summary.totalAmount)}
             </span>
-          </p>
+            <span className="text-[11px] font-semibold text-zinc-450 dark:text-zinc-550">
+              {formatSchedule(summary.scheduledAtMs)}
+            </span>
+          </div>
         </div>
         <Link
           href={href}
-          className="shrink-0 self-center text-[11px] font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+          className="shrink-0 inline-flex items-center rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-[11px] font-bold text-zinc-700 shadow-sm hover:border-zinc-300 hover:text-zinc-950 transition-all active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-350 dark:hover:border-zinc-700 dark:hover:text-zinc-100"
         >
           {linkLabel}
         </Link>

@@ -68,6 +68,7 @@ const HIDDEN_PATTERNS: readonly RegExp[] = [
   /^\/terms(\/|$)/,
   /^\/privacy(\/|$)/,
   /^\/admin(\/|$)/,
+  /^\/chat\/[^/]+$/,
 ];
 
 export function isHiddenPath(pathname: string | null): boolean {
