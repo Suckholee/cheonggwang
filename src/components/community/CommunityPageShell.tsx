@@ -60,7 +60,7 @@ export function CommunityPageShell({
           </div>
 
           {/* Row 2: Tabs + Scrolled Actions */}
-          <div className="flex items-center justify-between gap-3">
+          <div className={`flex items-center justify-between transition-all duration-300 ${scrolled ? "gap-3" : "gap-0"}`}>
             <div className="flex-1 min-w-0">
               <CommunityPanelTabs active={active} />
             </div>
