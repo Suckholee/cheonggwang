@@ -31,7 +31,7 @@ export function CommunityPageShell({
   }, []);
 
   return (
-    <div className="mx-auto min-h-screen max-w-2xl bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] pt-2 pb-24 dark:bg-zinc-950">
+    <div className="mx-auto min-h-screen w-full max-w-2xl bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] pt-2 pb-24 dark:bg-zinc-950">
       <header className={`sticky top-0 z-50 mb-3 border-b border-zinc-200/40 bg-[#f4f9ff]/95 px-4 backdrop-blur dark:border-zinc-850 dark:bg-zinc-950/95 transition-all duration-300 ${
         scrolled ? "py-2.5 shadow-[0_4px_12px_rgba(43,102,246,0.02)]" : "py-3.5"
       }`}>
