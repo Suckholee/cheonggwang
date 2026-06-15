@@ -41,9 +41,14 @@ export function QuickStatsSection({ stats }: Props) {
   const ratingLabel =
     stats.rating != null
       ? `${stats.rating.toFixed(1)} (${stats.reviewCount ?? 0})`
-      : "아직 없음";
+      : "평가 대기";
   const responseLabel =
-    stats.responseTimeMinutes != null ? `${stats.responseTimeMinutes}분` : "아직 없음";
+    stats.responseTimeMinutes != null ? `${stats.responseTimeMinutes}분` : "측정 대기";
+
+  const isNewPartner =
+    stats.completedWorkCount === null ||
+    stats.completedWorkCount === 0 ||
+    stats.rating === null;
 
   return (
     <section aria-labelledby="stats-heading" className="mb-6">
@@ -76,6 +81,19 @@ export function QuickStatsSection({ stats }: Props) {
           bgClass="bg-amber-50/70 dark:bg-amber-950/40"
         />
       </div>
+
+      {isNewPartner && (
+        <div className="mt-3.5 rounded-2xl bg-zinc-50/50 border border-zinc-150 p-4 dark:bg-zinc-900/30 dark:border-zinc-800/80 shadow-2xs">
+          <h4 className="text-xs font-extrabold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
+            <span>💡</span> 실적을 쌓기 위한 첫 단계
+          </h4>
+          <ul className="mt-2 space-y-1.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400 list-disc list-inside">
+            <li><span className="text-zinc-700 dark:text-zinc-300 font-bold">프로필 완성</span>: 상세 소개와 가격표를 완성하여 신뢰도를 높여보세요.</li>
+            <li><span className="text-zinc-700 dark:text-zinc-300 font-bold">견적 제안</span>: 새로 도착한 수신 요청에 빠르게 맞춤 견적을 보내보세요.</li>
+            <li>첫 작업을 완료하고 고객 리뷰를 받으면 평점과 누적 작업 수가 자동으로 활성화됩니다.</li>
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

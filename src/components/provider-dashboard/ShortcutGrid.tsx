@@ -14,13 +14,6 @@ interface Props {
 export function ShortcutGrid({ requestBadgeCount }: Props) {
   const shortcuts = [
     {
-      href: "/provider/profile",
-      label: "프로필 편집",
-      Icon: UserPen,
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-50/70 dark:bg-blue-950/40",
-    },
-    {
       href: "/provider/requests",
       label: "받은 요청",
       Icon: Inbox,
@@ -34,6 +27,13 @@ export function ShortcutGrid({ requestBadgeCount }: Props) {
       Icon: Briefcase,
       color: "text-amber-600 dark:text-amber-400",
       bg: "bg-amber-50/70 dark:bg-amber-950/40",
+    },
+    {
+      href: "/provider/profile",
+      label: "프로필 편집",
+      Icon: UserPen,
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-50/70 dark:bg-blue-950/40",
     },
     {
       href: "/provider/settings",

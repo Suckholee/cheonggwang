@@ -10,6 +10,7 @@ import { providerRepository } from "@/lib/firebase/provider-repository";
 import { quoteRequestRepository } from "@/lib/firebase/quote-request-repository";
 import { signOut } from "@/app/actions/auth-actions";
 import { DashboardHero } from "@/components/provider-dashboard/DashboardHero";
+import { ReceivedRequestsCta } from "@/components/provider-dashboard/ReceivedRequestsCta";
 import { ActiveRequestsSection } from "@/components/provider-dashboard/ActiveRequestsSection";
 import { TodayScheduleCard } from "@/components/provider-dashboard/TodayScheduleCard";
 import { QuickStatsSection } from "@/components/provider-dashboard/QuickStatsSection";
@@ -86,7 +87,7 @@ async function DashboardBody() {
     quoteRequestRepository.listForProvider({
       categories: provider.categories,
       status: "submitted",
-      limit: 3,
+      limit: 10,
     }),
     quoteRequestRepository.countForProvider({
       categories: provider.categories,
@@ -103,7 +104,9 @@ async function DashboardBody() {
 
   return (
     <>
-      <DashboardHero provider={provider} />
+      <DashboardHero provider={provider} totalCount={totalCount} />
+
+      <ReceivedRequestsCta count={totalCount} />
 
       <ActiveRequestsSection
         provider={provider}
