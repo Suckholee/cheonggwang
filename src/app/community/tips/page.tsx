@@ -42,11 +42,11 @@ function FeedSkeleton() {
       aria-label="불러오는 중"
     >
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="flex items-start justify-between gap-4 py-4 px-1">
-          <div className="flex flex-1 flex-col gap-2.5 min-w-0">
-            <div className="h-3 w-1/4 rounded bg-[#eef5ff] dark:bg-zinc-900" />
+        <div key={i} className="flex items-start justify-between gap-4 py-5 px-1">
+          <div className="flex flex-1 flex-col min-w-0">
             <div className="h-5 w-3/4 rounded bg-[#eef5ff] dark:bg-zinc-900" />
-            <div className="h-4 w-5/6 rounded bg-[#eef5ff] dark:bg-zinc-900" />
+            <div className="mt-2 h-4 w-5/6 rounded bg-[#eef5ff] dark:bg-zinc-900" />
+            <div className="mt-3.5 h-3.5 w-1/3 rounded bg-[#eef5ff] dark:bg-zinc-900" />
           </div>
           <div className="h-20 w-20 shrink-0 rounded-[16px] bg-[#eef5ff] dark:bg-zinc-900" />
         </div>

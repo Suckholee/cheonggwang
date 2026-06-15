@@ -13,7 +13,7 @@ export function CommunityPanelTabs({ active }: Props) {
     <nav
       role="tablist"
       aria-label="커뮤니티 패널"
-      className="flex gap-2 rounded-[22px] border border-[#dbe8fb] bg-white/80 p-1 shadow-[0_8px_20px_rgba(43,102,246,0.05)] dark:border-zinc-800 dark:bg-zinc-900"
+      className="flex gap-5 px-1"
     >
       {PANEL_ORDER.map((slug) => {
         const cfg = PANELS[slug];
@@ -26,10 +26,10 @@ export function CommunityPanelTabs({ active }: Props) {
             aria-selected={isActive}
             aria-current={isActive ? "page" : undefined}
             className={[
-              "relative flex-1 rounded-[18px] px-3 py-2.5 text-center text-sm font-semibold transition-colors",
+              "relative pb-2 text-[14.5px] transition-all duration-200 font-bold",
               isActive
-                ? "bg-[#edf4ff] text-[#2563EB] shadow-sm dark:bg-zinc-800 dark:text-zinc-50"
-                : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
+                ? "text-[#2563EB] dark:text-[#5B8DF6] after:absolute after:bottom-0 after:left-0 after:h-[2.5px] after:w-full after:rounded-full after:bg-[#2563EB] dark:after:bg-[#5B8DF6]"
+                : "text-zinc-500 hover:text-zinc-850 dark:text-zinc-400 dark:hover:text-zinc-200",
             ].join(" ")}
           >
             {cfg.label}

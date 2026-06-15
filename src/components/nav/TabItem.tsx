@@ -19,16 +19,17 @@ export function TabItem({ tab, active, badgeCount = 0 }: Props) {
       href={href}
       aria-current={active ? "page" : undefined}
       aria-label={label}
-      className={`flex flex-1 flex-col items-center justify-center gap-1 py-1 text-[11px] font-bold transition-colors w-full ${
+      className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-1 text-[11px] font-bold transition-colors w-full ${
         active
           ? "text-[#2563EB] dark:text-[#5B8DF6]"
-          : "text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-300"
+          : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
       }`}
     >
       <span className="relative">
         <Icon
           className="h-5 w-5"
           strokeWidth={active ? 2.5 : 2}
+          fill={active ? "currentColor" : "none"}
           aria-hidden
         />
         {showBadge && (

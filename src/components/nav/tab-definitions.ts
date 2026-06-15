@@ -3,7 +3,7 @@ import {
   Search,
   ClipboardList,
   MessageCircle,
-  Users,
+  Newspaper,
   Inbox,
   Briefcase,
   type LucideIcon,
@@ -30,7 +30,7 @@ export const CLIENT_TABS: readonly TabDefinition[] = [
     Icon: MessageCircle,
     badgeKey: "chat-unread",
   },
-  { href: "/community", label: "커뮤니티", Icon: Users },
+  { href: "/community", label: "커뮤니티", Icon: Newspaper },
 ] as const;
 
 export const PROVIDER_TABS: readonly TabDefinition[] = [
@@ -43,7 +43,7 @@ export const PROVIDER_TABS: readonly TabDefinition[] = [
     Icon: MessageCircle,
     badgeKey: "chat-unread",
   },
-  { href: "/community", label: "커뮤니티", Icon: Users },
+  { href: "/community", label: "커뮤니티", Icon: Newspaper },
 ] as const;
 
 export type TabSetKey = "client" | "provider";

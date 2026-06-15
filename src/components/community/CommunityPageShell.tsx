@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Search, Plus } from "lucide-react";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { CommunityPanelTabs } from "./CommunityPanelTabs";
 import type { PanelSlug } from "@/lib/feed/panel-config";
@@ -17,26 +19,36 @@ export function CommunityPageShell({
 }: Props) {
   return (
     <div className="mx-auto min-h-screen max-w-2xl bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] pt-2 pb-24 dark:bg-zinc-950">
-      <header className="sticky top-0 z-50 mb-4 border-b border-white/70 bg-[#f4f9ff]/90 px-4 py-3 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+      <header className="sticky top-0 z-50 mb-3 border-b border-zinc-200/40 bg-[#f4f9ff]/95 px-4 py-3.5 backdrop-blur dark:border-zinc-850 dark:bg-zinc-950/95">
         <div className="flex items-center justify-between">
           <BrandLogo />
-          <span className="rounded-full border border-[#d8e6ff] bg-white/80 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#2563EB]/80 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-            Community
-          </span>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/search"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-zinc-200 text-zinc-600 hover:text-zinc-900 shadow-sm transition-all hover:scale-105 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+              aria-label="검색"
+            >
+              <Search className="h-4.5 w-4.5" strokeWidth={2.3} />
+            </Link>
+            <Link
+              href="/partner/posts/new"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2563EB] text-white shadow-sm transition-all hover:scale-105 hover:bg-[#1d4ed8] active:scale-95 dark:bg-[#3b82f6] dark:hover:bg-[#2563eb]"
+              aria-label="글쓰기"
+            >
+              <Plus className="h-5 w-5" strokeWidth={2.5} />
+            </Link>
+          </div>
         </div>
-        <div className="mt-2.5">
+        <div className="mt-3.5">
           <CommunityPanelTabs active={active} />
         </div>
       </header>
       <div className="px-4">
-        <div className="mb-4 rounded-2xl border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-4.5 py-4 shadow-[0_12px_30px_rgba(43,102,246,0.06)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-450">
-            Curated Feed
-          </p>
-          <h1 className="mt-0.5 text-[20px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+        <div className="mb-4.5 px-0.5 pt-0.5">
+          <h1 className="text-[20px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
             {title}
           </h1>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1 text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
             {tagline}
           </p>
         </div>
