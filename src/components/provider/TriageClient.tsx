@@ -307,7 +307,7 @@ export function TriageClient({ initialRequests, provider }: Props) {
                       type="button"
                       onClick={(e) => handlePropose(req.id, e)}
                       disabled={isPending}
-                      className="flex-[1.5] flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-b from-[#3B82F6] to-[#2563EB] py-3 text-xs font-extrabold text-white shadow-[0_4px_12px_rgba(37,99,235,0.15)] border-b-[3px] border-b-[#1D4ED8] hover:scale-[1.01] hover:from-[#4F8FF7] hover:to-[#2A6DF0] active:scale-[0.99] active:translate-y-[1px] transition-all"
+                      className="flex-[1.5] flex items-center justify-center gap-1.5 rounded-xl bg-[#2563EB] py-3 text-xs font-extrabold text-white hover:scale-[1.01] active:scale-[0.99] active:translate-y-[1px] transition-all"
                     >
                       <Check className="h-4 w-4" strokeWidth={3} />
                       제안하기
