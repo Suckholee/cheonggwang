@@ -161,7 +161,7 @@ function loadDaumPostcode(): Promise<void> {
       return;
     }
     const script = document.createElement("script");
-    script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    script.src = "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
     script.async = true;
     script.onload = () => resolve();
     script.onerror = (e) => reject(e);
@@ -488,6 +488,16 @@ export function QuoteForm({
     window.addEventListener("click", handleGlobalClick);
     return () => window.removeEventListener("click", handleGlobalClick);
   }, []);
+
+  useEffect(() => {
+    if (isOpenPostcode) {
+      const handleTouchStart = () => {};
+      document.addEventListener("touchstart", handleTouchStart, { passive: true });
+      return () => {
+        document.removeEventListener("touchstart", handleTouchStart);
+      };
+    }
+  }, [isOpenPostcode]);
 
   const handleCardUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1316,8 +1326,8 @@ export function QuoteForm({
       {/* 다음 우편번호 모달 */}
       {isOpenPostcode && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-xs p-0 md:p-4 animate-fade-in">
-          <div className="absolute inset-0" onClick={() => setIsOpenPostcode(false)} />
-          <div className="relative w-full md:max-w-lg bg-white dark:bg-zinc-900 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[85vh] md:max-h-[90vh] overflow-hidden animate-slide-up">
+          <div className="absolute inset-0 z-0" onClick={() => setIsOpenPostcode(false)} />
+          <div className="relative z-10 w-full md:max-w-lg bg-white dark:bg-zinc-900 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[85vh] md:max-h-[90vh] overflow-hidden animate-slide-up">
             <div className="flex items-center justify-between px-5 py-4.5 border-b border-zinc-100 dark:border-zinc-800">
               <span className="text-base font-extrabold text-zinc-950 dark:text-zinc-50">
                 주소 검색
