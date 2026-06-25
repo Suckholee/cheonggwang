@@ -14,21 +14,45 @@
  * Migration: v1.1 이전 'responded' 값은 repository read 시 'quoted'로 alias.
  */
 export type QuoteStatus =
-  | "submitted"
-  | "quoted"
-  | "negotiating"
-  | "booked"
-  | "completed"
-  | "cancelled";
+  | "submitted"        // 고객접수
+  | "estimating"       // 견적중
+  | "consulted"        // 상담완료
+  | "booked"           // 예약확정
+  | "assigned"         // 작업배정
+  | "working"          // 작업중
+  | "completed"        // 작업완료
+  | "settled"          // 정산완료
+  | "cancelled"        // 취소됨
+  | "quoted"           // 하위 호환
+  | "negotiating";     // 하위 호환
 
 export const QUOTE_STATUSES: readonly QuoteStatus[] = [
   "submitted",
+  "estimating",
+  "consulted",
+  "booked",
+  "assigned",
+  "working",
+  "completed",
+  "settled",
+  "cancelled",
   "quoted",
   "negotiating",
-  "booked",
-  "completed",
-  "cancelled",
 ] as const;
+
+export const QUOTE_STATUS_LABELS: Record<QuoteStatus, string> = {
+  submitted: "고객접수",
+  estimating: "견적중",
+  consulted: "상담완료",
+  booked: "예약확정",
+  assigned: "작업배정",
+  working: "작업중",
+  completed: "작업완료",
+  settled: "정산완료",
+  cancelled: "취소됨",
+  quoted: "견적중",
+  negotiating: "상담완료",
+};
 
 /** v1.0 legacy 'responded' → 'quoted' normalize */
 export function normalizeQuoteStatus(raw: string): QuoteStatus {
@@ -42,6 +66,7 @@ export function normalizeQuoteStatus(raw: string): QuoteStatus {
 /** 청명이 응답(pass or quote) 가능한 상태 */
 export const RESPONDABLE_STATUSES: readonly QuoteStatus[] = [
   "submitted",
+  "estimating",
   "quoted",
 ] as const;
 
@@ -49,12 +74,16 @@ export function isRespondable(status: QuoteStatus): boolean {
   return (RESPONDABLE_STATUSES as readonly string[]).includes(status);
 }
 
-/** QuoteStepper 4단계 시각화용 (요청·견적수신·협의진행·거래완료) */
+/** QuoteStepper 8단계 시각화용 */
 export const STEPPER_LABELS: readonly string[] = [
-  "요청",
-  "견적수신",
-  "협의진행",
-  "거래완료",
+  "고객접수",
+  "견적중",
+  "상담완료",
+  "예약확정",
+  "작업배정",
+  "작업중",
+  "작업완료",
+  "정산완료",
 ] as const;
 
 /** status → 현재 step index. cancelled = -1 (특수: "취소됨" 표시) */
@@ -62,14 +91,22 @@ export function statusToStepIndex(status: QuoteStatus): number {
   switch (status) {
     case "submitted":
       return 0;
+    case "estimating":
     case "quoted":
       return 1;
+    case "consulted":
     case "negotiating":
       return 2;
     case "booked":
       return 3;
+    case "assigned":
+      return 4;
+    case "working":
+      return 5;
     case "completed":
-      return 3;
+      return 6;
+    case "settled":
+      return 7;
     case "cancelled":
       return -1;
   }
@@ -78,14 +115,19 @@ export function statusToStepIndex(status: QuoteStatus): number {
 /** 진행중 탭에 표시될 status */
 export const ACTIVE_STATUSES: readonly QuoteStatus[] = [
   "submitted",
+  "estimating",
   "quoted",
+  "consulted",
   "negotiating",
+  "booked",
+  "assigned",
+  "working",
 ] as const;
 
 /** 완료 탭에 표시될 status */
 export const COMPLETED_STATUSES: readonly QuoteStatus[] = [
-  "booked",
   "completed",
+  "settled",
 ] as const;
 
 export function isActive(status: QuoteStatus): boolean {
@@ -96,7 +138,7 @@ export function isCompleted(status: QuoteStatus): boolean {
   return (COMPLETED_STATUSES as readonly string[]).includes(status);
 }
 
-/** acceptQuote 가능한 quoteRequest status (submitted or quoted) */
+/** acceptQuote 가능한 quoteRequest status (submitted or quoted or estimating) */
 export function canAcceptQuote(status: QuoteStatus): boolean {
-  return status === "submitted" || status === "quoted";
+  return status === "submitted" || status === "quoted" || status === "estimating";
 }

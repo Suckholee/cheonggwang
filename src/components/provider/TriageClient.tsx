@@ -166,10 +166,10 @@ export function TriageClient({ initialRequests, provider }: Props) {
                   <div className="flex items-center gap-1.5">
                     {/* Category Chip */}
                     <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-extrabold border leading-none ${
-                      req.category === "move-in" ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/20 dark:border-blue-900/40 dark:text-blue-400" :
-                      req.category === "office" ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/20 dark:border-emerald-900/40 dark:text-emerald-400" :
-                      req.category === "aircon" ? "bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-950/20 dark:border-sky-900/40 dark:text-sky-400" :
-                      req.category === "move-out" ? "bg-violet-50 border-violet-200 text-violet-700 dark:bg-violet-950/20 dark:border-violet-900/40 dark:text-violet-400" :
+                      req.category === "residential" ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/20 dark:border-blue-900/40 dark:text-blue-400" :
+                      req.category === "regular" || req.category === "construction" ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/20 dark:border-emerald-900/40 dark:text-emerald-400" :
+                      req.category === "specialist" || req.category === "exterior" || req.category === "sanitation" ? "bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-950/20 dark:border-sky-900/40 dark:text-sky-400" :
+                      req.category === "lodging" || req.category === "industrial" ? "bg-violet-50 border-violet-200 text-violet-700 dark:bg-violet-950/20 dark:border-violet-900/40 dark:text-violet-400" :
                       req.category === "special" ? "bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/20 dark:border-rose-900/40 dark:text-rose-400" :
                       "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/20 dark:border-amber-900/40 dark:text-amber-400"
                     }`}>

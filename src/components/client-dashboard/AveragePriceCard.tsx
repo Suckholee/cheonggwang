@@ -11,12 +11,16 @@ import { shouldUnoptimizeImage } from "@/lib/image/should-unoptimize";
 import type { PriceSummary } from "@/types/client-dashboard";
 
 const CATEGORY_IMAGES: Record<QuoteCategory, string> = {
-  "move-in": "/images/cat_move_in.png",
-  office: "/images/cat_office.png",
-  aircon: "/images/cat_aircon.png",
-  "move-out": "/images/cat_move_out.png",
-  special: "/images/cat_special.png",
+  residential: "/images/cat_move_in.png",
   regular: "/images/cat_regular.png",
+  construction: "/images/cat_office.png",
+  exterior: "/images/cat_office.png",
+  sanitation: "/images/cat_special.png",
+  specialist: "/images/cat_aircon.png",
+  lodging: "/images/cat_regular.png",
+  industrial: "/images/cat_office.png",
+  special: "/images/cat_special.png",
+  etc: "/images/cat_office.png",
 };
 
 interface Props {

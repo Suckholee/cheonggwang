@@ -17,6 +17,7 @@ import {
 } from "@/domain/quote-category";
 import { RequestAccordion } from "@/components/received/RequestAccordion";
 import { QuoteCompareCard } from "@/components/received/QuoteCompareCard";
+import { RequestWorkflowCard } from "@/components/received/RequestWorkflowCard";
 
 export const metadata = {
   title: "견적 비교 · 청광",
@@ -93,12 +94,16 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
 
   // Category gradients matching premium aesthetics
   const categoryGradients: Record<string, string> = {
-    "move-in": "from-sky-500 to-indigo-600 dark:from-sky-700 dark:to-indigo-900",
-    office: "from-slate-650 to-neutral-850 dark:from-slate-800 dark:to-neutral-950",
-    aircon: "from-cyan-500 to-teal-600 dark:from-cyan-700 dark:to-teal-900",
-    "move-out": "from-amber-500 to-orange-600 dark:from-amber-700 dark:to-orange-950",
-    special: "from-violet-500 to-fuchsia-600 dark:from-violet-700 dark:to-fuchsia-900",
+    residential: "from-sky-500 to-indigo-600 dark:from-sky-700 dark:to-indigo-900",
     regular: "from-emerald-500 to-teal-700 dark:from-emerald-700 dark:to-teal-900",
+    construction: "from-orange-500 to-amber-600 dark:from-orange-700 dark:to-amber-900",
+    exterior: "from-indigo-500 to-violet-600 dark:from-indigo-700 dark:to-violet-900",
+    sanitation: "from-emerald-500 to-teal-600 dark:from-emerald-700 dark:to-teal-900",
+    specialist: "from-rose-500 to-pink-600 dark:from-rose-700 dark:to-pink-900",
+    lodging: "from-violet-500 to-fuchsia-600 dark:from-violet-700 dark:to-fuchsia-900",
+    industrial: "from-teal-500 to-slate-600 dark:from-teal-700 dark:to-slate-900",
+    special: "from-purple-500 to-purple-800 dark:from-purple-700 dark:to-purple-950",
+    etc: "from-slate-500 to-slate-700 dark:from-slate-700 dark:to-slate-900",
   };
   const gradient = categoryGradients[request.category] || "from-zinc-500 to-zinc-700";
 
@@ -132,6 +137,9 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
 
       {/* Floating Request Metadata Accordion Card */}
       <RequestAccordion request={request} />
+
+      {/* Real-time status, photos, assigned team & reviews */}
+      <RequestWorkflowCard request={request} />
 
       {/* Received Quotes Section */}
       <div className="px-4 mt-6">

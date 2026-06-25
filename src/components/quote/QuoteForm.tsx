@@ -12,8 +12,10 @@ import {
   QUOTE_CATEGORIES,
   QUOTE_CATEGORY_LABELS,
   QUOTE_CATEGORY_SUBTITLES,
+  QUOTE_CATEGORY_EMOJIS,
   type QuoteCategory,
 } from "@/domain/quote-category";
+import { CLEAN_SERVICES_CONFIG, type SubServiceConfig } from "@/domain/clean-services-config";
 import { FORM_REGION_OPTIONS } from "@/domain/region-presets";
 import { PhotoUpload } from "@/components/editor/PhotoUpload";
 import { submitQuoteRequest } from "@/app/actions/quote-actions";
@@ -25,11 +27,15 @@ import {
   Truck,
   Sparkles,
   CalendarDays,
-  type LucideIcon,
+  Hammer,
+  Shield,
+  HelpCircle,
+  Factory,
   ChevronDown,
   Check,
   Search,
   X,
+  type LucideIcon,
 } from "lucide-react";
 
 declare global {
@@ -37,117 +43,6 @@ declare global {
     daum: any;
   }
 }
-
-// 청소 종류별 기본 단가 및 동적 추가 옵션 정의
-interface CleanOption {
-  key: string;
-  label: string;
-  price: number;
-  type: "boolean" | "number";
-}
-
-interface CategoryConfig {
-  pricePerPyung: {
-    premium: number;
-    regular: number;
-    budget: number;
-  };
-  extraSpaces: CleanOption[];
-  options: CleanOption[];
-  guideText?: string;
-}
-
-const DYNAMIC_OPTIONS: Record<QuoteCategory, CategoryConfig> = {
-  "move-in": {
-    pricePerPyung: { premium: 15000, regular: 12000, budget: 10000 },
-    extraSpaces: [
-      { key: "space-veranda", label: "베란다", price: 0, type: "boolean" },
-      { key: "space-loft", label: "복층", price: 0, type: "boolean" },
-      { key: "space-toilet", label: "화장실 추가", price: 0, type: "number" },
-      { key: "space-room", label: "방 추가", price: 0, type: "number" },
-      { key: "space-kitchen", label: "주방 추가", price: 0, type: "number" },
-      { key: "space-window", label: "외창/유리창 집중 청소", price: 0, type: "boolean" },
-      { key: "space-light", label: "등기구 분해 세척", price: 0, type: "boolean" }
-    ],
-    options: [
-      { key: "opt-sickHouse", label: "새집증후군 전문 케어", price: 0, type: "boolean" },
-      { key: "opt-phytoncide", label: "피톤치드 살균 탈취", price: 0, type: "boolean" },
-      { key: "opt-disinfect", label: "오존 살균 소독", price: 0, type: "boolean" },
-      { key: "opt-joint", label: "줄눈시공", price: 0, type: "boolean" },
-      { key: "opt-silicone", label: "실리콘 코팅", price: 0, type: "boolean" }
-    ],
-    guideText: "※ 추가공간 및 옵션 선택사항은 현장확인 후 최종 견적 반영됩니다."
-  },
-  office: {
-    pricePerPyung: { premium: 18000, regular: 15000, budget: 12000 },
-    extraSpaces: [
-      { key: "space-terrace", label: "테라스/발코니", price: 0, type: "boolean" },
-      { key: "space-toilet", label: "화장실", price: 0, type: "number" },
-      { key: "space-meeting", label: "회의실", price: 0, type: "number" },
-      { key: "space-pantry", label: "탕비실", price: 0, type: "number" }
-    ],
-    options: [
-      { key: "opt-floor-wash", label: "바닥 기계세척", price: 0, type: "boolean" },
-      { key: "opt-floor-wax", label: "바닥 고급 왁스코팅", price: 0, type: "boolean" },
-      { key: "opt-window", label: "유리창 청소", price: 0, type: "boolean" },
-      { key: "opt-carpet", label: "카펫 샴푸", price: 0, type: "boolean" }
-    ],
-    guideText: "※ 사무실/상가 청소는 현장 면적 및 집기 상태에 따라 최종 견적이 확정됩니다."
-  },
-  aircon: {
-    pricePerPyung: { premium: 0, regular: 0, budget: 0 },
-    extraSpaces: [],
-    options: [
-      // 에어컨 종류 (기본금액 산출용)
-      { key: "wallAircon", label: "벽걸이형 에어컨 세척", price: 80000, type: "number" },
-      { key: "standAircon", label: "스탠드형 에어컨 세척", price: 120000, type: "number" },
-      { key: "systemAircon", label: "천장형(1way/4way) 세척", price: 150000, type: "number" },
-      // 에어컨 전용 추가 옵션 (단가 0원)
-      { key: "opt-disassemble", label: "완전 분해 세척", price: 0, type: "boolean" },
-      { key: "opt-outdoor", label: "실외기 청소", price: 0, type: "boolean" },
-      { key: "opt-mold-coat", label: "곰팡이 방지 코팅", price: 0, type: "boolean" },
-      { key: "opt-eco-chem", label: "친환경 약품 사용", price: 0, type: "boolean" }
-    ],
-    guideText: "※ 에어컨 브랜드 및 현장 작업 조건(높이 등)에 따라 추가 비용이 발생할 수 있습니다."
-  },
-  "move-out": {
-    pricePerPyung: { premium: 16000, regular: 13000, budget: 11000 },
-    extraSpaces: [
-      { key: "space-veranda", label: "베란다", price: 0, type: "boolean" },
-      { key: "space-loft", label: "복층", price: 0, type: "boolean" },
-      { key: "space-toilet", label: "화장실 추가", price: 0, type: "number" },
-      { key: "space-room", label: "방 추가", price: 0, type: "number" },
-      { key: "space-kitchen", label: "주방 추가", price: 0, type: "number" }
-    ],
-    options: [
-      { key: "opt-mold", label: "곰팡이 완전 제거", price: 0, type: "boolean" },
-      { key: "opt-window", label: "창틀/방충망 집중 케어", price: 0, type: "boolean" }
-    ],
-    guideText: "※ 퇴거청소 진행 시 대량의 쓰레기 배출이 필요한 경우 사전에 특이사항에 적어주세요."
-  },
-  special: {
-    pricePerPyung: { premium: 25000, regular: 20000, budget: 15000 },
-    extraSpaces: [],
-    options: [
-      { key: "opt-organize", label: "유품 정리", price: 0, type: "boolean" },
-      { key: "opt-odor", label: "특수 탈취/오존 살균", price: 0, type: "boolean" },
-      { key: "opt-demolish", label: "벽지/장판 철거", price: 0, type: "boolean" },
-      { key: "opt-waste-car", label: "폐기물 차량 대수", price: 0, type: "number" }
-    ],
-    guideText: "※ 특수청소(화재, 누수, 고독사 등)는 현장 오염도와 오염 유형에 따라 비용이 변동될 수 있습니다."
-  },
-  regular: {
-    pricePerPyung: { premium: 10000, regular: 8000, budget: 7000 },
-    extraSpaces: [],
-    options: [
-      { key: "opt-waxing", label: "바닥 왁싱", price: 0, type: "boolean" },
-      { key: "opt-window", label: "유리창 대청소", price: 0, type: "boolean" },
-      { key: "opt-toilet", label: "화장실 정밀 청소", price: 0, type: "boolean" },
-      { key: "opt-waste", label: "쓰레기 분리수거 대행", price: 0, type: "boolean" }
-    ],
-    guideText: "※ 정기청소는 월 구독 형태로 계약되며 방문 빈도에 따라 최종 월별 금액이 정산됩니다."
-  }
-};
 
 interface AddressPreset {
   address: string;
@@ -197,42 +92,6 @@ const ADDRESS_PRESETS: AddressPreset[] = [
       { name: "마포상암청소클럽", distance: "0.4km", status: "즉시 매칭 가능", rating: 4.8 },
       { name: "합정그린케어", distance: "1.8km", status: "즉시 매칭 가능", rating: 4.6 }
     ]
-  },
-  {
-    address: "서울특별시 종로구 세종대로 175 (세종문화회관)",
-    city: "서울특별시",
-    district: "종로구",
-    title: "세종문화회관",
-    lat: 37.5718,
-    lng: 126.9760,
-    partners: [
-      { name: "광화문클린시스템", distance: "0.5km", status: "즉시 매칭 가능", rating: 4.9 },
-      { name: "종로역사클린", distance: "1.9km", status: "광속 대기", rating: 4.5 }
-    ]
-  },
-  {
-    address: "서울특별시 용산구 한강대로 405 (서울역)",
-    city: "서울특별시",
-    district: "용산구",
-    title: "서울역",
-    lat: 37.5559,
-    lng: 126.9723,
-    partners: [
-      { name: "용산센트럴클린", distance: "0.9km", status: "즉시 매칭 가능", rating: 4.8 },
-      { name: "숙대입구그린케어", distance: "1.6km", status: "즉시 매칭 가능", rating: 4.7 }
-    ]
-  },
-  {
-    address: "부산광역시 해운대구 센텀남대로 35 (신세계백화점 센텀시티)",
-    city: "부산광역시",
-    district: "해운대구",
-    title: "신세계백화점 센텀시티",
-    lat: 35.1689,
-    lng: 129.1302,
-    partners: [
-      { name: "부산해운대스타", distance: "0.7km", status: "즉시 매칭 가능", rating: 4.9 },
-      { name: "수영만청소마스터", distance: "2.3km", status: "방문 협의 대기", rating: 4.6 }
-    ]
   }
 ];
 
@@ -271,7 +130,6 @@ function parseAddress(addr: string): { city: string; district: string } | null {
   }
 
   if (!district) return null;
-
   return { city, district };
 }
 
@@ -280,15 +138,12 @@ function isCompleteRoadNameAddress(addr: string): boolean {
   const parts = clean.split(/\s+/);
   if (parts.length < 3) return false;
 
-  // 1. 시/도 확인
-  const hasCityProvince = /^(서울|경기|부산|인천|대구|대전|광주|울산|세종|충청|전라|경상|강원|제주|충북|충남|전북|전남|경북|경남|특별)/.test(parts[0]);
+  const hasCityProvince = /^(서울|경기|부산|인천|대구|대전|광주|울산|세종|충청|전라|경상|강원|제주|특별)/.test(parts[0]);
   if (!hasCityProvince) return false;
 
-  // 2. 구/군/시 확인
   const hasDistrict = parts.some((p, idx) => idx > 0 && idx < 3 && /(시|군|구)$/.test(p));
   if (!hasDistrict) return false;
 
-  // 3. 도로명 + 건물번호 확인 (로/길 + 숫자)
   const hasRoadAndBuildingNum = /([로|길]\s*\d+)/.test(clean);
   if (!hasRoadAndBuildingNum) return false;
 
@@ -316,13 +171,11 @@ function loadDaumPostcode(): Promise<void> {
 
 function InteractiveMapWidget({ address, preset }: { address: string; preset: AddressPreset | null }) {
   if (!preset) return null;
-
   const partners = preset.partners;
 
   return (
     <div className="flex flex-col">
       <div className="relative h-56 bg-zinc-100 dark:bg-zinc-950 overflow-hidden">
-        {/* Real Google Maps embed iframe */}
         <iframe
           src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
           width="100%"
@@ -360,9 +213,6 @@ function InteractiveMapWidget({ address, preset }: { address: string; preset: Ad
             <p className="text-[11px] font-extrabold text-zinc-550 dark:text-zinc-400">
               구역 분석 중... 도로명 주소 입력을 완료해 주세요.
             </p>
-            <p className="text-[9.5px] text-zinc-400 dark:text-zinc-500 mt-0.5">
-              전체 행정 구역이 확인되면 인접한 청명 매칭망이 여기에 연동됩니다.
-            </p>
           </div>
         )}
       </div>
@@ -370,48 +220,27 @@ function InteractiveMapWidget({ address, preset }: { address: string; preset: Ad
   );
 }
 
-interface Props {
-  requestId: string;
-  initialCategory?: QuoteCategory;
-  /** v1.1b #2 provider-profile · "견적 요청하기" 경로에서 우선 청명 지정 */
-  preferredProviderId?: string;
-}
-
 const CATEGORY_STYLE: Record<
   QuoteCategory,
   { Icon: LucideIcon; bg: string; text: string }
 > = {
-  "move-in": {
-    Icon: Home,
-    bg: "bg-blue-50/70 dark:bg-blue-950/40",
-    text: "text-blue-600 dark:text-blue-400",
-  },
-  office: {
-    Icon: Building2,
-    bg: "bg-emerald-50/70 dark:bg-emerald-950/40",
-    text: "text-emerald-600 dark:text-emerald-400",
-  },
-  aircon: {
-    Icon: Wind,
-    bg: "bg-sky-50/70 dark:bg-sky-950/40",
-    text: "text-sky-600 dark:text-sky-400",
-  },
-  "move-out": {
-    Icon: Truck,
-    bg: "bg-violet-50/70 dark:bg-violet-950/40",
-    text: "text-violet-600 dark:text-violet-400",
-  },
-  special: {
-    Icon: Sparkles,
-    bg: "bg-rose-50/70 dark:bg-rose-950/40",
-    text: "text-rose-600 dark:text-rose-400",
-  },
-  regular: {
-    Icon: CalendarDays,
-    bg: "bg-amber-50/70 dark:bg-amber-950/40",
-    text: "text-amber-600 dark:text-amber-400",
-  },
+  residential: { Icon: Home, bg: "bg-blue-50/70 dark:bg-blue-950/40", text: "text-blue-600 dark:text-blue-400" },
+  regular: { Icon: CalendarDays, bg: "bg-amber-50/70 dark:bg-amber-950/40", text: "text-amber-600 dark:text-amber-400" },
+  construction: { Icon: Hammer, bg: "bg-orange-50/70 dark:bg-orange-950/40", text: "text-orange-600 dark:text-orange-400" },
+  exterior: { Icon: Building2, bg: "bg-indigo-50/70 dark:bg-indigo-950/40", text: "text-indigo-600 dark:text-indigo-400" },
+  sanitation: { Icon: Shield, bg: "bg-emerald-50/70 dark:bg-emerald-950/40", text: "text-emerald-600 dark:text-emerald-400" },
+  specialist: { Icon: Sparkles, bg: "bg-rose-50/70 dark:bg-rose-950/40", text: "text-rose-600 dark:text-rose-455" },
+  lodging: { Icon: Home, bg: "bg-violet-50/70 dark:bg-violet-950/40", text: "text-violet-600 dark:text-violet-400" },
+  industrial: { Icon: Factory, bg: "bg-teal-50/70 dark:bg-teal-950/40", text: "text-teal-600 dark:text-teal-400" },
+  special: { Icon: Sparkles, bg: "bg-purple-50/70 dark:bg-purple-950/40", text: "text-purple-600 dark:text-purple-400" },
+  etc: { Icon: Building2, bg: "bg-zinc-100/70 dark:bg-zinc-800/40", text: "text-zinc-650 dark:text-zinc-300" },
 };
+
+interface Props {
+  requestId: string;
+  initialCategory?: QuoteCategory;
+  preferredProviderId?: string;
+}
 
 export function QuoteForm({
   requestId,
@@ -433,51 +262,127 @@ export function QuoteForm({
     resolver: zodResolver(quoteRequestInputSchema),
     defaultValues: {
       requestId,
-      category: initialCategory ?? "move-in",
+      clientName: "",
+      category: initialCategory ?? "residential",
+      subService: "",
       region: FORM_REGION_OPTIONS[0].region,
       address: "",
       size: null,
       preferredDate: null,
+      preferredTime: "오전 09:00",
+      hasElevator: "no",
+      parkingAvailable: "discuss",
       contactPhone: "",
       photos: [],
-      note: null,
+      note: "",
       preferredProviderId,
     },
   });
 
   const category = watch("category");
+  const subService = watch("subService");
   const photos = watch("photos") ?? [];
   const noteValue = watch("note") ?? "";
   const region = watch("region");
   const size = watch("size");
   const preferredDate = watch("preferredDate");
+  const preferredTime = watch("preferredTime");
+  const hasElevator = watch("hasElevator");
+  const parkingAvailable = watch("parkingAvailable");
+  const clientName = watch("clientName");
   const contactPhone = watch("contactPhone") ?? "";
 
-  // 추가 옵션 수량 상태 관리
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, number>>({});
+  // 동적 추가 옵션 / 공간 / 추가 필드 상태 관리
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string | boolean>>({});
+  const [selectedExtraSpaces, setSelectedExtraSpaces] = useState<Record<string, boolean>>({});
+  const [dynamicFields, setDynamicFields] = useState<Record<string, string>>({});
 
-  // v1.7 견적유형 및 청소횟수 상태 추가
+  // 정기청소 및 요금 가성비/프리미엄 토글
   const [quoteType, setQuoteType] = useState<"premium" | "regular" | "budget">("regular");
   const [frequency, setFrequency] = useState<string>("once");
   const [frequencyCount, setFrequencyCount] = useState<number>(1);
 
-  // v1.10 - 명함 자동 완성 상태 추가
+  // 명함 자동 완성 상태
   const [isAnalyzingCard, setIsAnalyzingCard] = useState(false);
   const [cardUploaded, setCardUploaded] = useState(false);
-  const [cardInfo, setCardInfo] = useState<{ company: string; name: string; phone: string; address: string } | null>(null);
 
-  // 주소 검색 및 대화형 지도 관련 상태 추가
+  // 주소 관련 상태
   const [address, setAddress] = useState("");
   const [suggestions, setSuggestions] = useState<AddressPreset[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activePreset, setActivePreset] = useState<AddressPreset | null>(null);
   const [isOpenPostcode, setIsOpenPostcode] = useState(false);
 
+  // 카테고리별 하위 서비스 목록 추출
+  const availableServices = Object.values(CLEAN_SERVICES_CONFIG).filter(
+    (s) => s.category === category
+  );
+
+  // 카테고리 변경 시 subService 및 옵션 상태 리셋
+  useEffect(() => {
+    const firstService = Object.values(CLEAN_SERVICES_CONFIG).find((s) => s.category === category);
+    setValue("subService", firstService?.key ?? "");
+    setSelectedOptions({});
+    setSelectedExtraSpaces({});
+    setDynamicFields({});
+  }, [category, setValue]);
+
+  // 세부 서비스 변경 시 옵션 상태 리셋
+  useEffect(() => {
+    setSelectedOptions({});
+    setSelectedExtraSpaces({});
+    setDynamicFields({});
+  }, [subService]);
+
+  const activeServiceConfig: SubServiceConfig | undefined = CLEAN_SERVICES_CONFIG[subService];
+
+  // 요금 계산 공식 바인딩
+  const calculatePrice = () => {
+    if (!activeServiceConfig) return 0;
+    
+    let baseQty = size ?? 0;
+    
+    // Formula Types: pyung | pyung_min_25 | count | vehicle | floor | fixed
+    let baseAmount = 0;
+    const formula = activeServiceConfig.priceFormulaType;
+    const unitPrice = activeServiceConfig.unitPrice;
+
+    if (formula === "pyung_min_25") {
+      baseAmount = Math.max(25, baseQty) * unitPrice;
+    } else if (formula === "pyung" || formula === "count" || formula === "vehicle" || formula === "floor") {
+      baseAmount = baseQty * unitPrice;
+    } else if (formula === "fixed") {
+      baseAmount = unitPrice;
+    }
+
+    // Apply Quote Type Multipliers (Premium: 1.2, Budget: 0.85)
+    if (quoteType === "premium") {
+      baseAmount = Math.round(baseAmount * 1.2);
+    } else if (quoteType === "budget") {
+      baseAmount = Math.round(baseAmount * 0.85);
+    }
+
+    // Apply Regular Cleaning Discount & Frequency Multiplier
+    if (category === "regular" && frequency === "regular") {
+      let discount = 0;
+      if (frequencyCount >= 16) discount = 0.20; // 주 4회 이상 (월 16회+)
+      else if (frequencyCount >= 12) discount = 0.15; // 주 3회 (월 12회)
+      else if (frequencyCount >= 8) discount = 0.10;  // 주 2회 (월 8회)
+      else if (frequencyCount >= 4) discount = 0.05;  // 주 1회 (월 4회)
+
+      baseAmount = Math.round(baseAmount * frequencyCount * (1 - discount));
+    }
+
+    return baseAmount;
+  };
+
+  const calculatedBasePrice = calculatePrice();
+  const calculatedTotalAmount = calculatedBasePrice; // Live 옵션금액은 0원 연동 사양
+
   const handleAddressSearch = (val: string) => {
     setAddress(val);
     setValue("address", val, { shouldValidate: true });
     
-    // 주소 실시간 파싱을 통한 region 바인딩
     const parsed = parseAddress(val);
     if (parsed) {
       setValue("region", { city: parsed.city, district: parsed.district }, { shouldValidate: true });
@@ -532,14 +437,6 @@ export function QuoteForm({
                 else if (city.startsWith("울산")) city = "울산광역시";
                 else if (city.startsWith("세종")) city = "세종특별자치시";
                 else if (city.startsWith("경기")) city = "경기도";
-                else if (city.startsWith("강원")) city = "강원특별자치도";
-                else if (city.startsWith("충북") || city.startsWith("충청북도")) city = "충청북도";
-                else if (city.startsWith("충남") || city.startsWith("충청남도")) city = "충청남도";
-                else if (city.startsWith("전북") || city.startsWith("전라북도")) city = "전라북도";
-                else if (city.startsWith("전남") || city.startsWith("전라남도")) city = "전라남도";
-                else if (city.startsWith("경북") || city.startsWith("경상북도")) city = "경상북도";
-                else if (city.startsWith("경남") || city.startsWith("경상남도")) city = "경상남도";
-                else if (city.startsWith("제주")) city = "제주특별자치도";
                 
                 setValue("region", { city, district: data.sigungu }, { shouldValidate: true });
               }
@@ -550,12 +447,11 @@ export function QuoteForm({
           }).embed(node);
         })
         .catch((err) => {
-          console.error("다음 우편번호 API 로드 오류:", err);
+          console.error("Daum postcode API load error:", err);
         });
     }
   }, [setValue]);
 
-  // 주소 실시간 파싱 및 동적 맵 핀 바인딩
   useEffect(() => {
     if (!address) {
       setActivePreset(null);
@@ -577,26 +473,14 @@ export function QuoteForm({
           lat: 37.5665,
           lng: 126.9780,
           partners: [
-            { name: `${parsed.district.split(" ").pop()}제일청소`, distance: "1.4km", status: "즉시 매칭 가능", rating: 4.8 },
-            { name: `${parsed.district.split(" ").pop()}그린케어`, distance: "2.7km", status: "방문 협의 대기", rating: 4.6 }
+            { name: `${parsed.district.split(" ").pop()} 제일청소`, distance: "1.4km", status: "즉시 매칭 가능", rating: 4.8 },
+            { name: `${parsed.district.split(" ").pop()} 그린케어`, distance: "2.7km", status: "방문 협의 대기", rating: 4.6 }
           ]
-        });
-      } else {
-        // 불완전한 도로명 주소 입력 시 임시 프리셋 (지도에 핀만 표시하고 대기 목록은 비워둠)
-        setActivePreset({
-          address,
-          city: "서울특별시",
-          district: "서초구",
-          title: "위치 정보 입력 대기...",
-          lat: 37.5665,
-          lng: 126.9780,
-          partners: []
         });
       }
     }
   }, [address]);
 
-  // 바깥 누르면 suggestions 닫기
   useEffect(() => {
     const handleGlobalClick = () => {
       setShowSuggestions(false);
@@ -619,53 +503,15 @@ export function QuoteForm({
         phone: "010-8953-2345",
         address: "서울특별시 서초구 서초대로 397 (부티크모나코)"
       };
-      setCardInfo(info);
       
-      // 연락처, 주소 및 특이사항 자동 완성
+      setValue("clientName", info.name, { shouldValidate: true });
       setValue("contactPhone", info.phone, { shouldValidate: true });
       setAddress(info.address);
       setValue("address", info.address, { shouldValidate: true });
       setValue("region", { city: "서울특별시", district: "서초구" }, { shouldValidate: true });
-      
-      const currentNote = watch("note") ?? "";
-      const infoText = `[명함 자동 인식 정보]\n- 회사명: ${info.company}\n- 의뢰인: ${info.name}`;
-      setValue("note", currentNote ? `${infoText}\n\n${currentNote}` : infoText, { shouldValidate: true });
+      setValue("note", `[명함 자동 인식 정보]\n- 회사명: ${info.company}\n- 의뢰인: ${info.name}`, { shouldValidate: true });
     }, 1500);
   };
-
-  // (useForm hook relocated to top of component body to prevent hoisting issues)
-
-  // 카테고리가 변경될 때마다 추가 옵션 및 횟수 리셋
-  useEffect(() => {
-    setSelectedOptions({});
-    setFrequency("once");
-    setFrequencyCount(1);
-  }, [category]);
-
-  // 실시간 기본 견적 금액 계산
-  const basePricePerPyung = DYNAMIC_OPTIONS[category]?.pricePerPyung[quoteType] ?? 0;
-  const currentSize = size ?? 0;
-  
-  let baseAmount = 0;
-  if (category === "aircon") {
-    // 에어컨청소는 형태별 단가 * 수량이 기본 금액입니다.
-    baseAmount = Object.entries(selectedOptions).reduce((acc, [optKey, qty]) => {
-      const opt = DYNAMIC_OPTIONS.aircon.options.find((o) => o.key === optKey);
-      if (!opt || opt.price === 0) return acc;
-      return acc + opt.price * qty;
-    }, 0);
-  } else {
-    baseAmount = currentSize * basePricePerPyung * frequencyCount;
-  }
-
-  // 옵션 단가는 모두 제거되었으므로 0원
-  const optionsAmount = 0;
-  const totalAmount = baseAmount;
-
-  function onRegionChange(value: string) {
-    const option = FORM_REGION_OPTIONS.find((o) => o.value === value);
-    if (option) setValue("region", option.region, { shouldValidate: true });
-  }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const clean = e.target.value.replace(/[^0-9]/g, "");
@@ -680,45 +526,63 @@ export function QuoteForm({
     setValue("contactPhone", formatted, { shouldValidate: true });
   };
 
-  function onSubmit(data: QuoteRequestInput) {
+  const onSubmit = (data: QuoteRequestInput) => {
     setSubmitError(null);
     
-    // 선택된 옵션 목록 구조화 (추가공간 + 옵션 병합)
+    // 추가공간 및 옵션 선택사항 구조화
     const optionsList: Array<{ label: string; qty: number; price: number }> = [];
     
-    // 1. 추가공간 추가
-    DYNAMIC_OPTIONS[data.category].extraSpaces.forEach((space) => {
-      const qty = selectedOptions[space.key];
-      if (qty !== undefined) {
-        optionsList.push({
-          label: `[추가공간] ${space.label}`,
-          qty,
-          price: 0
-        });
+    // 1. 추가공간 데이터 가공
+    Object.entries(selectedExtraSpaces).forEach(([spaceKey, isSelected]) => {
+      if (isSelected && activeServiceConfig) {
+        const space = activeServiceConfig.extraSpaces.find((s) => s.key === spaceKey);
+        if (space) {
+          optionsList.push({
+            label: `[추가공간] ${space.label}`,
+            qty: 1,
+            price: 0
+          });
+        }
       }
     });
 
-    // 2. 옵션 추가 (에어컨 기본 서비스 종류는 실제 단가를 넘겨줌)
-    DYNAMIC_OPTIONS[data.category].options.forEach((opt) => {
-      const qty = selectedOptions[opt.key];
-      if (qty !== undefined) {
-        const isAirconBase = data.category === "aircon" && ["wallAircon", "standAircon", "systemAircon"].includes(opt.key);
-        optionsList.push({
-          label: isAirconBase ? opt.label : `[옵션] ${opt.label}`,
-          qty,
-          price: isAirconBase ? opt.price : 0
-        });
+    // 2. 옵션 데이터 가공
+    Object.entries(selectedOptions).forEach(([optKey, val]) => {
+      if (val && activeServiceConfig) {
+        const opt = activeServiceConfig.options.find((o) => o.key === optKey);
+        if (opt) {
+          const qtyLabel = typeof val === "string" ? ` (${val})` : "";
+          optionsList.push({
+            label: `[옵션] ${opt.label}${qtyLabel}`,
+            qty: 1,
+            price: 0
+          });
+        }
       }
     });
+
+    // 3. 세부 상세 필드(방개수 등)는 note에 덧붙여서 보존
+    let enrichedNote = data.note ?? "";
+    if (Object.keys(dynamicFields).length > 0 && activeServiceConfig) {
+      const fieldsText = Object.entries(dynamicFields)
+        .map(([fKey, fVal]) => {
+          const field = activeServiceConfig.fields.find((f) => f.key === fKey);
+          return `${field?.label ?? fKey}: ${fVal}`;
+        })
+        .join(", ");
+      
+      enrichedNote = `[상세 조건] ${fieldsText}\n\n${enrichedNote}`;
+    }
 
     const finalPayload = {
       ...data,
+      note: enrichedNote.trim() || null,
       quoteType,
       frequency,
-      frequencyCount,
-      baseAmount,
-      optionsAmount,
-      totalAmount,
+      frequencyCount: frequency === "regular" ? frequencyCount : 1,
+      baseAmount: calculatedBasePrice,
+      optionsAmount: 0,
+      totalAmount: calculatedTotalAmount,
       optionsList
     };
 
@@ -730,45 +594,22 @@ export function QuoteForm({
         setSubmitError(result.message);
       }
     });
-  }
+  };
 
-  const selectedRegionValue =
-    FORM_REGION_OPTIONS.find(
-      (o) =>
-        o.region.city === region?.city &&
-        o.region.district === region?.district,
-    )?.value ?? FORM_REGION_OPTIONS[0].value;
-
-  // Count completed fields
   const completedCount = [
+    !!clientName,
     !!category,
+    !!subService,
     isCompleteRoadNameAddress(address),
     size !== null && size !== undefined && size > 0,
     !!preferredDate,
     !!contactPhone && contactPhone.length >= 10,
-    photos.length > 0,
-    !!noteValue && noteValue.length > 0,
   ].filter(Boolean).length;
   
   const completionPercentage = Math.round((completedCount / 7) * 100);
 
-  const SIZE_CHIPS = [
-    { label: "10평 이하", value: 9 },
-    { label: "10~20평", value: 15 },
-    { label: "20~30평", value: 25 },
-    { label: "30평 이상", value: 35 },
-  ];
-
-  const getSelectedChipValue = (val: number | null) => {
-    if (val === null) return null;
-    if (val <= 10) return 9;
-    if (val > 10 && val <= 20) return 15;
-    if (val > 20 && val <= 30) return 25;
-    return 35;
-  };
-
   const isPhoneValid = /^[0-9]{2,4}-?[0-9]{3,4}-?[0-9]{4}$/.test(contactPhone);
-  const isValidForm = !!category && isCompleteRoadNameAddress(address) && !!region?.city && isPhoneValid;
+  const isValidForm = !!clientName && !!category && !!subService && isCompleteRoadNameAddress(address) && isPhoneValid;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -801,6 +642,7 @@ export function QuoteForm({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* 왼쪽 컬럼: 입력 폼 (7칸) */}
         <div className="lg:col-span-7 space-y-4">
+          
           {/* Progress Steps Indicator */}
           <div className="rounded-[20px] border border-zinc-200/50 bg-white p-4.5 shadow-[0_6px_16px_rgba(15,23,42,0.01)] dark:border-zinc-850 dark:bg-zinc-950 flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs font-bold">
@@ -815,163 +657,6 @@ export function QuoteForm({
             </div>
           </div>
 
-          {/* 카테고리 */}
-          <Field 
-            label="카테고리" 
-            hint="6종 중 1개 선택" 
-            error={errors.category?.message}
-            completed={!!category}
-          >
-            <div className="grid grid-cols-3 gap-2">
-              {QUOTE_CATEGORIES.map((c) => {
-                const selected = c === category;
-                const style = CATEGORY_STYLE[c];
-                const Icon = style.Icon;
-                return (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() =>
-                      setValue("category", c, { shouldValidate: true })
-                    }
-                    className={`relative flex flex-col items-center justify-center gap-1 rounded-2xl px-2 py-4 text-xs transition-all duration-205 focus:outline-none border cursor-pointer ${
-                      selected
-                        ? "bg-[#EFF6FF] text-zinc-950 border-[#2563EB] shadow-[0_6px_16px_rgba(37,99,235,0.08)] scale-[1.02] dark:bg-blue-950/20 dark:border-[#3B82F6] dark:text-zinc-50"
-                        : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-300 hover:scale-[1.01] active:scale-[0.97] shadow-sm dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800"
-                    }`}
-                  >
-                    {/* Active Check Indicator */}
-                    {selected && (
-                      <span className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-[#2563EB] text-white animate-[scaleIn_0.15s_ease-out] dark:bg-[#3B82F6] shadow-sm z-10">
-                        <Check className="h-2.5 w-2.5 stroke-[3.5]" />
-                      </span>
-                    )}
-                    
-                    <div
-                      className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
-                        selected ? style.bg : "bg-zinc-100 dark:bg-zinc-850"
-                      } ${style.text}`}
-                    >
-                      <Icon className="h-5 w-5" strokeWidth={2.2} />
-                    </div>
-                    <span className="font-extrabold mt-1 tracking-tight">{QUOTE_CATEGORY_LABELS[c]}</span>
-                    <span className="text-[9.5px] font-bold text-zinc-400 dark:text-zinc-500 leading-none">
-                      {QUOTE_CATEGORY_SUBTITLES[c]}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </Field>
-
-          {/* 견적 종류 */}
-          {category !== "aircon" && (
-            <Field 
-              label="견적 종류" 
-              hint="3가지 견적 타입 중 선택"
-              completed={!!quoteType}
-            >
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { value: "premium", label: "프리미엄 견적", desc: "인증업체 배정 / 전문 약품" },
-                  { value: "regular", label: "일반 견적", desc: "표준 정밀 클리닝" },
-                  { value: "budget", label: "가성비 견적", desc: "실속형 실질 클리닝" },
-                ].map((type) => {
-                  const selected = quoteType === type.value;
-                  return (
-                    <button
-                      key={type.value}
-                      type="button"
-                      onClick={() => setQuoteType(type.value as any)}
-                      className={`relative flex flex-col items-center justify-center gap-1 rounded-2xl px-2 py-3.5 text-xs transition-all duration-200 focus:outline-none border cursor-pointer ${
-                        selected
-                          ? "bg-[#EFF6FF] text-zinc-950 border-[#2563EB] shadow-sm dark:bg-blue-950/20 dark:border-[#3B82F6] dark:text-zinc-50"
-                          : "bg-white text-zinc-650 border-zinc-200 hover:border-zinc-300 shadow-xs dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800"
-                      }`}
-                    >
-                      {selected && (
-                        <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#2563EB] text-white dark:bg-[#3B82F6] z-10">
-                          <Check className="h-2.5 w-2.5 stroke-[3.5]" />
-                        </span>
-                      )}
-                      <span className="font-extrabold">{type.label}</span>
-                      <span className="text-[9px] text-zinc-450 dark:text-zinc-500 mt-0.5 text-center leading-tight">
-                        {type.desc}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              {quoteType === "premium" && (
-                <p className="mt-2 text-[10px] text-blue-600 dark:text-blue-400 font-bold">
-                  * 프리미엄 청소: 손해보험(배상책임보험) 가입 전문 친환경 약품 사용, 우수 인증업체 우선 배정
-                </p>
-              )}
-            </Field>
-          )}
-
-          {/* 청소 횟수 */}
-          <Field 
-            label="청소 횟수" 
-            completed={!!frequency}
-          >
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setFrequency("once");
-                  setFrequencyCount(1);
-                }}
-                className={`flex-1 rounded-xl py-2.5 text-xs font-bold border transition-all cursor-pointer ${
-                  frequency === "once"
-                    ? "bg-[#EFF6FF] border-[#2563EB] text-zinc-950 dark:bg-blue-950/20 dark:border-[#3B82F6] dark:text-zinc-50"
-                    : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800"
-                }`}
-              >
-                1회성 청소 (한번)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFrequency("regular");
-                  setFrequencyCount(4); // Default to 주1회 (월 4회)
-                }}
-                className={`flex-1 rounded-xl py-2.5 text-xs font-bold border transition-all cursor-pointer ${
-                  frequency === "regular"
-                    ? "bg-[#EFF6FF] border-[#2563EB] text-zinc-950 dark:bg-blue-950/20 dark:border-[#3B82F6] dark:text-zinc-50"
-                    : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800"
-                }`}
-              >
-                정기 청소 (구독)
-              </button>
-            </div>
-            
-            {frequency === "regular" && (
-              <div className="mt-3 animate-[fadeIn_0.2s_ease-out]">
-                <label className="block text-[11px] font-extrabold text-zinc-500 dark:text-zinc-400 mb-1.5">
-                  정기 청소 주기 선택
-                </label>
-                <div className="relative">
-                  <select
-                    value={frequencyCount}
-                    onChange={(e) => setFrequencyCount(Number(e.target.value))}
-                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 appearance-none cursor-pointer"
-                  >
-                    <option value={1}>월 1회 (월 1회 방문)</option>
-                    <option value={4}>주 1회 (월 4회 방문)</option>
-                    <option value={8}>주 2회 (월 8회 방문)</option>
-                    <option value={12}>주 3회 (월 12회 방문)</option>
-                    <option value={16}>주 4회 (월 16회 방문)</option>
-                    <option value={20}>주 5회 (월 20회 방문)</option>
-                    <option value={24}>주 6회 (월 24회 방문)</option>
-                    <option value={30}>매일 (월 30회 방문)</option>
-                  </select>
-                  <ChevronDown className="absolute right-3.5 top-3.5 h-4 w-4 text-zinc-400 pointer-events-none" />
-                </div>
-              </div>
-            )}
-          </Field>
-
           {/* 명함 등록 */}
           <Field
             label="명함 등록 (선택)"
@@ -984,25 +669,25 @@ export function QuoteForm({
                   <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#2563EB] border-t-transparent mb-2" />
                   <p className="text-[11.5px] font-semibold text-[#2563EB]">명함 이미지를 분석하여 연락처 및 사업장 정보를 입력 중입니다...</p>
                 </div>
-              ) : cardUploaded && cardInfo ? (
+              ) : cardUploaded ? (
                 <div className="flex items-center gap-3.5 rounded-2xl border border-emerald-200 bg-emerald-50/10 p-4 shadow-xs">
                   <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-zinc-800 flex items-center justify-center font-bold text-emerald-600 shrink-0 text-lg">
                     🪪
                   </div>
                   <div className="min-w-0 flex-1 text-[12.5px]">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-extrabold text-zinc-900 dark:text-zinc-50">{cardInfo.company}</span>
+                      <span className="font-extrabold text-zinc-900 dark:text-zinc-50">{clientName} 고객님</span>
                       <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-[0.5px] text-[9px] font-bold text-emerald-600">
                         인식 완료 ✓
                       </span>
                     </div>
-                    <p className="text-zinc-650 dark:text-zinc-400 mt-0.5 font-medium">{cardInfo.name} · {cardInfo.phone}</p>
+                    <p className="text-zinc-650 dark:text-zinc-400 mt-0.5 font-medium">{contactPhone}</p>
                   </div>
                   <button 
                     type="button" 
                     onClick={() => {
                       setCardUploaded(false);
-                      setCardInfo(null);
+                      setValue("clientName", "");
                       setValue("contactPhone", "");
                     }} 
                     className="text-xs font-bold text-zinc-400 hover:text-red-500 cursor-pointer"
@@ -1026,439 +711,502 @@ export function QuoteForm({
             </div>
           </Field>
 
-          {/* 서비스 받으실 위치 / 주소 */}
-          <Field 
-            label="서비스 받으실 도로명 주소 (위치)" 
-            error={errors.address?.message}
-            completed={isCompleteRoadNameAddress(address)}
-          >
-            <div className="space-y-3">
-              {/* 주소 검색창 */}
+          {/* 공통 고객 접수 정보 (상단 추가) */}
+          <div className="p-5 bg-white border border-zinc-200 rounded-[24px] shadow-sm space-y-4 dark:bg-zinc-950 dark:border-zinc-850">
+            <h3 className="text-sm font-black text-zinc-900 dark:text-zinc-100 border-b pb-2 mb-2">공통 고객 접수 정보</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 고객명 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">고객명 *</label>
+                <input
+                  {...register("clientName")}
+                  type="text"
+                  placeholder="예: 홍길동"
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                />
+                {errors.clientName?.message && <span className="text-[10px] text-red-500">{errors.clientName.message}</span>}
+              </div>
+
+              {/* 연락처 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">연락처 *</label>
+                <input
+                  {...register("contactPhone")}
+                  onChange={handlePhoneChange}
+                  maxLength={13}
+                  type="tel"
+                  placeholder="010-1234-5678"
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                />
+                {errors.contactPhone?.message && <span className="text-[10px] text-red-500">{errors.contactPhone.message}</span>}
+              </div>
+            </div>
+
+            {/* 서비스 받으실 위치 / 주소 */}
+            <div>
+              <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">서비스 받으실 도로명 주소 *</label>
               <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    placeholder="도로명 주소를 입력하세요 (예: 서초대로 397)"
-                    value={address}
-                    onFocus={() => setShowSuggestions(true)}
-                    onChange={(e) => handleAddressSearch(e.target.value)}
-                    className="w-full rounded-xl border border-zinc-200 bg-white pl-10 pr-4 py-2.5 text-[14px] font-bold text-zinc-800 outline-none transition-all placeholder-zinc-350 focus:border-[#2563EB] focus:ring-1 focus:ring-blue-100/50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
-                  />
-                  <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-zinc-400" />
-                  
-                  {/* 주소 자동완성 / 추천 프리셋 드롭다운 */}
-                  {showSuggestions && (
-                    <div className="absolute left-0 right-0 top-full mt-1.5 z-20 max-h-60 overflow-y-auto rounded-xl border border-zinc-200 bg-white p-2.5 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 animate-[fade-in_0.15s_ease-out]">
-                      <p className="text-[10px] font-extrabold text-zinc-400 mb-1.5 px-1.5">데모 추천/검색 주소</p>
-                      <div className="space-y-1">
-                        {(suggestions.length > 0 ? suggestions : ADDRESS_PRESETS).map((preset) => (
-                          <button
-                            key={preset.address}
-                            type="button"
-                            onClick={() => selectPresetAddress(preset)}
-                            className="w-full text-left rounded-lg px-2.5 py-2 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-850 flex items-center justify-between cursor-pointer group"
-                          >
-                            <div className="min-w-0 flex-1">
-                              <p className="font-extrabold text-zinc-800 dark:text-zinc-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                {preset.title}
-                              </p>
-                              <p className="text-[10.5px] text-zinc-450 truncate mt-0.5">{preset.address}</p>
-                            </div>
-                            <span className="text-[9.5px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-sm dark:bg-blue-950/30 dark:text-blue-400 shrink-0">
-                              선택
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <input
+                  type="text"
+                  placeholder="도로명 주소를 입력하세요 (예: 서초대로 397)"
+                  value={address}
+                  onFocus={() => setShowSuggestions(true)}
+                  onChange={(e) => handleAddressSearch(e.target.value)}
+                  className="flex-1 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                />
                 <button
                   type="button"
                   onClick={handleSearchAddressPopup}
-                  className="px-4 py-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-[13px] font-bold rounded-xl shadow-xs transition-colors shrink-0 flex items-center justify-center cursor-pointer dark:bg-[#3B82F6] dark:hover:bg-[#2563EB]"
+                  className="px-3 py-2 bg-[#2563EB] text-white text-[12px] font-bold rounded-xl hover:bg-blue-700 transition"
                 >
                   주소 검색
                 </button>
               </div>
 
-              {/* 도로명 주소 실시간 검증 피드백 */}
-              <div className="text-[11px] font-bold mt-1 px-1">
-                {!address ? (
-                  <p className="text-zinc-400 dark:text-zinc-500 leading-normal">
-                    * 정확한 현장 매칭을 위해 도로명 주소(로/길)와 건물번호를 함께 입력해 주세요.
-                  </p>
-                ) : !isCompleteRoadNameAddress(address) ? (
-                  <p className="text-amber-600 dark:text-amber-400 flex items-center gap-1 animate-pulse leading-normal">
-                    {address.split(/\s+/).length < 3 || !/^(서울|경기|부산|인천|대구|대전|광주|울산|세종|충청|전라|경상|강원|제주|충북|충남|전북|전남|경북|경남|특별)/.test(address.trim().split(/\s+/)[0])
-                      ? "⚠️ 시/도, 시/군/구 행정구역을 포함한 전체 주소를 입력해 주세요. (예: 경기도 남양주시 경춘북로 252)"
-                      : "⚠️ 도로명(로/길)과 건물번호(숫자)를 함께 입력해 주세요. (예: 테헤란로 218)"}
-                  </p>
-                ) : (
-                  <p className="text-emerald-600 dark:text-emerald-450 flex items-center gap-1">
-                    ✓ 올바른 도로명 주소 형식입니다.
-                  </p>
-                )}
+              {/* 주소 제안 */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="mt-1.5 z-20 max-h-40 overflow-y-auto rounded-xl border border-zinc-200 bg-white p-2 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+                  {suggestions.map((preset) => (
+                    <button
+                      key={preset.address}
+                      type="button"
+                      onClick={() => selectPresetAddress(preset)}
+                      className="w-full text-left rounded-lg px-2.5 py-2 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-850 flex items-center justify-between cursor-pointer"
+                    >
+                      <div>
+                        <p className="font-extrabold text-zinc-800 dark:text-zinc-200">{preset.title}</p>
+                        <p className="text-[10px] text-zinc-450 truncate">{preset.address}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="text-[10px] font-bold mt-1">
+                {address && !isCompleteRoadNameAddress(address) ? (
+                  <p className="text-amber-600">⚠️ 도로명(로/길)과 건물번호(숫자)를 함께 전체 형식으로 기재해 주세요.</p>
+                ) : address ? (
+                  <p className="text-emerald-600">✓ 올바른 도로명 주소 형식입니다.</p>
+                ) : null}
               </div>
 
-              {/* 대화형 프리미엄 지도 시뮬레이터 */}
               {address && (
-                <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-850 dark:bg-zinc-950 shadow-xs relative">
-                  <InteractiveMapWidget 
-                    address={address} 
-                    preset={activePreset} 
-                  />
+                <div className="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 mt-2">
+                  <InteractiveMapWidget address={address} preset={activePreset} />
                 </div>
               )}
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 작업희망일 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">작업희망일 *</label>
+                <Controller
+                  control={control}
+                  name="preferredDate"
+                  render={({ field }) => (
+                    <input
+                      type="date"
+                      value={field.value ? field.value.slice(0, 10) : ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        field.onChange(v ? new Date(v).toISOString() : null);
+                      }}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                    />
+                  )}
+                />
+              </div>
+
+              {/* 작업희망시간 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">작업희망시간 *</label>
+                <select
+                  {...register("preferredTime")}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                >
+                  <option value="오전 09:00">오전 09:00</option>
+                  <option value="오전 10:00">오전 10:00</option>
+                  <option value="오전 11:00">오전 11:00</option>
+                  <option value="오후 12:00">오후 12:00</option>
+                  <option value="오후 01:00">오후 01:00</option>
+                  <option value="오후 02:00">오후 02:00</option>
+                  <option value="오후 03:00">오후 03:00</option>
+                  <option value="오후 04:00">오후 04:00</option>
+                  <option value="야간/협의">야간/시간협의</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 엘리베이터 유무 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">엘리베이터 유무 *</label>
+                <select
+                  {...register("hasElevator")}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                >
+                  <option value="yes">엘리베이터 있음 (사용 가능)</option>
+                  <option value="no">엘리베이터 없음 (계단 이용)</option>
+                </select>
+              </div>
+
+              {/* 주차 가능 여부 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">주차 가능 여부 *</label>
+                <select
+                  {...register("parkingAvailable")}
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                >
+                  <option value="yes">무료 주차 가능</option>
+                  <option value="no">주차 불가능 (유료주차장 이용 필요)</option>
+                  <option value="discuss">협의 필요 / 유동적</option>
+                </select>
+              </div>
+            </div>
+
+            {/* 현장 사진 첨부 */}
+            <div>
+              <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">현장 사진 첨부</label>
+              <PhotoUpload
+                pageId={requestId}
+                pathPrefix="quote-photos"
+                photos={photos}
+                onChange={(next: Photo[]) =>
+                  setValue("photos", next, { shouldValidate: true })
+                }
+              />
+              <p className="text-[10px] text-zinc-400 mt-1">JPEG/PNG/WebP 지원, 최대 10장 업로드 가능. 현장 상황 파악에 도움이 됩니다.</p>
+            </div>
+
+            {/* 특이사항 */}
+            <div>
+              <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">특이사항 메모 (선택)</label>
+              <textarea
+                rows={3}
+                maxLength={500}
+                {...register("note")}
+                placeholder="반려동물 동반 여부, 현장 진입 방법, 비밀번호 공유 등 특이사항을 적어주세요."
+                className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+              />
+            </div>
+          </div>
+
+          {/* 대분류 카테고리 선택 (10개) */}
+          <Field 
+            label="1단계: 청소 서비스 대분류" 
+            hint="10대 카테고리 중 1개 선택" 
+            completed={!!category}
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              {QUOTE_CATEGORIES.map((c) => {
+                const selected = c === category;
+                const style = CATEGORY_STYLE[c];
+                const Icon = style.Icon;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() =>
+                      setValue("category", c, { shouldValidate: true })
+                    }
+                    className={`relative flex flex-col items-center justify-center gap-1 rounded-2xl px-2 py-3.5 text-xs transition-all border cursor-pointer ${
+                      selected
+                        ? "bg-blue-50 text-zinc-950 border-blue-600 dark:bg-blue-950/20 dark:border-blue-500 dark:text-zinc-50"
+                        : "bg-white text-zinc-650 border-zinc-200 hover:border-zinc-300 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800"
+                    }`}
+                  >
+                    {selected && (
+                      <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-[8px] font-bold">
+                        ✓
+                      </span>
+                    )}
+                    <span className="text-xl mb-1">{QUOTE_CATEGORY_EMOJIS[c]}</span>
+                    <span className="font-extrabold tracking-tight text-[11px]">{QUOTE_CATEGORY_LABELS[c]}</span>
+                  </button>
+                );
+              })}
+            </div>
           </Field>
 
-
-          {/* 평수 */}
-          <Field 
-            label={category === "aircon" ? "평수 (에어컨 청소는 선택 안 함)" : "평수 (선택)"} 
-            hint="정수만 입력" 
-            error={errors.size?.message}
-            completed={size !== null && size !== undefined && size > 0}
+          {/* 세부 서비스 (청소 종류) 선택 */}
+          <Field
+            label="2단계: 상세 청소 종류"
+            hint="대분류의 하위 서비스 종류 선택"
+            completed={!!subService}
           >
-            <Controller
-              control={control}
-              name="size"
-              render={({ field }) => (
-                <div>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    max={500}
-                    disabled={category === "aircon"}
-                    placeholder={category === "aircon" ? "에어컨 청소는 평수를 입력하지 않습니다." : "예: 24"}
-                    value={field.value ?? ""}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      field.onChange(v === "" ? null : Number(v));
-                    }}
-                    className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-[14px] font-bold text-zinc-800 outline-none transition-all placeholder-zinc-350 focus:border-[#2563EB] focus:ring-1 focus:ring-blue-100/50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
-                  />
-                  
-                  {/* Quick Size Select Chips */}
-                  {category !== "aircon" && (
-                    <div className="mt-2.5 flex flex-wrap gap-2 animate-[fade-in_0.2s_ease-out]">
-                      {SIZE_CHIPS.map((chip) => {
-                        const isSelected = getSelectedChipValue(field.value) === chip.value;
-                        return (
-                          <button
-                            key={chip.value}
-                            type="button"
-                            onClick={() => setValue("size", chip.value, { shouldValidate: true })}
-                            className={`rounded-full px-3 py-1.5 text-[11px] font-bold border transition-all duration-200 cursor-pointer ${
-                              isSelected
-                                ? "bg-[#2563EB] text-white border-[#2563EB] shadow-xs dark:bg-[#3B82F6] dark:border-[#3B82F6]"
-                                : "bg-zinc-50 text-zinc-650 border-zinc-200 hover:bg-zinc-100 hover:border-zinc-300 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-850"
-                            }`}
-                          >
-                            {chip.label}
-                          </button>
-                        );
-                      })}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {availableServices.map((service) => {
+                const selected = service.key === subService;
+                return (
+                  <button
+                    key={service.key}
+                    type="button"
+                    onClick={() => setValue("subService", service.key)}
+                    className={`rounded-xl border py-2.5 px-3 text-xs font-bold text-center transition-all cursor-pointer ${
+                      selected
+                        ? "bg-[#EFF6FF] border-[#2563EB] text-[#1E40AF] dark:bg-blue-950/20 dark:border-[#3B82F6] dark:text-zinc-50"
+                        : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800"
+                    }`}
+                  >
+                    {service.label}
+                  </button>
+                );
+              })}
+            </div>
+          </Field>
+
+          {/* 3단계: 세부 서비스 특화 필드 동적 렌더링 */}
+          {activeServiceConfig && (
+            <div className="p-5 bg-white border border-zinc-200 rounded-[24px] shadow-sm space-y-4 dark:bg-zinc-950 dark:border-zinc-850">
+              <h4 className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider">{activeServiceConfig.label} 특화 정보</h4>
+              
+              {/* 기본 요금제 및 견적 타입 설정 (사무실/가전 등 구분) */}
+              {category !== "specialist" && (
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-extrabold text-zinc-500">견적 등급 선택</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: "premium", label: "프리미엄", desc: "고급 친환경/인증" },
+                      { value: "regular", label: "일반 표준", desc: "기본 정밀 세척" },
+                      { value: "budget", label: "실속 가성비", desc: "실용 청소 중심" },
+                    ].map((type) => (
+                      <button
+                        key={type.value}
+                        type="button"
+                        onClick={() => setQuoteType(type.value as any)}
+                        className={`rounded-xl border p-2 text-xs font-extrabold text-center transition cursor-pointer ${
+                          quoteType === type.value
+                            ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-950/20 dark:border-blue-500 dark:text-zinc-100"
+                            : "bg-white border-zinc-200 text-zinc-650 dark:bg-zinc-900 dark:border-zinc-800"
+                        }`}
+                      >
+                        <div>{type.label}</div>
+                        <div className="text-[9px] text-zinc-400 font-medium mt-0.5">{type.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 정기 청소 주기 설정 */}
+              {category === "regular" && (
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-extrabold text-zinc-500">청소 정기 구독 설정</label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFrequency("once");
+                        setFrequencyCount(1);
+                      }}
+                      className={`flex-1 rounded-xl py-2.5 text-xs font-bold border transition cursor-pointer ${
+                        frequency === "once"
+                          ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-950/20 dark:border-blue-500"
+                          : "bg-white border-zinc-200 text-zinc-650 dark:bg-zinc-900 dark:border-zinc-800"
+                      }`}
+                    >
+                      1회성 (한번)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFrequency("regular");
+                        setFrequencyCount(4);
+                      }}
+                      className={`flex-1 rounded-xl py-2.5 text-xs font-bold border transition cursor-pointer ${
+                        frequency === "regular"
+                          ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-950/20 dark:border-blue-500"
+                          : "bg-white border-zinc-200 text-zinc-650 dark:bg-zinc-900 dark:border-zinc-800"
+                      }`}
+                    >
+                      정기 구독 (월 정기)
+                    </button>
+                  </div>
+
+                  {frequency === "regular" && (
+                    <div className="mt-2">
+                      <label className="block text-[10px] text-zinc-450 mb-1">방문 빈도</label>
+                      <select
+                        value={frequencyCount}
+                        onChange={(e) => setFrequencyCount(Number(e.target.value))}
+                        className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                      >
+                        <option value={1}>월 1회 방문</option>
+                        <option value={4}>주 1회 (월 4회 방문, 5% 할인)</option>
+                        <option value={8}>주 2회 (월 8회 방문, 10% 할인)</option>
+                        <option value={12}>주 3회 (월 12회 방문, 15% 할인)</option>
+                        <option value={16}>주 4회 (월 16회 방문, 20% 할인)</option>
+                        <option value={20}>주 5회 (월 20회 방문, 20% 할인)</option>
+                        <option value={24}>주 6회 (월 24회 방문, 20% 할인)</option>
+                        <option value={30}>매일 (월 30회 방문, 20% 할인)</option>
+                      </select>
                     </div>
                   )}
                 </div>
               )}
-            />
-          </Field>
 
-          {/* 동적 추가 공간 필드 */}
-          {DYNAMIC_OPTIONS[category]?.extraSpaces?.length > 0 && (
-            <Field
-              label="추가 공간 선택"
-              hint="현장 견적용 추가 공간 선택 (금액합산 제외)"
-              completed={DYNAMIC_OPTIONS[category].extraSpaces.some((s) => selectedOptions[s.key] !== undefined)}
-            >
-              <div className="space-y-2.5">
-                {DYNAMIC_OPTIONS[category].extraSpaces.map((space) => {
-                  const isChecked = selectedOptions[space.key] !== undefined;
-                  const currentQty = selectedOptions[space.key] || 0;
-
-                  return (
-                    <div
-                      key={space.key}
-                      className={`flex items-center justify-between rounded-xl border p-3.5 transition-colors duration-200 ${
-                        isChecked
-                          ? "border-blue-200 bg-blue-50/10 dark:border-blue-900/20 dark:bg-blue-950/10"
-                          : "border-zinc-150 bg-white hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          id={`space-${space.key}`}
-                          checked={isChecked}
-                          onChange={(e) => {
-                            const checked = e.target.checked;
-                            setSelectedOptions((prev) => {
-                              const next = { ...prev };
-                              if (checked) {
-                                next[space.key] = 1;
-                              } else {
-                                delete next[space.key];
-                              }
-                              return next;
-                            });
-                          }}
-                          className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 accent-blue-600 cursor-pointer"
-                        />
-                        <div>
-                          <label
-                            htmlFor={`space-${space.key}`}
-                            className="cursor-pointer text-xs font-bold text-zinc-800 dark:text-zinc-200 block"
-                          >
-                            {space.label}
-                          </label>
-                          <span className="text-[10px] text-zinc-400 font-medium">
-                            현장 실측 후 확정
-                          </span>
-                        </div>
-                      </div>
-
-                      {isChecked && space.type === "number" && (
-                        <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-0.5 dark:border-zinc-800 dark:bg-zinc-950 animate-[scaleIn_0.15s_ease-out]">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedOptions((prev) => {
-                                const next = { ...prev };
-                                if (currentQty > 1) {
-                                  next[space.key] = currentQty - 1;
-                                } else {
-                                  delete next[space.key];
-                                }
-                                return next;
-                              });
-                            }}
-                            className="flex h-5 w-5 items-center justify-center rounded text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                          >
-                            -
-                          </button>
-                          <span className="w-5 text-center text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                            {currentQty}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedOptions((prev) => {
-                                const next = { ...prev };
-                                next[space.key] = currentQty + 1;
-                                return next;
-                              });
-                            }}
-                            className="flex h-5 w-5 items-center justify-center rounded text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                          >
-                            +
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </Field>
-          )}
-
-          {/* 동적 추가 옵션 필드 */}
-          {DYNAMIC_OPTIONS[category]?.options.length > 0 && (
-            <Field
-              label={category === "aircon" ? "에어컨 세척 종류 및 옵션" : `${QUOTE_CATEGORY_LABELS[category]} 전용 추가 옵션`}
-              hint="맞춤 추가 서비스 선택"
-              completed={DYNAMIC_OPTIONS[category].options.some((o) => selectedOptions[o.key] !== undefined)}
-            >
-              <div className="space-y-2.5">
-                {category === "aircon" && (
-                  <p className="text-[11px] font-bold text-blue-600 dark:text-blue-400 mb-1">
-                    [기본 서비스] 세척할 에어컨 수량 선택
-                  </p>
+              {/* 수량 / 면적 / 평수 입력 */}
+              <div>
+                <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">
+                  {activeServiceConfig.priceFormulaType === "floor"
+                    ? "건물 층수 *"
+                    : activeServiceConfig.priceFormulaType === "vehicle"
+                    ? "차량 대수 *"
+                    : activeServiceConfig.priceFormulaType === "count"
+                    ? "간판 크기/개수 *"
+                    : activeServiceConfig.priceFormulaType === "fixed" && subService === "aircon-cleaning"
+                    ? "에어컨 수량 *"
+                    : activeServiceConfig.priceFormulaType === "fixed" && subService === "lodging-cleaning"
+                    ? "객실 수 *"
+                    : "평수 (정수 입력) *"}
+                </label>
+                <Controller
+                  control={control}
+                  name="size"
+                  render={({ field }) => (
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      max={10000}
+                      placeholder="예: 24"
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        field.onChange(v === "" ? null : Number(v));
+                      }}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                    />
+                  )}
+                />
+                {errors.size?.message && <span className="text-[10px] text-red-500">{errors.size.message}</span>}
+                {activeServiceConfig.priceFormulaType === "pyung_min_25" && (
+                  <p className="text-[10px] text-zinc-400 mt-1">※ 25평 이하 기본 최소 금액 수식이 자동 적용됩니다.</p>
                 )}
+              </div>
 
-                {DYNAMIC_OPTIONS[category].options.map((opt) => {
-                  const isChecked = selectedOptions[opt.key] !== undefined;
-                  const currentQty = selectedOptions[opt.key] || 0;
-                  const isAirconBase = category === "aircon" && ["wallAircon", "standAircon", "systemAircon"].includes(opt.key);
-                  const isFirstAirconOption = category === "aircon" && opt.key === "opt-disassemble";
+              {/* 동적 상세 기획 필드 (드롭다운) */}
+              {activeServiceConfig.fields.map((f) => (
+                <div key={f.key}>
+                  <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">{f.label}</label>
+                  {f.type === "select" ? (
+                    <select
+                      value={dynamicFields[f.key] ?? ""}
+                      onChange={(e) => setDynamicFields({ ...dynamicFields, [f.key]: e.target.value })}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                    >
+                      <option value="">선택하세요</option>
+                      {f.options?.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="number"
+                      placeholder={f.placeholder ?? "수량 입력"}
+                      value={dynamicFields[f.key] ?? ""}
+                      onChange={(e) => setDynamicFields({ ...dynamicFields, [f.key]: e.target.value })}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold text-zinc-800 outline-none focus:border-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
+                    />
+                  )}
+                </div>
+              ))}
 
-                  return (
-                    <div key={opt.key}>
-                      {isFirstAirconOption && (
-                        <p className="text-[11px] font-bold text-blue-600 dark:text-blue-400 mt-4 mb-2">
-                          [추가 옵션] 현장 확인용 케어 선택 (단가 0원)
-                        </p>
-                      )}
-                      
-                      <div
-                        className={`flex items-center justify-between rounded-xl border p-3.5 transition-colors duration-200 ${
-                          isChecked
-                            ? "border-blue-200 bg-blue-50/10 dark:border-blue-900/20 dark:bg-blue-950/10"
-                            : "border-zinc-150 bg-white hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            id={`opt-${opt.key}`}
-                            checked={isChecked}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              setSelectedOptions((prev) => {
-                                const next = { ...prev };
-                                if (checked) {
-                                  next[opt.key] = 1;
-                                } else {
-                                  delete next[opt.key];
-                                }
-                                return next;
-                              });
-                            }}
-                            className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 accent-blue-600 cursor-pointer"
-                          />
-                          <div>
-                            <label
-                              htmlFor={`opt-${opt.key}`}
-                              className="cursor-pointer text-xs font-bold text-zinc-800 dark:text-zinc-200 block"
-                            >
-                              {opt.label}
-                            </label>
-                            <span className="text-[10px] text-zinc-400 font-medium">
-                              {opt.price > 0 ? `+ ${opt.price.toLocaleString()}원` : "현장 확인 후 안내"}
-                              {opt.type === "number" ? " (1개당)" : ""}
-                            </span>
-                          </div>
-                        </div>
+              {/* 동적 추가 공간 선택 */}
+              {activeServiceConfig.extraSpaces.length > 0 && (
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">추가 공간 (중복 선택 가능)</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {activeServiceConfig.extraSpaces.map((space) => {
+                      const isChecked = !!selectedExtraSpaces[space.key];
+                      return (
+                        <button
+                          key={space.key}
+                          type="button"
+                          onClick={() => setSelectedExtraSpaces({ ...selectedExtraSpaces, [space.key]: !isChecked })}
+                          className={`rounded-xl border p-2.5 text-left text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                            isChecked
+                              ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-950/20 dark:border-blue-500 dark:text-zinc-100"
+                              : "bg-white border-zinc-200 text-zinc-650 dark:bg-zinc-900 dark:border-zinc-800"
+                          }`}
+                        >
+                          <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${isChecked ? "bg-blue-600 border-blue-600 text-white" : "border-zinc-300 bg-white"}`}>
+                            {isChecked && <Check className="w-2.5 h-2.5 stroke-[4.5]" />}
+                          </span>
+                          {space.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-                        {isChecked && opt.type === "number" && (
-                          <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-0.5 dark:border-zinc-800 dark:bg-zinc-950 animate-[scaleIn_0.15s_ease-out]">
-                            <button
-                              type="button"
-                              onClick={() => {
+              {/* 동적 옵션선택 */}
+              {activeServiceConfig.options.length > 0 && (
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">옵션 선택 (현장 실측용)</label>
+                  <div className="space-y-2">
+                    {activeServiceConfig.options.map((opt) => {
+                      const isChecked = !!selectedOptions[opt.key];
+                      const currentVal = selectedOptions[opt.key];
+
+                      return (
+                        <div
+                          key={opt.key}
+                          className={`flex items-center justify-between rounded-xl border p-3.5 transition-colors ${
+                            isChecked
+                              ? "border-blue-200 bg-blue-50/10 dark:border-blue-900/20 dark:bg-blue-950/10"
+                              : "border-zinc-150 bg-white hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              id={`opt-${opt.key}`}
+                              checked={isChecked}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
                                 setSelectedOptions((prev) => {
                                   const next = { ...prev };
-                                  if (currentQty > 1) {
-                                    next[opt.key] = currentQty - 1;
+                                  if (checked) {
+                                    next[opt.key] = opt.type === "select" ? opt.options?.[0] || true : true;
                                   } else {
                                     delete next[opt.key];
                                   }
                                   return next;
                                 });
                               }}
-                              className="flex h-5 w-5 items-center justify-center rounded text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                              className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 accent-blue-600 cursor-pointer"
+                            />
+                            <label
+                              htmlFor={`opt-${opt.key}`}
+                              className="cursor-pointer text-xs font-bold text-zinc-800 dark:text-zinc-200"
                             >
-                              -
-                            </button>
-                            <span className="w-5 text-center text-xs font-bold text-zinc-800 dark:text-zinc-200">
-                              {currentQty}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSelectedOptions((prev) => {
-                                  const next = { ...prev };
-                                  next[opt.key] = currentQty + 1;
-                                  return next;
-                                });
-                              }}
-                              className="flex h-5 w-5 items-center justify-center rounded text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                            >
-                              +
-                            </button>
+                              {opt.label}
+                            </label>
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </Field>
+
+                          {isChecked && opt.type === "select" && (
+                            <select
+                              value={typeof currentVal === "string" ? currentVal : ""}
+                              onChange={(e) => setSelectedOptions({ ...selectedOptions, [opt.key]: e.target.value })}
+                              className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-bold outline-none focus:border-blue-500"
+                            >
+                              {opt.options?.map((o) => (
+                                <option key={o} value={o}>{o}</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
-
-          {/* 희망일 */}
-          <Field 
-            label="희망일 (선택)" 
-            error={errors.preferredDate?.message}
-            completed={!!preferredDate}
-          >
-            <Controller
-              control={control}
-              name="preferredDate"
-              render={({ field }) => (
-                <input
-                  type="date"
-                  value={field.value ? field.value.slice(0, 10) : ""}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    field.onChange(v ? new Date(v).toISOString() : null);
-                  }}
-                  className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-[14px] font-bold text-zinc-800 outline-none transition-all focus:border-[#2563EB] focus:ring-1 focus:ring-blue-100/50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 cursor-pointer"
-                />
-              )}
-            />
-          </Field>
-
-          {/* 연락처 */}
-          <Field
-            label="연락처"
-            hint="010-1234-5678 형식"
-            error={errors.contactPhone?.message}
-            completed={!!contactPhone && contactPhone.length >= 10}
-          >
-            <input
-              {...register("contactPhone")}
-              onChange={handlePhoneChange}
-              maxLength={13}
-              type="tel"
-              placeholder="010-1234-5678"
-              className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-[14px] font-bold text-zinc-800 outline-none transition-all placeholder-zinc-350 focus:border-[#2563EB] focus:ring-1 focus:ring-blue-100/50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
-            />
-          </Field>
-
-          {/* 사진 */}
-          <Field 
-            label="사진" 
-            hint="최대 3장, 대표 이미지 포함"
-            completed={photos.length > 0}
-          >
-            <PhotoUpload
-              pageId={requestId}
-              pathPrefix="quote-photos"
-              photos={photos}
-              onChange={(next: Photo[]) =>
-                setValue("photos", next, { shouldValidate: true })
-              }
-            />
-            <p className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 mt-2.5 leading-normal">
-              JPEG/PNG/WebP, 파일당 최대 5MB. 첫 번째 사진이 견적 상세 대표 사진으로 사용됩니다.
-            </p>
-          </Field>
-
-          {/* 특이사항 */}
-          <Field
-            label="특이사항 (선택)"
-            hint={`${noteValue.length} / 500`}
-            error={errors.note?.message}
-            completed={!!noteValue && noteValue.length > 0}
-          >
-            <Controller
-              control={control}
-              name="note"
-              render={({ field }) => (
-                <textarea
-                  rows={4}
-                  maxLength={500}
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(e.target.value || null)}
-                  placeholder="반려동물 여부, 주차 가능 정보, 문 비밀번호나 상세 요청 사항을 적어주시면 상세한 맞춤 견적을 받아보실 수 있습니다."
-                  className="w-full resize-none rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-[14px] font-bold text-zinc-800 outline-none transition-all placeholder-zinc-350 focus:border-[#2563EB] focus:ring-1 focus:ring-blue-100/50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200"
-                />
-              )}
-            />
-          </Field>
         </div>
 
         {/* 오른쪽 컬럼: 실시간 영수증 모크업 (5칸) */}
@@ -1479,7 +1227,6 @@ export function QuoteForm({
               backgroundSize: "20px 20px"
             }}
           >
-            {/* 상단 장식 효과 */}
             <div className="absolute top-0 left-6 right-6 flex justify-between -translate-y-1">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="h-2 w-2 rounded-full bg-zinc-100 dark:bg-zinc-950" />
@@ -1491,7 +1238,7 @@ export function QuoteForm({
                 CHG CLEANING ESTIMATE
               </span>
               <h2 className="mt-1 text-lg font-black text-zinc-950 dark:text-zinc-50">
-                {QUOTE_CATEGORY_LABELS[category]} 기본 견적서
+                {activeServiceConfig?.label || "청소"} 기본 견적서
               </h2>
               <p className="mt-1 text-[9px] font-mono text-zinc-450">
                 NO. {requestId.toUpperCase().slice(0, 8)}
@@ -1500,64 +1247,82 @@ export function QuoteForm({
 
             {/* 내역 명세표 */}
             <div className="mt-5 border-t-2 border-dashed border-zinc-200 pt-4 text-xs space-y-2.5 dark:border-zinc-800">
-              {/* 견적 유형 표시 */}
-              {category !== "aircon" && (
+              <div className="flex justify-between items-start text-[11px] text-zinc-500 dark:text-zinc-400 font-bold mb-1">
+                <span>고객명</span>
+                <span>{clientName || "(미입력)"}</span>
+              </div>
+              
+              {category !== "specialist" && (
                 <div className="flex justify-between items-start text-[11px] text-zinc-500 dark:text-zinc-400 font-bold mb-1">
-                  <span>견적 타입</span>
-                  <span>{quoteType === "premium" ? "프리미엄" : quoteType === "budget" ? "가성비" : "일반"}</span>
+                  <span>견적 등급</span>
+                  <span>{quoteType === "premium" ? "프리미엄" : quoteType === "budget" ? "가성비" : "일반 표준"}</span>
                 </div>
               )}
-              {/* 청소 주기 표시 */}
-              <div className="flex justify-between items-start text-[11px] text-zinc-500 dark:text-zinc-400 font-bold mb-2">
-                <span>청소 주기</span>
-                <span>
-                  {frequency === "once" 
-                    ? "1회성 (한번)" 
-                    : `정기 구독 (월 ${frequencyCount}회)`}
-                </span>
-              </div>
+
+              {category === "regular" && (
+                <div className="flex justify-between items-start text-[11px] text-zinc-500 dark:text-zinc-400 font-bold mb-2">
+                  <span>청소 주기</span>
+                  <span>
+                    {frequency === "once" 
+                      ? "1회성 (한번)" 
+                      : `정기 구독 (월 ${frequencyCount}회)`}
+                  </span>
+                </div>
+              )}
 
               {/* 기본 요금 */}
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start pt-2 border-t border-zinc-100 dark:border-zinc-850">
                 <div>
-                  <p className="font-bold text-zinc-800 dark:text-zinc-200">기본 {QUOTE_CATEGORY_LABELS[category]}</p>
+                  <p className="font-bold text-zinc-800 dark:text-zinc-200">기본 {activeServiceConfig?.label || "청소"}</p>
                   <span className="text-[10px] text-zinc-400">
-                    {category === "aircon" 
-                      ? "대수 기준 단가 적용" 
-                      : `${currentSize}평 x ${basePricePerPyung.toLocaleString()}원` + (frequencyCount > 1 ? ` x 월 ${frequencyCount}회` : "")}
+                    {activeServiceConfig ? (
+                      activeServiceConfig.priceFormulaType === "pyung_min_25"
+                        ? `${size ? Math.max(25, size) : 0}평(25평 최소수식) x ${activeServiceConfig.unitPrice.toLocaleString()}원`
+                        : `${size ?? 0}${
+                            activeServiceConfig.priceFormulaType === "floor" ? "층" : 
+                            activeServiceConfig.priceFormulaType === "vehicle" ? "대" : "평"
+                          } x ${activeServiceConfig.unitPrice.toLocaleString()}원`
+                    ) : ""}
+                    {category === "regular" && frequency === "regular" && ` x 월 ${frequencyCount}회`}
                   </span>
                 </div>
                 <span className="font-bold text-zinc-800 dark:text-zinc-200">
-                  {category === "aircon" ? "0원" : `${baseAmount.toLocaleString()}원`}
+                  {calculatedBasePrice.toLocaleString()}원
                 </span>
               </div>
 
-              {/* 추가 공간 및 옵션 내역 */}
-              {Object.entries(selectedOptions).map(([key, qty]) => {
-                let item = DYNAMIC_OPTIONS[category].extraSpaces.find((s) => s.key === key);
-                let isSpace = true;
-                if (!item) {
-                  item = DYNAMIC_OPTIONS[category].options.find((o) => o.key === key);
-                  isSpace = false;
-                }
-                if (!item) return null;
-                
-                const isAirconBase = category === "aircon" && ["wallAircon", "standAircon", "systemAircon"].includes(item.key);
-                const displayPrice = isAirconBase 
-                  ? `${(item.price * qty).toLocaleString()}원` 
-                  : "현장 확인";
+              {/* 추가 공간 내역 */}
+              {Object.entries(selectedExtraSpaces).map(([key, isSelected]) => {
+                if (!isSelected) return null;
+                const space = activeServiceConfig?.extraSpaces.find((s) => s.key === key);
+                if (!space) return null;
 
                 return (
-                  <div key={item.key} className="flex justify-between items-start text-xs text-zinc-700 dark:text-zinc-300 pl-2.5 border-l-2 border-blue-200 dark:border-blue-900/60 animate-[scaleIn_0.15s_ease-out]">
+                  <div key={key} className="flex justify-between items-start text-xs text-zinc-700 dark:text-zinc-300 pl-2.5 border-l-2 border-blue-200 dark:border-blue-900/60 animate-[scaleIn_0.15s_ease-out]">
                     <div>
-                      <p className="font-semibold">
-                        {isSpace ? `[추가공간] ${item.label}` : item.label}
-                      </p>
-                      {item.type === "number" && (
-                        <span className="text-[9px] text-zinc-400">수량: {qty}개</span>
+                      <p className="font-semibold">[추가공간] {space.label}</p>
+                      <span className="text-[9px] text-zinc-400">현장 실측 후 최종 산정</span>
+                    </div>
+                    <span className="font-semibold text-zinc-550">실측후 확정</span>
+                  </div>
+                );
+              })}
+
+              {/* 추가 옵션 내역 */}
+              {Object.entries(selectedOptions).map(([key, val]) => {
+                if (!val) return null;
+                const opt = activeServiceConfig?.options.find((o) => o.key === key);
+                if (!opt) return null;
+
+                return (
+                  <div key={key} className="flex justify-between items-start text-xs text-zinc-700 dark:text-zinc-300 pl-2.5 border-l-2 border-blue-200 dark:border-blue-900/60 animate-[scaleIn_0.15s_ease-out]">
+                    <div>
+                      <p className="font-semibold">[옵션] {opt.label}</p>
+                      {typeof val === "string" && (
+                        <span className="text-[9px] text-zinc-400">선택사항: {val}</span>
                       )}
                     </div>
-                    <span className="font-semibold text-zinc-550">{displayPrice}</span>
+                    <span className="font-semibold text-zinc-550">실측후 확정</span>
                   </div>
                 );
               })}
@@ -1567,17 +1332,15 @@ export function QuoteForm({
             <div className="mt-5 border-t-2 border-dashed border-zinc-200 pt-4 dark:border-zinc-800 flex justify-between items-end">
               <span className="text-xs font-bold text-zinc-850 dark:text-zinc-200">총 1차 견적 예상금</span>
               <span className="text-xl font-black text-blue-600 dark:text-blue-400">
-                {totalAmount.toLocaleString()}원
+                {calculatedTotalAmount.toLocaleString()}원
               </span>
             </div>
 
             {/* 하단 면책 및 홍보 */}
             <div className="mt-6 border-t border-zinc-100 pt-4 text-center dark:border-zinc-850">
-              {DYNAMIC_OPTIONS[category]?.guideText && (
-                <p className="text-[10px] font-bold text-blue-700 bg-blue-50/50 py-1.5 px-2 rounded-lg dark:text-blue-400 dark:bg-blue-950/20 leading-normal mb-2">
-                  {DYNAMIC_OPTIONS[category].guideText}
-                </p>
-              )}
+              <p className="text-[10px] font-bold text-blue-700 bg-blue-50/50 py-1.5 px-2 rounded-lg dark:text-blue-400 dark:bg-blue-950/20 leading-normal mb-2">
+                추가공간 및 옵션선택 내용은 현장상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.
+              </p>
               <p className="text-[9px] leading-4 text-zinc-400 text-left">
                 ※ 본 견적서는 현장 방문 전 기본 사항을 바탕으로 작성된 것으로, 실제 청소업체(청명)의 현장 실측 상태에 따라 최종 요금이 달라질 수 있습니다.
               </p>
@@ -1611,14 +1374,11 @@ export function QuoteForm({
       {isPending && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md animate-[page-fade-in_0.25s_ease-out]">
           <div className="relative flex flex-col items-center max-w-xs text-center px-4">
-            {/* Radar glow */}
             <div className="absolute w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse" />
             
-            {/* Rotating / Pulsing Graphic */}
             <div className="relative w-28 h-28 flex items-center justify-center bg-gradient-to-tr from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-850 rounded-full border border-blue-100 dark:border-zinc-800 shadow-[inset_0_2px_6px_rgba(0,0,0,0.03)] mb-6">
               <Home className="h-12 w-12 text-blue-600 dark:text-blue-400 animate-[bounce_2s_infinite]" />
               
-              {/* Orbiter container */}
               <div 
                 className="absolute"
                 style={{
@@ -1631,7 +1391,6 @@ export function QuoteForm({
               </div>
               
               <Sparkles className="absolute top-4 right-4 h-5 w-5 text-amber-400 animate-pulse" />
-              <Sparkles className="absolute bottom-5 left-4 h-4 w-4 text-amber-300 animate-pulse delay-500" />
             </div>
 
             <h3 className="text-base font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight">
@@ -1642,17 +1401,6 @@ export function QuoteForm({
               고객님의 1차 견적 요청 접수 후,<br />
               청광이 조건에 최적화된 인증 파트너를 분류하고 있습니다.
             </p>
-            <p className="mt-1.5 text-[10.5px] text-zinc-450 dark:text-zinc-500 leading-normal">
-              접수 즉시 청광 매니저가 내용을 검토하여 연락을 드리며,<br />
-              매치 가능한 우수 청명 파트너 풀이 대기방에 연동됩니다.
-            </p>
-
-            {/* Simple dot-flashing indicator */}
-            <div className="mt-6 flex gap-1.5 items-center justify-center">
-              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-[bounce_1s_infinite]" />
-              <span className="w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400 animate-[bounce_1s_infinite_0.2s]" />
-              <span className="w-2 h-2 rounded-full bg-blue-400 dark:bg-blue-500 animate-[bounce_1s_infinite_0.4s]" />
-            </div>
           </div>
         </div>
       )}
@@ -1660,12 +1408,8 @@ export function QuoteForm({
       {/* 다음 우편번호 모달 */}
       {isOpenPostcode && (
         <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-xs p-0 md:p-4 animate-fade-in">
-          {/* backdrop click overlay */}
           <div className="absolute inset-0" onClick={() => setIsOpenPostcode(false)} />
-          
-          {/* 모달 카드 */}
           <div className="relative w-full md:max-w-lg bg-white dark:bg-zinc-900 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[85vh] md:max-h-[90vh] overflow-hidden animate-slide-up">
-            {/* Header */}
             <div className="flex items-center justify-between px-5 py-4.5 border-b border-zinc-100 dark:border-zinc-800">
               <span className="text-base font-extrabold text-zinc-950 dark:text-zinc-50">
                 주소 검색
@@ -1678,7 +1422,6 @@ export function QuoteForm({
                 <X className="h-5 w-5" />
               </button>
             </div>
-            {/* Embed Target Container */}
             <div className="flex-1 bg-zinc-50 dark:bg-zinc-950 min-h-[450px] md:min-h-[480px] relative">
               <div 
                 ref={postcodeContainerRef} 
@@ -1695,13 +1438,11 @@ export function QuoteForm({
 function Field({
   label,
   hint,
-  error,
   completed,
   children,
 }: {
   label: string;
   hint?: string;
-  error?: string;
   completed?: boolean;
   children: React.ReactNode;
 }) {
@@ -1729,11 +1470,6 @@ function Field({
         )}
       </span>
       <div className="mt-1">{children}</div>
-      {error && (
-        <span className="text-xs font-semibold text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
-          ⚠️ {error}
-        </span>
-      )}
     </div>
   );
 }

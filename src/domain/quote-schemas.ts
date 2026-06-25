@@ -14,20 +14,24 @@ export const photoSchema = z.object({
 
 export const quoteRequestInputSchema = z.object({
   requestId: z.string().regex(/^[a-z0-9]{16}$/, "유효하지 않은 요청 ID"),
+  clientName: z.string().min(1, "고객명을 입력해 주세요"),
   category: z.enum(
     QUOTE_CATEGORIES as unknown as [QuoteCategory, ...QuoteCategory[]],
   ),
+  subService: z.string().min(1, "세부 청소 종류를 선택해 주세요"),
   region: regionSchema,
-  size: z.number().int().positive().max(500).nullable(),
-  // ISO date string; Server Action 내에서 Date로 변환해 Repository에 전달.
+  size: z.number().int().positive().max(10000).nullable(), // Support building floor height / area up to 10000
   preferredDate: z.string().datetime().nullable(),
+  preferredTime: z.string().min(1, "작업희망시간을 입력해 주세요"),
+  hasElevator: z.enum(["yes", "no"]),
+  parkingAvailable: z.enum(["yes", "no", "discuss"]),
   contactPhone: z
     .string()
     .regex(
       /^[0-9]{2,4}-?[0-9]{3,4}-?[0-9]{4}$/,
       "전화번호 형식이 올바르지 않습니다",
     ),
-  photos: z.array(photoSchema).max(5),
+  photos: z.array(photoSchema).max(10), // Limit increased to support more photos
   note: z.string().max(500).nullable(),
   address: z.string().max(200).optional(),
   /** v1.1b #2 provider-profile — provider-profile → "견적 요청하기" 경로에서 우선 청명 지정 */

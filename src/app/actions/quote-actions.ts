@@ -78,10 +78,15 @@ export async function submitQuoteRequest(
 
     await quoteRequestRepository.create(input.requestId, {
       clientUid,
+      clientName: input.clientName,
       category: input.category,
+      subService: input.subService,
       region: input.region,
       size: input.size,
       preferredDate,
+      preferredTime: input.preferredTime,
+      hasElevator: input.hasElevator,
+      parkingAvailable: input.parkingAvailable,
       contactPhone: input.contactPhone,
       photos: input.photos,
       note: input.note,
@@ -101,10 +106,15 @@ export async function submitQuoteRequest(
     const emailRequest: QuoteRequest = {
       id: input.requestId,
       clientUid,
+      clientName: input.clientName,
       category: input.category,
+      subService: input.subService,
       region: input.region,
       size: input.size,
       preferredDate,
+      preferredTime: input.preferredTime,
+      hasElevator: input.hasElevator,
+      parkingAvailable: input.parkingAvailable,
       contactPhone: input.contactPhone,
       photos: input.photos,
       note: input.note,
@@ -179,5 +189,25 @@ export async function submitQuoteRequest(
       return actionError("INVALID_INPUT", "요청 정보가 올바르지 않습니다");
     }
     return toActionError(e);
+  }
+}
+
+export async function submitQuoteRequestReview(
+  requestId: string,
+  review: { rating: number; comment: string; wouldReuse: string }
+): Promise<ActionResult<null>> {
+  try {
+    const clientUid = await requireUid();
+    const req = await quoteRequestRepository.get(requestId);
+    if (!req) return actionError("NOT_FOUND", "요청을 찾을 수 없습니다.");
+    if (req.clientUid !== clientUid) return actionError("FORBIDDEN", "권한이 없습니다.");
+    
+    await quoteRequestRepository.update(requestId, {
+      customerReview: review
+    });
+    
+    return { ok: true, data: null };
+  } catch (err) {
+    return toActionError(err);
   }
 }

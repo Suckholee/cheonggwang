@@ -21,6 +21,7 @@ const TABS: { href: string; label: string; matcher: (p: string) => boolean }[] =
   { href: "/admin/auto-series", label: "자동 시리즈", matcher: (p) => p.startsWith("/admin/auto-series") },
   // v1.17 cycle #30 cleaning-tips-content
   { href: "/admin/tips", label: "청소 노하우", matcher: (p) => p.startsWith("/admin/tips") },
+  { href: "/admin/requests", label: "접수/예약 관리", matcher: (p) => p.startsWith("/admin/requests") },
 ];
 
 export default function AdminNav() {

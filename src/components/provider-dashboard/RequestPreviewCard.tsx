@@ -23,42 +23,62 @@ const CATEGORY_STYLE: Record<
   QuoteCategory,
   { Icon: LucideIcon; bg: string; text: string }
 > = {
-  "move-in": {
+  residential: {
     Icon: Home,
     bg: "bg-blue-50/70 dark:bg-blue-950/40",
     text: "text-blue-600 dark:text-blue-400",
-  },
-  office: {
-    Icon: Building2,
-    bg: "bg-emerald-50/70 dark:bg-emerald-950/40",
-    text: "text-emerald-600 dark:text-emerald-400",
-  },
-  aircon: {
-    Icon: Wind,
-    bg: "bg-sky-50/70 dark:bg-sky-950/40",
-    text: "text-sky-600 dark:text-sky-400",
-  },
-  "move-out": {
-    Icon: Truck,
-    bg: "bg-violet-50/70 dark:bg-violet-950/40",
-    text: "text-violet-600 dark:text-violet-400",
-  },
-  special: {
-    Icon: Sparkles,
-    bg: "bg-rose-50/70 dark:bg-rose-950/40",
-    text: "text-rose-600 dark:text-rose-400",
   },
   regular: {
     Icon: CalendarDays,
     bg: "bg-amber-50/70 dark:bg-amber-950/40",
     text: "text-amber-600 dark:text-amber-400",
   },
+  construction: {
+    Icon: Building2,
+    bg: "bg-emerald-50/70 dark:bg-emerald-950/40",
+    text: "text-emerald-600 dark:text-emerald-400",
+  },
+  exterior: {
+    Icon: Building2,
+    bg: "bg-sky-50/70 dark:bg-sky-950/40",
+    text: "text-sky-600 dark:text-sky-400",
+  },
+  sanitation: {
+    Icon: Sparkles,
+    bg: "bg-rose-50/70 dark:bg-rose-950/40",
+    text: "text-rose-600 dark:text-rose-400",
+  },
+  specialist: {
+    Icon: Wind,
+    bg: "bg-indigo-50/70 dark:bg-indigo-950/40",
+    text: "text-indigo-600 dark:text-indigo-400",
+  },
+  lodging: {
+    Icon: CalendarDays,
+    bg: "bg-violet-50/70 dark:bg-violet-950/40",
+    text: "text-violet-600 dark:text-violet-400",
+  },
+  industrial: {
+    Icon: Building2,
+    bg: "bg-teal-50/70 dark:bg-teal-950/40",
+    text: "text-teal-600 dark:text-teal-400",
+  },
+  special: {
+    Icon: Sparkles,
+    bg: "bg-red-50/70 dark:bg-red-950/40",
+    text: "text-red-600 dark:text-red-400",
+  },
+  etc: {
+    Icon: Building2,
+    bg: "bg-zinc-50/70 dark:bg-zinc-950/40",
+    text: "text-zinc-650 dark:text-zinc-400",
+  },
 };
 
 export function RequestPreviewCard({ request }: Props) {
   const style =
     CATEGORY_STYLE[request.category as QuoteCategory] ||
-    CATEGORY_STYLE["move-in"];
+    CATEGORY_STYLE["residential"];
   const Icon = style.Icon;
 
   return (

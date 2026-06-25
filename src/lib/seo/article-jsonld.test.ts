@@ -32,7 +32,7 @@ function makePost(over: Partial<Post> = {}): Post {
     providerId: "test-provider",
     providerOwnerUid: "uid-1",
     companyName: "강남 코워킹스페이스",
-    categories: ["office"],
+    categories: ["regular"],
     regionLabel: "강남구",
     title: "사무실 청소 후기",
     slug: "test-slug",

@@ -48,7 +48,7 @@ export function ProviderSignupForm() {
       password: "",
       passwordConfirm: "",
       companyName: "",
-      primaryCategory: "move-in",
+      primaryCategory: "residential",
       contactPhone: "",
       termsAgreed: undefined as unknown as true,
       marketingAgreed: false,

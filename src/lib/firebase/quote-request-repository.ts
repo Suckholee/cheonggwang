@@ -34,14 +34,30 @@ function toQuoteRequest(id: string, d: DocumentData): QuoteRequest {
   const rawRoomType = typeof d.roomType === "string" ? d.roomType : null;
   const roomType: RoomType | undefined =
     rawRoomType && isRoomType(rawRoomType) ? rawRoomType : undefined;
+
+  const bookingPaymentRaw = d.bookingPayment;
+  const bookingPayment = bookingPaymentRaw ? {
+    bookingNumber: (bookingPaymentRaw.bookingNumber as string) ?? "",
+    receivedAt: tsToDate(bookingPaymentRaw.receivedAt as Timestamp | undefined),
+    hasDeposit: !!bookingPaymentRaw.hasDeposit,
+    depositAmount: typeof bookingPaymentRaw.depositAmount === "number" ? bookingPaymentRaw.depositAmount : 0,
+    balanceAmount: typeof bookingPaymentRaw.balanceAmount === "number" ? bookingPaymentRaw.balanceAmount : 0,
+    paymentMethod: (bookingPaymentRaw.paymentMethod as string) ?? "카드",
+  } : undefined;
+
   return {
     id,
     clientUid: (d.clientUid as string) ?? "",
+    clientName: (d.clientName as string) ?? "",
     category: d.category as QuoteCategory,
+    subService: (d.subService as string) ?? "",
     region: toRegion(d),
     size: typeof d.size === "number" ? (d.size as number) : null,
     roomType,
     preferredDate: preferred ? preferred.toDate() : null,
+    preferredTime: (d.preferredTime as string) ?? "",
+    hasElevator: (d.hasElevator as "yes" | "no") ?? "no",
+    parkingAvailable: (d.parkingAvailable as "yes" | "no" | "discuss") ?? "discuss",
     contactPhone: (d.contactPhone as string) ?? "",
     photos: Array.isArray(d.photos) ? (d.photos as Photo[]) : [],
     note: (d.note as string | null) ?? null,
@@ -60,6 +76,24 @@ function toQuoteRequest(id: string, d: DocumentData): QuoteRequest {
     quoteType: typeof d.quoteType === "string" ? (d.quoteType as "premium" | "regular" | "budget") : undefined,
     frequency: typeof d.frequency === "string" ? d.frequency : undefined,
     frequencyCount: typeof d.frequencyCount === "number" ? d.frequencyCount : undefined,
+
+    // 공통 필드 매핑
+    workerAssignment: d.workerAssignment ? {
+      assignedTeam: (d.workerAssignment.assignedTeam as string) ?? "",
+      teamLeaderName: (d.workerAssignment.teamLeaderName as string) ?? "",
+      teamLeaderPhone: (d.workerAssignment.teamLeaderPhone as string) ?? "",
+      workerCount: typeof d.workerAssignment.workerCount === "number" ? d.workerAssignment.workerCount : 1,
+      estimatedHours: typeof d.workerAssignment.estimatedHours === "number" ? d.workerAssignment.estimatedHours : 2,
+    } : undefined,
+    photosBefore: Array.isArray(d.photosBefore) ? (d.photosBefore as Photo[]) : [],
+    photosAfter: Array.isArray(d.photosAfter) ? (d.photosAfter as Photo[]) : [],
+    customerReview: d.customerReview ? {
+      rating: typeof d.customerReview.rating === "number" ? d.customerReview.rating : 5,
+      comment: (d.customerReview.comment as string) ?? "",
+      wouldReuse: (d.customerReview.wouldReuse as string) ?? "yes",
+    } : undefined,
+    bookingPayment,
+    providerPayment: typeof d.providerPayment === "number" ? d.providerPayment : undefined,
   };
 }
 
@@ -74,12 +108,17 @@ export const quoteRequestRepository = {
       .doc(id)
       .create({
         clientUid: data.clientUid,
+        clientName: data.clientName,
         category: data.category,
+        subService: data.subService,
         region: data.region,
         size: data.size,
         preferredDate: data.preferredDate
           ? Timestamp.fromDate(data.preferredDate)
           : null,
+        preferredTime: data.preferredTime,
+        hasElevator: data.hasElevator,
+        parkingAvailable: data.parkingAvailable,
         contactPhone: data.contactPhone,
         photos: data.photos,
         note: data.note,
@@ -94,14 +133,49 @@ export const quoteRequestRepository = {
         quoteType: data.quoteType ?? null,
         frequency: data.frequency ?? null,
         frequencyCount: data.frequencyCount ?? null,
+        workerAssignment: data.workerAssignment ?? null,
+        photosBefore: data.photosBefore ?? [],
+        photosAfter: data.photosAfter ?? [],
+        customerReview: data.customerReview ?? null,
+        bookingPayment: data.bookingPayment ? {
+          bookingNumber: data.bookingPayment.bookingNumber,
+          receivedAt: Timestamp.fromDate(data.bookingPayment.receivedAt),
+          hasDeposit: data.bookingPayment.hasDeposit,
+          depositAmount: data.bookingPayment.depositAmount,
+          balanceAmount: data.bookingPayment.balanceAmount,
+          paymentMethod: data.bookingPayment.paymentMethod,
+        } : null,
+        providerPayment: data.providerPayment ?? null,
       });
   },
 
   async update(
     id: string,
-    patch: Partial<Pick<QuoteRequest, "notifiedProviderIds" | "status">>,
+    patch: Partial<QuoteRequest>,
   ): Promise<void> {
-    await col().doc(id).update(patch);
+    const updateData: DocumentData = {};
+    
+    if (patch.notifiedProviderIds !== undefined) updateData.notifiedProviderIds = patch.notifiedProviderIds;
+    if (patch.status !== undefined) updateData.status = patch.status;
+    if (patch.workerAssignment !== undefined) updateData.workerAssignment = patch.workerAssignment;
+    if (patch.photosBefore !== undefined) updateData.photosBefore = patch.photosBefore;
+    if (patch.photosAfter !== undefined) updateData.photosAfter = patch.photosAfter;
+    if (patch.customerReview !== undefined) updateData.customerReview = patch.customerReview;
+    if (patch.providerPayment !== undefined) updateData.providerPayment = patch.providerPayment;
+    if (patch.totalAmount !== undefined) updateData.totalAmount = patch.totalAmount;
+    
+    if (patch.bookingPayment !== undefined) {
+      updateData.bookingPayment = patch.bookingPayment ? {
+        bookingNumber: patch.bookingPayment.bookingNumber,
+        receivedAt: Timestamp.fromDate(patch.bookingPayment.receivedAt),
+        hasDeposit: patch.bookingPayment.hasDeposit,
+        depositAmount: patch.bookingPayment.depositAmount,
+        balanceAmount: patch.bookingPayment.balanceAmount,
+        paymentMethod: patch.bookingPayment.paymentMethod,
+      } : null;
+    }
+
+    await col().doc(id).update(updateData);
   },
 
   async get(id: string): Promise<QuoteRequest | null> {
@@ -178,5 +252,14 @@ export const quoteRequestRepository = {
       .count()
       .get();
     return agg.data().count;
+  },
+
+  async listAll(options?: { limit?: number }): Promise<QuoteRequest[]> {
+    const limit = options?.limit ?? 100;
+    const snap = await col()
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get();
+    return snap.docs.map((d) => toQuoteRequest(d.id, d.data()));
   },
 };

@@ -10,19 +10,23 @@ import type { TipTopic } from "./tips-generator";
  *    CI lint: scripts/check-queue-mirror.mjs (inferCategoriesFromTopic 양 패키지).
  */
 export type QuoteCategory =
-  | "move-in"
-  | "office"
-  | "aircon"
-  | "move-out"
+  | "residential"
+  | "regular"
+  | "construction"
+  | "exterior"
+  | "sanitation"
+  | "specialist"
+  | "lodging"
+  | "industrial"
   | "special"
-  | "regular";
+  | "etc";
 
 const TIP_TO_QUOTE_CATEGORY: Record<TipTopic["category"], QuoteCategory> = {
   bathroom: "regular",
   kitchen: "regular",
-  aircon: "aircon",
+  aircon: "specialist",
   living: "regular",
-  move: "move-in",
+  move: "residential",
   general: "regular",
 };
 

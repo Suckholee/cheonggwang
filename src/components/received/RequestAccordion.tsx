@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, Calendar, MapPin, Grid, MessageSquare } from "lucide-react";
 import type { QuoteRequest } from "@/types/quote-request";
 import { QuoteStepper } from "./QuoteStepper";
+import { CLEAN_SERVICES_CONFIG } from "@/domain/clean-services-config";
 import { QUOTE_CATEGORY_LABELS } from "@/domain/quote-category";
 
 interface Props {
@@ -22,10 +23,16 @@ function formatDate(date: Date | null): string {
 export function RequestAccordion({ request }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const catLabel = QUOTE_CATEGORY_LABELS[request.category];
+  const serviceConfig = request.subService ? CLEAN_SERVICES_CONFIG[request.subService] : undefined;
+  const sizeUnit = serviceConfig
+    ? serviceConfig.priceFormulaType === "floor" ? "층" : 
+      serviceConfig.priceFormulaType === "vehicle" ? "대" : "평"
+    : "평";
+
+  const catLabel = serviceConfig?.label ?? QUOTE_CATEGORY_LABELS[request.category];
   const sizeLabel = request.size
-    ? `${request.size}평${request.roomType ? ` · ${request.roomType}` : ""}`
-    : request.roomType ?? "";
+    ? `${request.size}${sizeUnit}`
+    : "";
 
   return (
     <div className="relative z-20 mx-4 -mt-8 rounded-2xl border border-zinc-200 bg-white shadow-lg transition-all duration-300 dark:border-zinc-800 dark:bg-zinc-950">

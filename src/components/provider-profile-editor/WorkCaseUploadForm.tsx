@@ -33,7 +33,7 @@ export function WorkCaseUploadForm() {
     resolver: zodResolver(createWorkCaseInputSchema),
     defaultValues: {
       workCaseId,
-      category: "move-in",
+      category: "residential",
       sizeLabel: "",
       memo: null,
     },
@@ -48,7 +48,7 @@ export function WorkCaseUploadForm() {
         setWorkCaseId(nextId);
         reset({
           workCaseId: nextId,
-          category: "move-in",
+          category: "residential",
           sizeLabel: "",
           memo: null,
           beforePhoto: undefined,

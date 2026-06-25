@@ -98,7 +98,7 @@ export function PriceBookTab({ provider }: Props) {
           disabled={fields.length >= MAX_ENTRIES}
           onClick={() =>
             append({
-              category: "move-in",
+              category: "residential",
               unit: "per_visit",
               unitLabel: "",
               basePrice: 0,

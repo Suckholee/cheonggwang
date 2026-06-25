@@ -5,10 +5,11 @@ import Image from "next/image";
 import {
   Home,
   Building2,
-  Wind,
-  Truck,
-  Sparkles,
   CalendarDays,
+  Hammer,
+  Shield,
+  Sparkles,
+  Factory,
   type LucideIcon,
 } from "lucide-react";
 import { shouldUnoptimizeImage } from "@/lib/image/should-unoptimize";
@@ -23,45 +24,69 @@ const CATEGORY_STYLE: Record<
   QuoteCategory,
   { Icon: LucideIcon; tile: string; icon: string }
 > = {
-  "move-in": {
+  residential: {
     Icon: Home,
     tile: "bg-blue-50/90 border-blue-200/50 dark:bg-blue-950/40 dark:border-blue-900/50",
     icon: "text-blue-600 dark:text-blue-450",
-  },
-  office: {
-    Icon: Building2,
-    tile: "bg-emerald-50/90 border-emerald-200/50 dark:bg-emerald-950/40 dark:border-emerald-900/50",
-    icon: "text-emerald-600 dark:text-emerald-405",
-  },
-  aircon: {
-    Icon: Wind,
-    tile: "bg-sky-50/90 border-sky-200/50 dark:bg-sky-950/40 dark:border-sky-900/50",
-    icon: "text-sky-600 dark:text-sky-400",
-  },
-  "move-out": {
-    Icon: Truck,
-    tile: "bg-violet-50/90 border-violet-200/50 dark:bg-violet-950/40 dark:border-violet-900/50",
-    icon: "text-violet-600 dark:text-violet-400",
-  },
-  special: {
-    Icon: Sparkles,
-    tile: "bg-rose-50/90 border-rose-200/50 dark:bg-rose-950/40 dark:border-rose-900/50",
-    icon: "text-rose-600 dark:text-rose-455",
   },
   regular: {
     Icon: CalendarDays,
     tile: "bg-amber-50/90 border-amber-200/50 dark:bg-amber-950/40 dark:border-amber-900/50",
     icon: "text-amber-600 dark:text-amber-400",
   },
+  construction: {
+    Icon: Hammer,
+    tile: "bg-orange-50/90 border-orange-200/50 dark:bg-orange-950/40 dark:border-orange-900/50",
+    icon: "text-orange-600 dark:text-orange-400",
+  },
+  exterior: {
+    Icon: Building2,
+    tile: "bg-indigo-50/90 border-indigo-200/50 dark:bg-indigo-950/40 dark:border-indigo-900/50",
+    icon: "text-indigo-600 dark:text-indigo-400",
+  },
+  sanitation: {
+    Icon: Shield,
+    tile: "bg-emerald-50/90 border-emerald-200/50 dark:bg-emerald-950/40 dark:border-emerald-900/50",
+    icon: "text-emerald-600 dark:text-emerald-400",
+  },
+  specialist: {
+    Icon: Sparkles,
+    tile: "bg-rose-50/90 border-rose-200/50 dark:bg-rose-950/40 dark:border-rose-900/50",
+    icon: "text-rose-600 dark:text-rose-455",
+  },
+  lodging: {
+    Icon: Home,
+    tile: "bg-violet-50/90 border-violet-200/50 dark:bg-violet-950/40 dark:border-violet-900/50",
+    icon: "text-violet-600 dark:text-violet-400",
+  },
+  industrial: {
+    Icon: Factory,
+    tile: "bg-teal-50/90 border-teal-200/50 dark:bg-teal-950/40 dark:border-teal-900/50",
+    icon: "text-teal-600 dark:text-teal-400",
+  },
+  special: {
+    Icon: Sparkles,
+    tile: "bg-purple-50/90 border-purple-200/50 dark:bg-purple-950/40 dark:border-purple-900/50",
+    icon: "text-purple-600 dark:text-purple-400",
+  },
+  etc: {
+    Icon: Building2,
+    tile: "bg-zinc-100/90 border-zinc-200/50 dark:bg-zinc-800/40 dark:border-zinc-700/50",
+    icon: "text-zinc-600 dark:text-zinc-300",
+  },
 };
 
 const CATEGORY_IMAGES: Record<QuoteCategory, string> = {
-  "move-in": "/images/cat_move_in.png",
-  office: "/images/cat_office.png",
-  aircon: "/images/cat_aircon.png",
-  "move-out": "/images/cat_move_out.png",
-  special: "/images/cat_special.png",
+  residential: "/images/cat_move_in.png",
   regular: "/images/cat_regular.png",
+  construction: "/images/cat_special.png",
+  exterior: "/images/cat_office.png",
+  sanitation: "/images/cat_special.png",
+  specialist: "/images/cat_aircon.png",
+  lodging: "/images/cat_move_in.png",
+  industrial: "/images/cat_office.png",
+  special: "/images/cat_special.png",
+  etc: "/images/cat_office.png",
 };
 
 function CategoryCard({ category }: { category: QuoteCategory }) {
@@ -104,12 +129,13 @@ function CategoryCard({ category }: { category: QuoteCategory }) {
   );
 }
 
-export function CategoryGrid() {
+export default function CategoryGrid() {
   return (
-    <div className="grid grid-cols-2 gap-[14px] sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-[14px] sm:grid-cols-5">
       {QUOTE_CATEGORIES.map((c) => (
         <CategoryCard key={c} category={c} />
       ))}
     </div>
   );
 }
+export { CategoryGrid };

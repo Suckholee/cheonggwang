@@ -13,9 +13,9 @@ import type { QuoteCategory } from "@/domain/quote-category";
 const TIP_TO_QUOTE_CATEGORY: Record<TipTopic["category"], QuoteCategory> = {
   bathroom: "regular",
   kitchen: "regular",
-  aircon: "aircon",
+  aircon: "specialist",
   living: "regular",
-  move: "move-in",
+  move: "residential",
   general: "regular",
 };
 

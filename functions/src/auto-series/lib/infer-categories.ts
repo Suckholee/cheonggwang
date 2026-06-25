@@ -8,24 +8,29 @@
  */
 
 type QuoteCategory =
+  | "residential"
   | "regular"
-  | "move-in"
-  | "aircon"
-  | "office"
-  | "special";
+  | "construction"
+  | "exterior"
+  | "sanitation"
+  | "specialist"
+  | "lodging"
+  | "industrial"
+  | "special"
+  | "etc";
 
 // MIRROR: src/domain/infer-categories.ts의 TAG_TO_CATEGORY 핵심 항목 (자주 매칭되는 keyword만)
 const TAG_TO_CATEGORY: Array<[string, QuoteCategory]> = [
-  ["aircon", "aircon"],
-  ["에어컨", "aircon"],
-  ["air conditioner", "aircon"],
-  ["office", "office"],
-  ["사무실", "office"],
-  ["코워킹", "office"],
-  ["coworking", "office"],
-  ["입주", "move-in"],
-  ["이사", "move-in"],
-  ["move", "move-in"],
+  ["aircon", "specialist"],
+  ["에어컨", "specialist"],
+  ["air conditioner", "specialist"],
+  ["office", "regular"],
+  ["사무실", "regular"],
+  ["코워킹", "regular"],
+  ["coworking", "regular"],
+  ["입주", "residential"],
+  ["이사", "residential"],
+  ["move", "residential"],
   ["거실", "regular"],
   ["주방", "regular"],
   ["bathroom", "regular"],

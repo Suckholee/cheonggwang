@@ -11,7 +11,7 @@ import {
   QUOTE_CATEGORY_EMOJIS,
   QUOTE_CATEGORY_LABELS,
   QUOTE_CATEGORY_SUBTITLES,
-  isQuoteCategory,
+  mapLegacyCategory,
   type QuoteCategory,
 } from "@/domain/quote-category";
 import { providerRepository } from "@/lib/firebase/provider-repository";
@@ -131,7 +131,7 @@ async function AuthedQuoteForm({
 
   const initialCategory: QuoteCategory | undefined =
     preferredProvider?.firstCategory ??
-    (sp.category && isQuoteCategory(sp.category) ? sp.category : undefined);
+    (sp.category ? mapLegacyCategory(sp.category) : undefined);
 
   const requestId = nanoRequestId();
 

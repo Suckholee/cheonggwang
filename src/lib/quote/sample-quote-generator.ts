@@ -53,18 +53,25 @@ const SAFETY = [
 function priceHintRange(category: QuoteCategory, sizePyeong: number | null): [number, number] {
   const p = sizePyeong && sizePyeong > 0 ? sizePyeong : 20;
   switch (category) {
-    case "move-in":
-      return [Math.round(p * 7000), Math.round(p * 11000)];
-    case "move-out":
-      return [Math.round(p * 6000), Math.round(p * 9500)];
+    case "residential":
+      return [Math.round(p * 10000), Math.round(p * 15000)];
     case "regular":
       return [150000, 320000]; // 월
-    case "office":
-      return [200000, 500000];
-    case "aircon":
+    case "construction":
+      return [Math.round(p * 15000), Math.round(p * 25000)];
+    case "exterior":
+      return [300000, 700000];
+    case "sanitation":
+      return [80000, 150000];
+    case "specialist":
       return [100000, 160000]; // 1대 기준
+    case "lodging":
+      return [30000, 60000];
+    case "industrial":
+      return [500000, 1500000];
     case "special":
       return [300000, 800000];
+    case "etc":
     default:
       return [150000, 300000];
   }

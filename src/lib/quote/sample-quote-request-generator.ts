@@ -51,8 +51,8 @@ function estimateSizeFromPersona(persona: SamplePersona, category: QuoteCategory
   }
   if (region.includes("아파트")) return 24 + Math.floor(Math.random() * 20); // 24~43
   // category별 폴백
-  if (category === "office") return 20 + Math.floor(Math.random() * 20);
-  if (category === "aircon") return 20 + Math.floor(Math.random() * 15);
+  if (category === "regular") return 20 + Math.floor(Math.random() * 20);
+  if (category === "specialist") return 20 + Math.floor(Math.random() * 15);
   if (category === "special") return 18 + Math.floor(Math.random() * 20);
   return 20 + Math.floor(Math.random() * 15);
 }
