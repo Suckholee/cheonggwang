@@ -1113,98 +1113,6 @@ export function QuoteForm({
                   )}
                 </div>
               ))}
-
-              {/* 동적 추가 공간 선택 */}
-              {activeServiceConfig.extraSpaces.length > 0 && (
-                <div className="space-y-1.5">
-                  <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">추가 공간 (중복 선택 가능)</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {activeServiceConfig.extraSpaces.map((space) => {
-                      const isChecked = !!selectedExtraSpaces[space.key];
-                      return (
-                        <button
-                          key={space.key}
-                          type="button"
-                          onClick={() => setSelectedExtraSpaces({ ...selectedExtraSpaces, [space.key]: !isChecked })}
-                          className={`rounded-xl border p-2.5 text-left text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
-                            isChecked
-                              ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-950/20 dark:border-blue-500 dark:text-zinc-100"
-                              : "bg-white border-zinc-200 text-zinc-650 dark:bg-zinc-900 dark:border-zinc-800"
-                          }`}
-                        >
-                          <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${isChecked ? "bg-blue-600 border-blue-600 text-white" : "border-zinc-300 bg-white"}`}>
-                            {isChecked && <Check className="w-2.5 h-2.5 stroke-[4.5]" />}
-                          </span>
-                          {space.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* 동적 옵션선택 */}
-              {activeServiceConfig.options.length > 0 && (
-                <div className="space-y-2">
-                  <label className="block text-[11px] font-extrabold text-zinc-500 mb-1">옵션 선택 (현장 실측용)</label>
-                  <div className="space-y-2">
-                    {activeServiceConfig.options.map((opt) => {
-                      const isChecked = !!selectedOptions[opt.key];
-                      const currentVal = selectedOptions[opt.key];
-
-                      return (
-                        <div
-                          key={opt.key}
-                          className={`flex items-center justify-between rounded-xl border p-3.5 transition-colors ${
-                            isChecked
-                              ? "border-blue-200 bg-blue-50/10 dark:border-blue-900/20 dark:bg-blue-950/10"
-                              : "border-zinc-150 bg-white hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="checkbox"
-                              id={`opt-${opt.key}`}
-                              checked={isChecked}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                setSelectedOptions((prev) => {
-                                  const next = { ...prev };
-                                  if (checked) {
-                                    next[opt.key] = opt.type === "select" ? opt.options?.[0] || true : true;
-                                  } else {
-                                    delete next[opt.key];
-                                  }
-                                  return next;
-                                });
-                              }}
-                              className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 accent-blue-600 cursor-pointer"
-                            />
-                            <label
-                              htmlFor={`opt-${opt.key}`}
-                              className="cursor-pointer text-xs font-bold text-zinc-800 dark:text-zinc-200"
-                            >
-                              {opt.label}
-                            </label>
-                          </div>
-
-                          {isChecked && opt.type === "select" && (
-                            <select
-                              value={typeof currentVal === "string" ? currentVal : ""}
-                              onChange={(e) => setSelectedOptions({ ...selectedOptions, [opt.key]: e.target.value })}
-                              className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-bold outline-none focus:border-blue-500"
-                            >
-                              {opt.options?.map((o) => (
-                                <option key={o} value={o}>{o}</option>
-                              ))}
-                            </select>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -1339,7 +1247,7 @@ export function QuoteForm({
             {/* 하단 면책 및 홍보 */}
             <div className="mt-6 border-t border-zinc-100 pt-4 text-center dark:border-zinc-850">
               <p className="text-[10px] font-bold text-blue-700 bg-blue-50/50 py-1.5 px-2 rounded-lg dark:text-blue-400 dark:bg-blue-950/20 leading-normal mb-2">
-                추가공간 및 옵션선택 내용은 현장상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.
+                기본 견적 외 상세 현장 조건은 실측 상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.
               </p>
               <p className="text-[9px] leading-4 text-zinc-400 text-left">
                 ※ 본 견적서는 현장 방문 전 기본 사항을 바탕으로 작성된 것으로, 실제 청소업체(청명)의 현장 실측 상태에 따라 최종 요금이 달라질 수 있습니다.
