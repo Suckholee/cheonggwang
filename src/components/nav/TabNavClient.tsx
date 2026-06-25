@@ -25,7 +25,7 @@ export function TabNavClient({ tabSetKey, chatUnreadCount = 0 }: Props) {
   return (
     <nav
       aria-label="하단 내비게이션"
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[480px] border-t border-zinc-100 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95"
+      className="md:hidden fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[480px] border-t border-zinc-100 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/95"
       style={{
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}

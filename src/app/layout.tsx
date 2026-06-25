@@ -62,16 +62,20 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 10px #2563EB,0 0 5px #2563EB"
         />
-        <div className="w-full max-w-[480px] bg-[#F9FAFB] dark:bg-zinc-950 h-screen h-[100dvh] relative flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.03)] overflow-hidden has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:h-auto">
-          <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(var(--bottom-nav-height)+20px)] [&::-webkit-scrollbar]:hidden has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:pb-0 has-[[data-chat-room]]:overflow-hidden has-[[data-chat-room]]:pb-0 has-[[data-chat-room]]:h-full has-[[data-chat-room]]:flex has-[[data-chat-room]]:flex-col">
-            <Suspense fallback={null}>
-              <PageTransitionWrapper>
-                {children}
-              </PageTransitionWrapper>
-            </Suspense>
+        <div className="w-full max-w-[480px] bg-[#F9FAFB] dark:bg-zinc-950 h-screen h-[100dvh] relative flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.03)] overflow-hidden md:max-w-none md:w-full md:h-screen md:flex md:flex-row md:overflow-hidden md:shadow-none md:bg-white dark:md:bg-zinc-900 has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:bg-transparent has-[[data-admin-shell]]:shadow-none has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:h-auto">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(var(--bottom-nav-height)+20px)] [&::-webkit-scrollbar]:hidden md:order-2 md:flex-1 md:overflow-y-auto md:h-screen md:pb-0 md:bg-zinc-50 dark:md:bg-zinc-950 has-[[data-admin-shell]]:overflow-visible has-[[data-admin-shell]]:pb-0 has-[[data-chat-room]]:overflow-hidden has-[[data-chat-room]]:pb-0 has-[[data-chat-room]]:h-full has-[[data-chat-room]]:flex has-[[data-chat-room]]:flex-col">
+            <div className="flex-1 flex flex-col w-full md:max-w-6xl md:mx-auto md:px-8 md:py-6 has-[[data-admin-shell]]:max-w-none has-[[data-admin-shell]]:p-0 has-[[data-chat-room]]:max-w-none has-[[data-chat-room]]:h-full has-[[data-chat-room]]:p-0">
+              <Suspense fallback={null}>
+                <PageTransitionWrapper>
+                  {children}
+                </PageTransitionWrapper>
+              </Suspense>
+            </div>
           </main>
           <Suspense fallback={null}>
-            <BottomTabNavServer />
+            <div className="md:order-1 shrink-0">
+              <BottomTabNavServer />
+            </div>
           </Suspense>
         </div>
         <JsonLdScript data={buildOrganizationJsonLd()} />

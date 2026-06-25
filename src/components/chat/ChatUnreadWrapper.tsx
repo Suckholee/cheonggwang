@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { clientDb } from "@/lib/firebase/client";
 import { TabNavClient } from "@/components/nav/TabNavClient";
+import { DesktopSidebar } from "@/components/nav/DesktopSidebar";
 import type { ThreadRole } from "@/types/chat";
 
 interface Props {
@@ -41,5 +42,10 @@ export function ChatUnreadWrapper({ uid, role }: Props) {
     return () => unsub();
   }, [uid, role]);
 
-  return <TabNavClient tabSetKey={role} chatUnreadCount={unread} />;
+  return (
+    <>
+      <TabNavClient tabSetKey={role} chatUnreadCount={unread} />
+      <DesktopSidebar tabSetKey={role} chatUnreadCount={unread} />
+    </>
+  );
 }

@@ -1278,7 +1278,7 @@ export function QuoteForm({
       )}
 
       {/* Sticky Bottom CTA Button Area */}
-      <div className="sticky bottom-[64px] z-30 -mx-5 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/95 to-transparent px-5 pt-6 pb-4 dark:from-zinc-950 dark:via-zinc-950/95">
+      <div className="sticky bottom-[64px] z-30 -mx-5 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/95 to-transparent px-5 pt-6 pb-4 dark:from-zinc-950 dark:via-zinc-950/95 md:relative md:bottom-0 md:mx-0 md:bg-transparent md:px-0 md:pt-8 md:pb-0">
         <button
           type="submit"
           disabled={isPending || !isValidForm}

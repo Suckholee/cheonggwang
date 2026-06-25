@@ -79,12 +79,16 @@ export default function MarketplaceHome() {
 
 function HomeHeader() {
   return (
-    <header className="sticky top-0 z-50 -mx-4 mb-5 border-b border-[#e7f0ff] bg-[#f4f9ff]/95 px-4 py-3 backdrop-blur">
+    <header className="sticky top-0 z-50 -mx-4 mb-5 border-b border-[#e7f0ff] bg-[#f4f9ff]/95 px-4 py-3 backdrop-blur md:-mx-8 md:px-8 md:py-4 md:border-b-0 md:bg-transparent md:backdrop-blur-none">
       <div className="flex items-center justify-between">
-        <BrandLogo />
-        <div className="flex items-center gap-2">
+        <div className="md:hidden">
+          <BrandLogo />
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
           <HeaderRegionSelect />
-          <ProfileMenuButton />
+          <div className="md:hidden">
+            <ProfileMenuButton />
+          </div>
         </div>
       </div>
     </header>
@@ -229,7 +233,7 @@ function CommunityPreviewSection() {
 function StickyHomeCta() {
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 z-50 mx-auto w-full max-w-[480px] px-4"
+      className="md:hidden pointer-events-none fixed inset-x-0 z-50 mx-auto w-full max-w-[480px] px-4"
       style={{
         // 하단 탭 네비게이션 바(--bottom-nav-height=64px) 위에 올라가도록 오프셋.
         // safe-area-inset-bottom 은 iOS 홈 인디케이터 회피용.

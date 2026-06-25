@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { clientAuth, clientDb } from "@/lib/firebase/client";
 import { ChatUnreadWrapper } from "@/components/chat/ChatUnreadWrapper";
 import { TabNavClient } from "@/components/nav/TabNavClient";
+import { DesktopSidebar } from "@/components/nav/DesktopSidebar";
 
 interface AuthContext {
   uid: string;
@@ -59,7 +60,12 @@ export function BottomTabNavServer() {
 
   // Guest/Unauthenticated users default to client tabs
   if (ctx === null) {
-    return <TabNavClient tabSetKey="client" chatUnreadCount={0} />;
+    return (
+      <>
+        <TabNavClient tabSetKey="client" chatUnreadCount={0} />
+        <DesktopSidebar tabSetKey="client" chatUnreadCount={0} />
+      </>
+    );
   }
 
   // v1.6 — URL 경로를 1순위로: `/provider/*` 면 Firestore 조회 실패/지연과 무관하게 PROVIDER 탭.
