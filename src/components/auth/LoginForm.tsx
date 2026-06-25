@@ -180,6 +180,15 @@ export function LoginForm() {
     >
       <div id="recaptcha-container"></div>
 
+      {nextPath.includes("/signup-partner") && mode === "signup" && (
+        <div className="rounded-xl bg-blue-50 p-3 text-xs font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 animate-[fade-in_0.3s_ease-out]">
+          🏢 <strong>의뢰업체(파트너) 계정 생성</strong>
+          <p className="mt-0.5 text-[11px] opacity-80 font-normal">
+            계정을 생성한 후, 바로 이어서 매장 정보를 등록합니다.
+          </p>
+        </div>
+      )}
+
       {/* Segmented Control Switcher */}
       <div className="flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-900/60">
         <div

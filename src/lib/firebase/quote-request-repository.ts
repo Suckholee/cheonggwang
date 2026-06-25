@@ -45,11 +45,21 @@ function toQuoteRequest(id: string, d: DocumentData): QuoteRequest {
     contactPhone: (d.contactPhone as string) ?? "",
     photos: Array.isArray(d.photos) ? (d.photos as Photo[]) : [],
     note: (d.note as string | null) ?? null,
+    address: typeof d.address === "string" ? d.address : undefined,
     notifiedProviderIds: Array.isArray(d.notifiedProviderIds)
       ? (d.notifiedProviderIds as string[])
       : [],
     status: normalizeQuoteStatus((d.status as string) ?? "submitted"),
     createdAt: tsToDate(d.createdAt as Timestamp | undefined),
+    baseAmount: typeof d.baseAmount === "number" ? d.baseAmount : undefined,
+    optionsAmount: typeof d.optionsAmount === "number" ? d.optionsAmount : undefined,
+    totalAmount: typeof d.totalAmount === "number" ? d.totalAmount : undefined,
+    optionsList: Array.isArray(d.optionsList)
+      ? (d.optionsList as Array<{ label: string; qty: number; price: number }>)
+      : undefined,
+    quoteType: typeof d.quoteType === "string" ? (d.quoteType as "premium" | "regular" | "budget") : undefined,
+    frequency: typeof d.frequency === "string" ? d.frequency : undefined,
+    frequencyCount: typeof d.frequencyCount === "number" ? d.frequencyCount : undefined,
   };
 }
 
@@ -73,9 +83,17 @@ export const quoteRequestRepository = {
         contactPhone: data.contactPhone,
         photos: data.photos,
         note: data.note,
+        address: data.address ?? null,
         notifiedProviderIds: data.notifiedProviderIds,
         status: data.status,
         createdAt: FieldValue.serverTimestamp(),
+        baseAmount: data.baseAmount ?? null,
+        optionsAmount: data.optionsAmount ?? null,
+        totalAmount: data.totalAmount ?? null,
+        optionsList: data.optionsList ?? null,
+        quoteType: data.quoteType ?? null,
+        frequency: data.frequency ?? null,
+        frequencyCount: data.frequencyCount ?? null,
       });
   },
 

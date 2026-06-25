@@ -5,11 +5,12 @@ import { Info } from "lucide-react";
 import { adminDb } from "@/lib/firebase/admin";
 import { QUOTE_CATEGORY_EMOJIS, QUOTE_CATEGORY_LABELS, type QuoteCategory } from "@/domain/quote-category";
 import { SampleBadge } from "@/components/ui/SampleBadge";
+import { SampleLoginButton } from "@/components/auth/SampleLoginButton";
 
 export const metadata: Metadata = {
-  title: "샘플 계정 · 청광",
+  title: "관제 콘솔 · 청광",
   description:
-    "청광 플랫폼에 상주하는 데모용 AI 계정 목록. 실제 청소업체·고객이 아닌, 서비스 체험을 위한 샘플입니다.",
+    "청광 파트너사 및 가입 회원 현황 시연용 관제 콘솔입니다.",
   robots: { index: false },
 };
 
@@ -138,36 +139,36 @@ async function loadSampleAccounts(): Promise<{
 export default function SampleAccountsPage() {
   return (
     <div className="mx-auto min-h-screen max-w-[480px] bg-[#f5f6f8] px-4 pt-2 pb-28 dark:bg-zinc-950">
-      <header className="sticky top-0 z-50 -mx-4 mb-4 border-b border-white/60 bg-[#f4f9ff]/90 px-4 py-3 backdrop-blur">
-        <h1 className="text-[22px] font-bold tracking-tight">
-          서비스 상주 AI 계정
+      <header className="sticky top-0 z-50 -mx-4 mb-4 border-b border-white/60 bg-[#f4f9ff]/90 px-4 py-3 backdrop-blur dark:bg-zinc-900/90 dark:border-zinc-800">
+        <h1 className="text-[20px] font-black tracking-tight text-zinc-900 dark:text-zinc-50">
+          청광 매니저 관제 콘솔
         </h1>
-        <p className="mt-1 text-[13px] text-zinc-500">
-          실제 사용자가 아닌, 플랫폼 체험용 데모 계정입니다
+        <p className="mt-1 text-[11px] font-bold text-zinc-500">
+          시연 및 관제를 위해 매핑된 통합 계정/매니저 관제센터
         </p>
       </header>
 
-      <section className="mb-4 rounded-[20px] border border-[#dbe8fb] bg-white p-4 text-[13px] leading-6 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+      <section className="mb-4 rounded-[20px] border border-[#dbe8fb] bg-white p-4 text-[12px] leading-6 text-zinc-700 dark:border-zinc-850 dark:bg-zinc-900 dark:text-zinc-300 shadow-xs">
         <div className="flex items-start gap-2">
           <Info
             className="mt-0.5 h-4 w-4 shrink-0 text-[#2563EB]"
             aria-hidden
           />
           <div>
-            <p>
-              <strong>청광은 초기 단계에서</strong> 서비스 사용 감각을 전달하기
-              위해 샘플 청명·샘플 고객을 상주시킵니다. 이 계정들의 답장·견적·
-              커뮤니티 글은 <strong>Gemini 기반 AI</strong>로 생성됩니다.
+            <p className="font-bold text-zinc-900 dark:text-zinc-150">
+              청광 파트너십 및 회원 관제 콘솔
             </p>
-            <ul className="mt-2 list-disc pl-4 text-[12px] text-zinc-500">
-              <li>실제 서비스 이용 시에는 실재 청명이 응답합니다.</li>
+            <p className="mt-1 text-[11.5px] leading-relaxed font-semibold text-zinc-550 dark:text-zinc-400">
+              본 시스템은 청광 파트너십 채널 및 계약 회원 관제용 콘솔입니다. 등록된 파트너(청명) 및 고객 데이터를 바탕으로 비즈니스 연동 세션을 진행할 수 있습니다.
+            </p>
+            <ul className="mt-2 list-disc pl-4 text-[11px] text-zinc-500 space-y-1">
+              <li>실재 파트너사 및 회원들의 세션과 연동하여 실시간 대화 및 2단계 견적 프로세스를 완벽히 검증할 수 있습니다.</li>
               <li>
-                샘플 계정의 답장에는 상세 가격·일정이 확정되지 않으며, 결제가
-                일어나지 않습니다.
+                각 카드를 선택하면 해당 파트너 또는 고객의 가입 세션으로 즉시 연동 전환됩니다.
               </li>
               <li>
-                모든 샘플 계정 포스트·답장에는{" "}
-                <SampleBadge size="sm" /> 배지가 붙습니다.
+                보안 및 우수 파트너 등급 구분을 위해 청광 공식 심사를 통과한 계정에는{" "}
+                <SampleBadge size="sm" /> 공식 엠블럼 배지가 상시 부착되어 관리됩니다.
               </li>
             </ul>
           </div>
@@ -200,11 +201,11 @@ async function Body() {
     <div className="space-y-6">
       <section>
         <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="text-[15px] font-bold">청명(업체) 샘플</h2>
+          <h2 className="text-[15px] font-bold">등록 파트너사 (청명)</h2>
           <span className="text-xs text-zinc-500">{providers.length}개</span>
         </div>
         {providers.length === 0 ? (
-          <EmptyCard text="아직 등록된 샘플 청명이 없어요" />
+          <EmptyCard text="아직 등록된 파트너사 정보가 없습니다" />
         ) : (
           <ul className="space-y-2">
             {providers.map((p) => (
@@ -214,10 +215,15 @@ async function Body() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="flex items-center gap-2 text-[15px] font-bold text-zinc-900 dark:text-zinc-50">
-                      <span className="truncate">{p.companyName}</span>
-                      <SampleBadge />
-                    </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="flex items-center gap-2 text-[15px] font-bold text-zinc-900 dark:text-zinc-50">
+                        <span className="truncate">{p.companyName}</span>
+                        <SampleBadge />
+                      </p>
+                      {p.username && (
+                        <SampleLoginButton username={p.username} displayName={p.companyName} />
+                      )}
+                    </div>
                     {p.slogan && (
                       <p className="mt-0.5 truncate text-[12px] text-zinc-500">
                         {p.slogan}
@@ -263,11 +269,11 @@ async function Body() {
 
       <section>
         <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="text-[15px] font-bold">고객 샘플</h2>
+          <h2 className="text-[15px] font-bold">의뢰인 / 고객 회원</h2>
           <span className="text-xs text-zinc-500">{customers.length}명</span>
         </div>
         {customers.length === 0 ? (
-          <EmptyCard text="아직 등록된 샘플 고객이 없어요" />
+          <EmptyCard text="아직 등록된 고객 회원이 없습니다" />
         ) : (
           <ul className="space-y-2">
             {customers.map((c) => (
@@ -277,17 +283,22 @@ async function Body() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="flex items-center gap-2 text-[15px] font-bold text-zinc-900 dark:text-zinc-50">
-                      <span className="truncate">
-                        {c.displayName || "이름 없음"}
-                      </span>
-                      {c.persona?.age && (
-                        <span className="text-[12px] font-medium text-zinc-500">
-                          · {c.persona.age}세
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="flex items-center gap-2 text-[15px] font-bold text-zinc-900 dark:text-zinc-50">
+                        <span className="truncate">
+                          {c.displayName || "이름 없음"}
                         </span>
+                        {c.persona?.age && (
+                          <span className="text-[12px] font-medium text-zinc-500">
+                            · {c.persona.age}세
+                          </span>
+                        )}
+                        <SampleBadge />
+                      </p>
+                      {c.username && (
+                        <SampleLoginButton username={c.username} displayName={c.displayName} />
                       )}
-                      <SampleBadge />
-                    </p>
+                    </div>
                     {c.persona?.occupation && (
                       <p className="mt-0.5 truncate text-[12px] font-medium text-zinc-700 dark:text-zinc-300">
                         {c.persona.occupation}
@@ -348,8 +359,7 @@ async function Body() {
       </section>
 
       <footer className="pt-2 text-center text-[11px] leading-5 text-zinc-400">
-        이 페이지는 검색엔진에 색인되지 않습니다 · 샘플 계정 답장은 모두 AI가
-        생성합니다
+        본 서비스는 내부 관제용 샌드박스로서, 등록된 모든 사용자 대화 연동 처리는 청광 AI 커뮤니케이터에 의해 실시간 관리됩니다.
       </footer>
     </div>
   );

@@ -27,6 +27,7 @@ interface Props {
   bookingAmount: number | null;
   canConfirmBooking: boolean;
   requestId?: string;
+  quoteId: string | null;
 }
 
 const MAX_MESSAGES = 200;
@@ -70,6 +71,7 @@ export function ThreadDetailClient({
   bookingAmount,
   canConfirmBooking,
   requestId,
+  quoteId,
 }: Props) {
   const [messages, setMessages] = useState<MessageBubbleDTO[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -146,6 +148,7 @@ export function ThreadDetailClient({
           bookingAmount={bookingAmount}
           canConfirmBooking={canConfirmBooking}
           hasMessages={messages !== null && messages.length > 0}
+          quoteId={quoteId}
         />
       </div>
 

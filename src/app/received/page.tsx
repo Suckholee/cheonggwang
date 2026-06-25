@@ -35,16 +35,24 @@ export default function ReceivedPage(props: {
           </span>
         </div>
       </header>
-      <div className="mt-4 mb-4 rounded-2xl border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-4 py-4 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
-          Inbox
-        </p>
-        <h1 className="mt-0.5 text-[20px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-          받은 견적
-        </h1>
-        <p className="mt-1 text-[12px] leading-5 text-zinc-600 dark:text-zinc-400">
-          청명들로부터 도착한 견적서와 예약 진행 상황을 확인하세요.
-        </p>
+      <div className="mt-4 mb-4 rounded-2xl border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-4 py-4 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950 flex justify-between items-center">
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
+            Inbox
+          </p>
+          <h1 className="mt-0.5 text-[20px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+            받은 견적
+          </h1>
+          <p className="mt-1 text-[12px] leading-5 text-zinc-600 dark:text-zinc-400">
+            청명들로부터 도착한 견적서와 예약 진행 상황을 확인하세요.
+          </p>
+        </div>
+        <Link
+          href="/quote/new"
+          className="ml-4 shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-[#2563EB] px-4 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue-750 active:scale-95 shadow-sm dark:bg-[#3B82F6] dark:hover:bg-[#2563EB]"
+        >
+          새 견적 요청
+        </Link>
       </div>
       <Suspense fallback={<ReceivedSkeleton />}>
         <ReceivedBody searchParams={props.searchParams} />

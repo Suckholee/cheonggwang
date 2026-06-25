@@ -57,6 +57,7 @@ export function isActiveTab(pathname: string | null, tab: TabDefinition): boolea
   if (!pathname) return false;
   if (tab.exact) return pathname === tab.href;
   if (pathname === tab.href) return true;
+  if (tab.href === "/received" && pathname.startsWith("/quote")) return true;
   return pathname.startsWith(tab.href + "/");
 }
 

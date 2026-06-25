@@ -104,8 +104,8 @@ export function RequestCard({ request, provider }: Props) {
         />
         <DetailRow
           icon={<MapPin className="h-4 w-4" />}
-          label="지역"
-          value={request.region.district}
+          label="지역/주소"
+          value={request.address || request.region.district}
         />
         <DetailRow
           icon={<Home className="h-4 w-4" />}

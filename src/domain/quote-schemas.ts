@@ -29,8 +29,24 @@ export const quoteRequestInputSchema = z.object({
     ),
   photos: z.array(photoSchema).max(5),
   note: z.string().max(500).nullable(),
+  address: z.string().max(200).optional(),
   /** v1.1b #2 provider-profile — provider-profile → "견적 요청하기" 경로에서 우선 청명 지정 */
   preferredProviderId: z.string().min(10).optional(),
+  
+  // v1.7 견적기 맞춤화 관련 추가 필드
+  quoteType: z.enum(["premium", "regular", "budget"]).optional(),
+  frequency: z.string().optional(),
+  frequencyCount: z.number().int().positive().optional(),
+  
+  // 2단계 견적을 위한 1차 기본 견적 계산 결과 필드
+  baseAmount: z.number().int().nonnegative().optional(),
+  optionsAmount: z.number().int().nonnegative().optional(),
+  totalAmount: z.number().int().nonnegative().optional(),
+  optionsList: z.array(z.object({
+    label: z.string(),
+    qty: z.number().int().positive(),
+    price: z.number().int().nonnegative()
+  })).optional(),
 });
 
 export type QuoteRequestInput = z.infer<typeof quoteRequestInputSchema>;

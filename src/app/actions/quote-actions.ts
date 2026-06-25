@@ -85,8 +85,16 @@ export async function submitQuoteRequest(
       contactPhone: input.contactPhone,
       photos: input.photos,
       note: input.note,
+      address: input.address,
       notifiedProviderIds: [],
       status: "submitted",
+      baseAmount: input.baseAmount,
+      optionsAmount: input.optionsAmount,
+      totalAmount: input.totalAmount,
+      optionsList: input.optionsList,
+      quoteType: input.quoteType,
+      frequency: input.frequency,
+      frequencyCount: input.frequencyCount,
     });
 
     // 7. 이메일 발송 (graceful — 실패해도 저장은 성공)
@@ -100,9 +108,17 @@ export async function submitQuoteRequest(
       contactPhone: input.contactPhone,
       photos: input.photos,
       note: input.note,
+      address: input.address,
       notifiedProviderIds: [],
       status: "submitted",
       createdAt: new Date(),
+      baseAmount: input.baseAmount,
+      optionsAmount: input.optionsAmount,
+      totalAmount: input.totalAmount,
+      optionsList: input.optionsList,
+      quoteType: input.quoteType,
+      frequency: input.frequency,
+      frequencyCount: input.frequencyCount,
     };
     const photoUrls = input.photos.map((p) => p.url);
 

@@ -17,7 +17,19 @@ export interface QuoteRequest {
   contactPhone: string;
   photos: Photo[];
   note: string | null;
+  address?: string;
   notifiedProviderIds: string[];
   status: QuoteStatus;
   createdAt: Date;
+  
+  // 2단계 견적을 위한 1차 기본 견적 계산 결과 필드
+  baseAmount?: number;
+  optionsAmount?: number;
+  totalAmount?: number;
+  optionsList?: Array<{ label: string; qty: number; price: number }>;
+  
+  // v1.7 견적기 맞춤화 관련 추가 필드
+  quoteType?: "premium" | "regular" | "budget";
+  frequency?: string;
+  frequencyCount?: number;
 }

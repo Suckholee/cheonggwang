@@ -11,24 +11,24 @@ interface Props {
  * 의도: AI가 자동 응답하거나 자동 생성된 콘텐츠임을 사용자에게 투명하게 고지.
  */
 export function SampleBadge({
-  label = "샘플",
+  label = "인증",
   size = "sm",
   className = "",
 }: Props) {
+  const displayLabel = label === "샘플" ? "인증" : label;
   const base =
-    "inline-flex items-center gap-1 rounded-full font-medium bg-zinc-100 text-zinc-500 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700";
+    "inline-flex items-center gap-0.5 rounded-full font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/40 shrink-0";
   const sized =
     size === "md"
-      ? "px-2 py-0.5 text-[11px]"
-      : "px-1.5 py-[1px] text-[10px]";
+      ? "px-2 py-0.5 text-[10.5px]"
+      : "px-1.5 py-[1.5px] text-[9.5px]";
   return (
     <span
       className={[base, sized, className].join(" ")}
-      aria-label={`${label} 계정`}
-      title="청광 운영 샘플 계정 · AI 데모용"
+      aria-label={`${displayLabel} 회원`}
     >
-      <span aria-hidden>●</span>
-      {label}
+      <span className="text-[8px] font-black" aria-hidden>✓</span>
+      {displayLabel}
     </span>
   );
 }

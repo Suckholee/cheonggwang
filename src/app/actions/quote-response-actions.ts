@@ -313,3 +313,183 @@ export async function acceptQuote(
     return toActionError(e);
   }
 }
+
+// ─── updateFieldEstimate [NEW] ──────────────
+const updateFieldEstimateInputSchema = z.object({
+  quoteId: z.string().min(10),
+  additionalAmount: z.number().int().nonnegative(),
+  additionalReason: z.string().min(1).max(500),
+});
+export type UpdateFieldEstimateInput = z.infer<typeof updateFieldEstimateInputSchema>;
+
+export async function updateFieldEstimate(
+  rawInput: UpdateFieldEstimateInput,
+): Promise<ActionResult<{ quoteId: string }>> {
+  try {
+    const input = updateFieldEstimateInputSchema.parse(rawInput);
+    const { providerId } = await requireProviderContext();
+
+    const quoteRef = adminDb.collection("quotes").doc(input.quoteId);
+
+    await adminDb.runTransaction(async (tx) => {
+      const quoteSnap = await tx.get(quoteRef);
+      if (!quoteSnap.exists) {
+        throw new AppError("INVALID_INPUT", "견적을 찾을 수 없습니다");
+      }
+      const quoteData = quoteSnap.data()!;
+      if (quoteData.providerId !== providerId) {
+        throw new AppError("FORBIDDEN", "본인이 보낸 견적만 업데이트할 수 있습니다");
+      }
+      // 해당 견적의 현재 상태가 accepted 또는 booked 또는 negotiating 인지 검증 (매칭 완료 상태)
+      if (quoteData.status !== "accepted" && quoteData.status !== "booked") {
+        throw new AppError(
+          "INVALID_STATE",
+          "매칭 완료된 견적만 현장 추가금을 등록할 수 있습니다",
+        );
+      }
+
+      const totalAmount = typeof quoteData.totalAmount === "number" ? quoteData.totalAmount : 0;
+      const finalAmount = totalAmount + input.additionalAmount;
+
+      tx.update(quoteRef, {
+        additionalAmount: input.additionalAmount,
+        additionalReason: input.additionalReason,
+        finalAmount,
+      });
+
+      // 실시간 채팅방에도 시스템 메시지를 남겨 알릴 수 있습니다.
+      const threadId = buildThreadId(quoteData.requestId, providerId);
+      const threadRef = adminDb.collection("threads").doc(threadId);
+      const threadSnap = await tx.get(threadRef);
+      if (threadSnap.exists) {
+        const messageRef = threadRef.collection("messages").doc();
+        const systemText = `🔔 현장 실측 결과가 반영된 2차 견적이 등록되었습니다.\n• 추가금: +${input.additionalAmount.toLocaleString()}원\n• 사유: ${input.additionalReason}\n• 최종 금액: ${finalAmount.toLocaleString()}원`;
+        
+        tx.create(messageRef, {
+          threadId,
+          senderUid: providerId,
+          senderRole: "system",
+          type: "system",
+          text: systemText,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+
+        tx.update(threadRef, {
+          lastMessageAt: FieldValue.serverTimestamp(),
+          lastMessagePreview: `[2차 견적] 추가금 +${input.additionalAmount.toLocaleString()}원`,
+          lastMessageSenderUid: providerId,
+          unreadByClient: FieldValue.increment(1),
+        });
+      }
+    });
+
+    return { ok: true, data: { quoteId: input.quoteId } };
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "issues" in e) {
+      return actionError("INVALID_INPUT", "입력 정보가 올바르지 않습니다");
+    }
+    return toActionError(e);
+  }
+}
+
+// ─── confirmFinalEstimate [NEW] ──────────────
+const confirmFinalEstimateInputSchema = z.object({
+  quoteId: z.string().min(10),
+});
+export type ConfirmFinalEstimateInput = z.infer<typeof confirmFinalEstimateInputSchema>;
+
+export async function confirmFinalEstimate(
+  rawInput: ConfirmFinalEstimateInput,
+): Promise<ActionResult<{ quoteId: string }>> {
+  try {
+    const input = confirmFinalEstimateInputSchema.parse(rawInput);
+
+    const jar = await cookies();
+    const clientUid = await verifySessionCookie(
+      jar.get(SESSION_COOKIE_NAME)?.value,
+    );
+
+    const quoteRef = adminDb.collection("quotes").doc(input.quoteId);
+
+    await adminDb.runTransaction(async (tx) => {
+      const quoteSnap = await tx.get(quoteRef);
+      if (!quoteSnap.exists) {
+        throw new AppError("INVALID_INPUT", "견적을 찾을 수 없습니다");
+      }
+      const quoteData = quoteSnap.data()!;
+      if (quoteData.clientUid !== clientUid) {
+        throw new AppError("FORBIDDEN", "본인 요청의 견적만 확정할 수 있습니다");
+      }
+      if (quoteData.status !== "accepted" && quoteData.status !== "booked") {
+        throw new AppError(
+          "INVALID_STATE",
+          "진행 중인 견적만 최종 확정할 수 있습니다",
+        );
+      }
+
+      const requestId = String(quoteData.requestId);
+      const requestRef = adminDb.collection("quoteRequests").doc(requestId);
+      const requestSnap = await tx.get(requestRef);
+      if (!requestSnap.exists) {
+        throw new AppError("INVALID_INPUT", "요청을 찾을 수 없습니다");
+      }
+
+      const finalConfirmedAmount = typeof quoteData.finalAmount === "number" ? quoteData.finalAmount : quoteData.totalAmount;
+
+      tx.update(quoteRef, {
+        finalConfirmed: true,
+        finalConfirmedAt: FieldValue.serverTimestamp(),
+        status: "completed",
+      });
+
+      tx.update(requestRef, {
+        status: "completed",
+      });
+
+      // 관련 booking이 있다면 booking의 totalAmount도 최종금액으로 갱신
+      const bookingsSnap = await tx.get(
+        adminDb.collection("bookings").where("quoteId", "==", input.quoteId).limit(1)
+      );
+      if (!bookingsSnap.empty) {
+        const bookingDoc = bookingsSnap.docs[0];
+        tx.update(bookingDoc.ref, {
+          totalAmount: finalConfirmedAmount,
+        });
+      }
+
+      // 실시간 채팅방에도 시스템 메시지를 남겨 알릴 수 있습니다.
+      const providerId = String(quoteData.providerId);
+      const threadId = buildThreadId(requestId, providerId);
+      const threadRef = adminDb.collection("threads").doc(threadId);
+      const threadSnap = await tx.get(threadRef);
+      if (threadSnap.exists) {
+        const messageRef = threadRef.collection("messages").doc();
+        const systemText = `🎉 최종 견적이 수락되었으며 청소 예약이 최종 확정되었습니다!`;
+        
+        tx.create(messageRef, {
+          threadId,
+          senderUid: clientUid,
+          senderRole: "system",
+          type: "system",
+          text: systemText,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+
+        tx.update(threadRef, {
+          lastMessageAt: FieldValue.serverTimestamp(),
+          lastMessagePreview: systemText,
+          lastMessageSenderUid: clientUid,
+          unreadByProvider: FieldValue.increment(1),
+        });
+      }
+    });
+
+    return { ok: true, data: { quoteId: input.quoteId } };
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "issues" in e) {
+      return actionError("INVALID_INPUT", "입력 정보가 올바르지 않습니다");
+    }
+    return toActionError(e);
+  }
+}
+

@@ -132,6 +132,7 @@ async function ThreadBody({
         bookingAmount={bookingAmount}
         canConfirmBooking={canConfirmBooking}
         requestId={thread.requestId}
+        quoteId={thread.quoteId}
       />
     </>
   );

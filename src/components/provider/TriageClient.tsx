@@ -247,8 +247,22 @@ export function TriageClient({ initialRequests, provider }: Props) {
                     </div>
                   )}
 
-                  {/* Standard price range if available */}
-                  {standardPriceRange(provider, req.category) && (
+                  {/* Customer's first-stage quote if available */}
+                  {req.totalAmount !== undefined && req.totalAmount > 0 ? (
+                    <div className="rounded-2xl bg-blue-50 border border-blue-150 px-4 py-3.5 dark:bg-blue-950/15 dark:border-blue-900/35">
+                      <span className="text-[9.5px] font-extrabold text-[#2563EB] dark:text-blue-400 uppercase tracking-wider leading-none block mb-1.5">
+                        고객 1차 기본 견적금 (계산기 산출)
+                      </span>
+                      <span className="text-[18px] font-black text-[#2563EB] dark:text-[#3B82F6]">
+                        {req.totalAmount.toLocaleString()}원
+                      </span>
+                      {req.optionsList && req.optionsList.length > 0 && (
+                        <p className="mt-2 text-[10.5px] font-bold text-zinc-400 dark:text-zinc-500 leading-normal">
+                          • 선택 옵션: {req.optionsList.map((o) => `${o.label}(${o.qty}개)`).join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  ) : standardPriceRange(provider, req.category) && (
                     <div className="rounded-2xl bg-[#EFF6FF] border border-blue-100/50 px-4 py-3.5 dark:bg-blue-950/15 dark:border-blue-900/35">
                       <span className="text-[10px] font-extrabold text-blue-500 dark:text-blue-400 uppercase tracking-wider leading-none block mb-1">
                         표준 견적 범위

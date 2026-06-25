@@ -154,6 +154,20 @@ export function QuoteProposalForm({ request, providerId }: Props) {
         <p className="text-[11px] text-zinc-450 dark:text-zinc-500 leading-relaxed font-medium">
           고객이 요청한 기본 조건을 확인하고 합리적인 견적을 작성해 보세요.
         </p>
+        
+        {request.totalAmount !== undefined && request.totalAmount > 0 && (
+          <div className="mt-4 rounded-2xl bg-white border border-zinc-150 p-4 text-xs dark:bg-zinc-950 dark:border-zinc-800 space-y-1.5 shadow-xs">
+            <div className="flex justify-between items-center font-bold text-zinc-850 dark:text-zinc-200">
+              <span>고객 1차 기본 견적 금액 (계산기 산출)</span>
+              <span className="text-[14px] font-black text-[#2563EB] dark:text-blue-400">{request.totalAmount.toLocaleString()}원</span>
+            </div>
+            {request.optionsList && request.optionsList.length > 0 && (
+              <p className="text-[10.5px] font-bold text-zinc-400 dark:text-zinc-500 leading-normal">
+                • 선택 옵션: {request.optionsList.map((o) => `${o.label}(${o.qty}개)`).join(", ")}
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 2. 스마트 견적 계산기 Panel */}

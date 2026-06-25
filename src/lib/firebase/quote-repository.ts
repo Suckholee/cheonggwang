@@ -46,6 +46,15 @@ function toQuote(id: string, d: DocumentData): Quote {
     sentAt: tsToDate(d.sentAt as Timestamp | undefined),
     acceptedAt: tsToNullableDate(d.acceptedAt as Timestamp | null),
     rejectedAt: tsToNullableDate(d.rejectedAt as Timestamp | null),
+    additionalAmount:
+      typeof d.additionalAmount === "number" ? d.additionalAmount : undefined,
+    additionalReason:
+      typeof d.additionalReason === "string" ? d.additionalReason : undefined,
+    finalAmount:
+      typeof d.finalAmount === "number" ? d.finalAmount : undefined,
+    finalConfirmed:
+      typeof d.finalConfirmed === "boolean" ? d.finalConfirmed : undefined,
+    finalConfirmedAt: tsToNullableDate(d.finalConfirmedAt as Timestamp | null),
   };
 }
 

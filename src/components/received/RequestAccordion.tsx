@@ -70,7 +70,7 @@ export function RequestAccordion({ request }: Props) {
               <div className="flex flex-col">
                 <span className="text-zinc-400">청소 위치</span>
                 <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                  {request.region.city} {request.region.district}
+                  {request.address || `${request.region.city} ${request.region.district}`}
                 </span>
               </div>
             </div>

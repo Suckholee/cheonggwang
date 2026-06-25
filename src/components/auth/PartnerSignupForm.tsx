@@ -93,6 +93,13 @@ export function PartnerSignupForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="w-full max-w-md space-y-4"
     >
+      <div className="rounded-xl bg-blue-50 p-3.5 text-xs font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 animate-[fade-in_0.3s_ease-out]">
+        🏢 <strong>[2단계] 매장 정보 등록</strong>
+        <p className="mt-0.5 text-[11px] opacity-80 font-normal">
+          의뢰업체 신청을 마무리하기 위해 매장 정보를 마저 입력해 주세요.
+        </p>
+      </div>
+
       {/* 현재 로그인 계정 표시 */}
       {user ? (
         <div className="rounded-md bg-zinc-50 px-3 py-2 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
