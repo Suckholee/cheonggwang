@@ -15,6 +15,7 @@ import {
   type QuoteCategory,
 } from "@/domain/quote-category";
 import { providerRepository } from "@/lib/firebase/provider-repository";
+import { userRepository } from "@/lib/firebase/user-repository";
 import { QuoteForm } from "@/components/quote/QuoteForm";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { ChevronLeft, Home, Sparkles } from "lucide-react";
@@ -133,6 +134,10 @@ async function AuthedQuoteForm({
     preferredProvider?.firstCategory ??
     (sp.category ? mapLegacyCategory(sp.category) : undefined);
 
+  const userProfile = await userRepository.get(uid);
+  const initialClientName = userProfile?.displayName ?? "";
+  const initialContactPhone = userProfile?.contactPhone ?? "";
+
   const requestId = nanoRequestId();
 
   return (
@@ -163,6 +168,8 @@ async function AuthedQuoteForm({
         requestId={requestId}
         initialCategory={initialCategory}
         preferredProviderId={preferredProvider?.id}
+        initialClientName={initialClientName}
+        initialContactPhone={initialContactPhone}
       />
     </>
   );

@@ -240,12 +240,16 @@ interface Props {
   requestId: string;
   initialCategory?: QuoteCategory;
   preferredProviderId?: string;
+  initialClientName?: string;
+  initialContactPhone?: string;
 }
 
 export function QuoteForm({
   requestId,
   initialCategory,
   preferredProviderId,
+  initialClientName = "",
+  initialContactPhone = "",
 }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -262,7 +266,7 @@ export function QuoteForm({
     resolver: zodResolver(quoteRequestInputSchema),
     defaultValues: {
       requestId,
-      clientName: "",
+      clientName: initialClientName,
       category: initialCategory ?? "residential",
       subService: "",
       region: FORM_REGION_OPTIONS[0].region,
@@ -272,7 +276,7 @@ export function QuoteForm({
       preferredTime: "오전 09:00",
       hasElevator: "no",
       parkingAvailable: "discuss",
-      contactPhone: "",
+      contactPhone: initialContactPhone,
       photos: [],
       note: "",
       preferredProviderId,
