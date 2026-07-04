@@ -13,14 +13,14 @@ import type { PriceSummary } from "@/types/client-dashboard";
 const CATEGORY_IMAGES: Record<QuoteCategory, string> = {
   residential: "/images/cat_move_in.png",
   regular: "/images/cat_regular.png",
-  construction: "/images/cat_office.png",
-  exterior: "/images/cat_office.png",
-  sanitation: "/images/cat_special.png",
-  specialist: "/images/cat_aircon.png",
-  lodging: "/images/cat_regular.png",
-  industrial: "/images/cat_office.png",
+  construction: "/images/cat_construction.png",
+  exterior: "/images/cat_exterior.png",
+  sanitation: "/images/cat_sanitation.png",
+  specialist: "/images/cat_specialist.png",
+  lodging: "/images/cat_lodging.png",
+  industrial: "/images/cat_industrial.png",
   special: "/images/cat_special.png",
-  etc: "/images/cat_office.png",
+  etc: "/images/cat_etc.png",
 };
 
 interface Props {
