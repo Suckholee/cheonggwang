@@ -306,10 +306,6 @@ export function QuoteForm({
   const [frequency, setFrequency] = useState<string>("once");
   const [frequencyCount, setFrequencyCount] = useState<number>(1);
 
-  // 명함 자동 완성 상태
-  const [isAnalyzingCard, setIsAnalyzingCard] = useState(false);
-  const [cardUploaded, setCardUploaded] = useState(false);
-
   // 주소 관련 상태
   const [address, setAddress] = useState("");
   const [suggestions, setSuggestions] = useState<AddressPreset[]>([]);
@@ -503,30 +499,6 @@ export function QuoteForm({
     }
   }, [isOpenPostcode]);
 
-  const handleCardUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsAnalyzingCard(true);
-    setTimeout(() => {
-      setIsAnalyzingCard(false);
-      setCardUploaded(true);
-      const info = {
-        company: "스타트업 크림타임",
-        name: "김민수 팀장",
-        phone: "010-8953-2345",
-        address: "서울특별시 서초구 서초대로 397 (부티크모나코)"
-      };
-      
-      setValue("clientName", info.name, { shouldValidate: true });
-      setValue("contactPhone", info.phone, { shouldValidate: true });
-      setAddress(info.address);
-      setValue("address", info.address, { shouldValidate: true });
-      setValue("region", { city: "서울특별시", district: "서초구" }, { shouldValidate: true });
-      setValue("note", `[명함 자동 인식 정보]\n- 회사명: ${info.company}\n- 의뢰인: ${info.name}`, { shouldValidate: true });
-    }, 1500);
-  };
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const clean = e.target.value.replace(/[^0-9]/g, "");
     let formatted = clean;
@@ -670,60 +642,6 @@ export function QuoteForm({
               />
             </div>
           </div>
-
-          {/* 명함 등록 */}
-          <Field
-            label="명함 등록 (선택)"
-            hint="연락처/회사정보 3초 자동 완성"
-            completed={cardUploaded}
-          >
-            <div className="relative">
-              {isAnalyzingCard ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-blue-200 bg-blue-50/10 p-6 text-center shadow-xs">
-                  <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#2563EB] border-t-transparent mb-2" />
-                  <p className="text-[11.5px] font-semibold text-[#2563EB]">명함 이미지를 분석하여 연락처 및 사업장 정보를 입력 중입니다...</p>
-                </div>
-              ) : cardUploaded ? (
-                <div className="flex items-center gap-3.5 rounded-2xl border border-emerald-200 bg-emerald-50/10 p-4 shadow-xs">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-zinc-800 flex items-center justify-center font-bold text-emerald-600 shrink-0 text-lg">
-                    🪪
-                  </div>
-                  <div className="min-w-0 flex-1 text-[12.5px]">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-extrabold text-zinc-900 dark:text-zinc-50">{clientName} 고객님</span>
-                      <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-[0.5px] text-[9px] font-bold text-emerald-600">
-                        인식 완료 ✓
-                      </span>
-                    </div>
-                    <p className="text-zinc-650 dark:text-zinc-400 mt-0.5 font-medium">{contactPhone}</p>
-                  </div>
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      setCardUploaded(false);
-                      setValue("clientName", "");
-                      setValue("contactPhone", "");
-                    }} 
-                    className="text-xs font-bold text-zinc-400 hover:text-red-500 cursor-pointer"
-                  >
-                    삭제
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 hover:bg-zinc-50 p-6 text-center cursor-pointer transition-all hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900">
-                  <span className="text-2xl mb-1.5" aria-hidden>📸</span>
-                  <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">본인 명함 올리기</span>
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">업로드 시 이름, 연락처, 회사명이 자동 입력됩니다.</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCardUpload}
-                    className="hidden"
-                  />
-                </label>
-              )}
-            </div>
-          </Field>
 
           {/* 공통 고객 접수 정보 (상단 추가) */}
           <div className="p-5 bg-white border border-zinc-200 rounded-[24px] shadow-sm space-y-4 dark:bg-zinc-950 dark:border-zinc-850">
