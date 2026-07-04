@@ -32,43 +32,50 @@ export const metadata = {
 export default function MarketplaceHome() {
   return (
     <>
-      <div className="min-h-screen w-full bg-[#F7F9FC] px-4 pt-2 pb-40">
+      <div className="min-h-screen w-full bg-[#F7F9FC] px-4 pt-2 pb-40 md:bg-transparent md:px-0 md:py-0 md:pb-12 md:min-h-0">
         <HomeHeader />
 
-        <main className="space-y-8">
-          <HeroSection />
+        <main className="space-y-8 md:space-y-0 animate-[fadeIn_0.3s_ease-out]">
+          <div className="flex flex-col md:flex-row gap-6 lg:gap-8 items-start">
+            {/* Left Column (Main Contents) */}
+            <div className="w-full md:w-0 md:flex-[2] flex flex-col gap-8">
+              <HeroSection />
 
-          {/* v1.10 핵심 가치 — Hero 직후 노출. 매장·사무실 운영자에게 청소+광고 듀얼 가치 강조 */}
-          <PartnerApplyCTA />
+              <section>
+                <HomeSectionHeader
+                  eyebrow="Quick Start"
+                  title="어떤 청소가 필요하세요?"
+                  description="자주 찾는 서비스를 바로 선택하고 2분 안에 견적을 시작해보세요."
+                />
+                <CategoryGrid />
+              </section>
 
-          <Suspense fallback={<TodayCardSkeleton />}>
-            <TodayCardSlot />
-          </Suspense>
+              <Suspense fallback={<SectionSkeleton />}>
+                <AveragePriceSection />
+              </Suspense>
 
-          <TrustMetricsSection />
+              <CommunityPreviewSection />
+            </div>
 
-          <section>
-            <HomeSectionHeader
-              eyebrow="Quick Start"
-              title="어떤 청소가 필요하세요?"
-              description="자주 찾는 서비스를 바로 선택하고 2분 안에 견적을 시작해보세요."
-            />
-            <CategoryGrid />
-          </section>
+            {/* Right Column (Sidebar Widgets) */}
+            <div className="w-full md:w-0 md:flex-[1] flex flex-col gap-6">
+              <Suspense fallback={<TodayCardSkeleton />}>
+                <TodayCardSlot />
+              </Suspense>
 
-          <Suspense fallback={<SectionSkeleton />}>
-            <AveragePriceSection />
-          </Suspense>
+              <PartnerApplyCTA />
 
-          <Suspense fallback={<SectionSkeleton />}>
-            <TopProvidersSection />
-          </Suspense>
+              <TrustMetricsSection />
 
-          <CommunityPreviewSection />
+              <Suspense fallback={<SectionSkeleton />}>
+                <TopProvidersSection />
+              </Suspense>
 
-          <Suspense fallback={<FooterSkeleton />}>
-            <MarketplaceFooter />
-          </Suspense>
+              <Suspense fallback={<FooterSkeleton />}>
+                <MarketplaceFooter />
+              </Suspense>
+            </div>
+          </div>
         </main>
       </div>
 
@@ -98,7 +105,7 @@ function HomeHeader() {
 function HeroSection() {
   return (
     <section 
-      className="relative overflow-hidden rounded-[30px] border border-[#b0cfff] px-6 py-7 shadow-[0_12px_36px_rgba(43,102,246,0.08)] bg-cover bg-center"
+      className="relative overflow-hidden rounded-[30px] border border-[#b0cfff] px-6 py-7 shadow-[0_12px_36px_rgba(43,102,246,0.08)] bg-cover bg-center md:py-10 md:px-8"
       style={{ backgroundImage: "url('/images/clean_living_room.png')" }}
     >
       {/* Premium semi-transparent white/blue glassmorphism overlay */}
@@ -109,7 +116,7 @@ function HeroSection() {
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           믿고 맡길 수 있는 청소 연결
         </div>
-        <h1 className="max-w-xs text-[32px] font-extrabold leading-[1.25] tracking-[-0.2px] text-zinc-950 dark:text-zinc-50">
+        <h1 className="max-w-xs text-[32px] md:max-w-md font-extrabold leading-[1.25] tracking-[-0.2px] text-zinc-950 dark:text-zinc-50">
           오늘 필요한 청소,
           <br />
           빠르게 연결해드려요
@@ -119,17 +126,17 @@ function HeroSection() {
           <br />
           비교 견적과 업체 정보를 한 번에 확인하세요.
         </p>
-        <div className="mt-5 flex flex-col gap-2.5">
+        <div className="mt-5 flex flex-col gap-2.5 md:flex-row md:items-center md:gap-4">
           <Link
             href="/quote/new"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2563EB] px-5 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(43,102,246,0.24)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_10px_24px_rgba(43,102,246,0.32)] active:scale-[0.99]"
+            className="inline-flex w-full md:w-auto items-center justify-center gap-2 rounded-2xl bg-[#2563EB] px-5 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(43,102,246,0.24)] transition-all hover:bg-[#1D4ED8] hover:shadow-[0_10px_24px_rgba(43,102,246,0.32)] active:scale-[0.99]"
           >
             청소 견적 받기
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <Link
             href="/search"
-            className="inline-flex w-full items-center justify-center gap-1.5 py-2 text-sm font-bold text-[#2563EB] transition-colors hover:text-[#1D4ED8] dark:text-[#3B82F6] dark:hover:text-[#60A5FA]"
+            className="inline-flex w-full md:w-auto items-center justify-center gap-1.5 px-5 py-3.5 text-sm font-bold text-[#2563EB] transition-colors hover:text-[#1D4ED8] dark:text-[#3B82F6] dark:hover:text-[#60A5FA] md:bg-white/80 md:border md:border-zinc-200 md:rounded-2xl md:shadow-xs md:hover:bg-zinc-50 dark:md:bg-zinc-900 dark:md:border-zinc-800"
           >
             <Search className="h-4 w-4" aria-hidden />
             업체 찾기

@@ -29,7 +29,7 @@ export default function ComparePage(props: {
   params: Promise<Params>;
 }) {
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-zinc-50 dark:bg-zinc-900 pb-12 shadow-2xl border-x border-zinc-200/50 dark:border-zinc-800/50 relative">
+    <div className="mx-auto min-h-screen max-w-md md:max-w-none md:w-full bg-zinc-50 dark:bg-zinc-900 pb-12 shadow-2xl md:shadow-none border-x md:border-x-0 border-zinc-200/50 dark:border-zinc-800/50 relative animate-[fadeIn_0.3s_ease-out]">
       <Suspense fallback={<CompareSkeleton />}>
         <CompareBody params={props.params} />
       </Suspense>
@@ -108,9 +108,9 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
   const gradient = categoryGradients[request.category] || "from-zinc-500 to-zinc-700";
 
   return (
-    <>
+    <div className="md:px-2 md:py-2">
       {/* Category Banner Header */}
-      <header className={`relative bg-gradient-to-br ${gradient} px-5 pb-16 pt-6 text-white overflow-hidden`}>
+      <header className={`relative bg-gradient-to-br ${gradient} px-5 pb-16 pt-6 text-white overflow-hidden md:rounded-3xl`}>
         <div className="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4 select-none pointer-events-none text-9xl">
           {emoji}
         </div>
@@ -135,53 +135,59 @@ async function CompareBody({ params }: { params: Promise<Params> }) {
         </div>
       </header>
 
-      {/* Floating Request Metadata Accordion Card */}
-      <RequestAccordion request={request} />
+      {/* Grid container for desktop layout */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start mt-6">
+        {/* Left Column: Request Details & Timeline (5 cols) */}
+        <div className="md:col-span-5 space-y-6">
+          {/* Floating Request Metadata Accordion Card */}
+          <RequestAccordion request={request} />
 
-      {/* Real-time status, photos, assigned team & reviews */}
-      <RequestWorkflowCard request={request} />
+          {/* Real-time status, photos, assigned team & reviews */}
+          <RequestWorkflowCard request={request} />
+        </div>
 
-      {/* Received Quotes Section */}
-      <div className="px-4 mt-6">
-        <style dangerouslySetInnerHTML={{__html: `
-          @keyframes slideUp {
-            from {
-              transform: translateY(24px);
-              opacity: 0;
+        {/* Right Column: Received Quotes (7 cols) */}
+        <div className="md:col-span-7 px-4 md:px-0 mt-6 md:mt-0">
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes slideUp {
+              from {
+                transform: translateY(24px);
+                opacity: 0;
+              }
+              to {
+                transform: translateY(0);
+                opacity: 1;
+              }
             }
-            to {
-              transform: translateY(0);
-              opacity: 1;
-            }
-          }
-        `}} />
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 pl-1">
-          받은 견적 <span className="text-emerald-600 dark:text-emerald-400">{quotes.length}</span>건
-        </h2>
+          `}} />
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 pl-1">
+            받은 견적 <span className="text-emerald-600 dark:text-emerald-400">{quotes.length}</span>건
+          </h2>
 
-        {quotes.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-zinc-200 bg-white px-4 py-12 text-center dark:border-zinc-800 dark:bg-zinc-950">
-            <p className="text-sm text-zinc-400">아직 도착한 견적이 없습니다.</p>
-            <p className="text-xs text-zinc-400 mt-1">청명이 견적을 보내면 실시간으로 알림을 드립니다.</p>
-          </div>
-        ) : (
-          /* Continuous Quote Cards Container with dividers */
-          <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-950">
-            {quotes.map((quote, i) => (
-              <QuoteCompareCard
-                key={quote.id}
-                quote={quote}
-                provider={providers[i]}
-                requestStatus={request.status}
-                bookingScheduledAtMs={
-                  bookingScheduledAtMsByQuoteId.get(quote.id) ?? null
-                }
-                index={i}
-              />
-            ))}
-          </div>
-        )}
+          {quotes.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-zinc-200 bg-white px-4 py-12 text-center dark:border-zinc-800 dark:bg-zinc-950">
+              <p className="text-sm text-zinc-400">아직 도착한 견적이 없습니다.</p>
+              <p className="text-xs text-zinc-400 mt-1">청명이 견적을 보내면 실시간으로 알림을 드립니다.</p>
+            </div>
+          ) : (
+            /* Continuous Quote Cards Container with dividers */
+            <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800/80 dark:bg-zinc-950 animate-[fadeIn_0.3s_ease-out]">
+              {quotes.map((quote, i) => (
+                <QuoteCompareCard
+                  key={quote.id}
+                  quote={quote}
+                  provider={providers[i]}
+                  requestStatus={request.status}
+                  bookingScheduledAtMs={
+                    bookingScheduledAtMsByQuoteId.get(quote.id) ?? null
+                  }
+                  index={i}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }

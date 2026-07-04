@@ -24,8 +24,8 @@ export const metadata = {
 
 export default function ProviderHomePage() {
   return (
-    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
-      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none md:bg-transparent md:px-0 md:py-0 md:pb-12 md:min-h-0 animate-[fadeIn_0.3s_ease-out]">
+      <header className="md:hidden sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:border-zinc-800/70 dark:bg-zinc-950/90">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <BrandLogo />
@@ -103,22 +103,26 @@ async function DashboardBody() {
   };
 
   return (
-    <>
-      <DashboardHero provider={provider} totalCount={totalCount} />
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+      <div className="md:col-span-2 space-y-6">
+        <DashboardHero provider={provider} totalCount={totalCount} />
 
-      <ReceivedRequestsCta count={totalCount} />
+        <ActiveRequestsSection
+          provider={provider}
+          requests={activeRequests}
+          totalCount={totalCount}
+        />
 
-      <ActiveRequestsSection
-        provider={provider}
-        requests={activeRequests}
-        totalCount={totalCount}
-      />
+        <TodayScheduleCard />
+      </div>
 
-      <TodayScheduleCard />
+      <div className="space-y-6">
+        <ReceivedRequestsCta count={totalCount} />
 
-      <QuickStatsSection stats={stats} />
+        <QuickStatsSection stats={stats} />
 
-      <ShortcutGrid requestBadgeCount={totalCount} />
-    </>
+        <ShortcutGrid requestBadgeCount={totalCount} />
+      </div>
+    </div>
   );
 }

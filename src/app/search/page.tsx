@@ -19,26 +19,26 @@ interface PageProps {
 
 export default function SearchPage(props: PageProps) {
   return (
-    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-24">
-      <header className="sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:bg-zinc-950/90">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-24 md:bg-transparent md:px-0 md:py-0 md:pb-12 md:min-h-0 animate-[fadeIn_0.3s_ease-out]">
+      <header className="md:hidden sticky top-0 z-40 -mx-5 mb-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:bg-zinc-950/90">
         <div className="flex items-center justify-between">
           <BrandLogo />
           <span className="rounded-full border border-[#d8e6ff] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/80">
             Search
           </span>
         </div>
-        <div className="mt-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)]">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70">
-            Find Providers
-          </p>
-          <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-            청명찾기
-          </h1>
-          <p className="mt-2 text-[13px] leading-5 text-zinc-600 dark:text-zinc-400">
-            평점, 보험 여부, 응답 속도 같은 신뢰 신호를 먼저 보고 나에게 맞는 청명을 골라보세요.
-          </p>
-        </div>
       </header>
+      <div className="mt-4 rounded-[28px] border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-5 py-5 shadow-[0_14px_34px_rgba(43,102,246,0.08)] md:bg-transparent md:border-0 md:px-0 md:py-0 md:shadow-none md:mb-6 md:mt-2">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
+          Find Providers
+        </p>
+        <h1 className="mt-1 text-[26px] font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+          청명찾기
+        </h1>
+        <p className="mt-2 text-[13px] leading-5 text-zinc-650 dark:text-zinc-400">
+          평점, 보험 여부, 응답 속도 같은 신뢰 신호를 먼저 보고 나에게 맞는 청명을 골라보세요.
+        </p>
+      </div>
       <Suspense fallback={<SearchSkeleton />}>
         <SearchBody searchParams={props.searchParams} />
       </Suspense>

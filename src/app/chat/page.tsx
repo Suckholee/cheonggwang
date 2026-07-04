@@ -19,8 +19,8 @@ export const metadata = {
 
 export default function ChatPage() {
   return (
-    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-4 pt-2 pb-28 dark:bg-none">
-      <header className="sticky top-0 z-40 -mx-4 mb-3 border-b border-zinc-200/40 bg-[#f4f9ff]/95 px-4 py-3.5 backdrop-blur dark:border-zinc-850 dark:bg-zinc-950/95">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-4 pt-2 pb-28 dark:bg-none md:bg-transparent md:px-0 md:py-0 md:pb-12 md:min-h-0 animate-[fadeIn_0.3s_ease-out]">
+      <header className="md:hidden sticky top-0 z-40 -mx-4 mb-3 border-b border-zinc-200/40 bg-[#f4f9ff]/95 px-4 py-3.5 backdrop-blur dark:border-zinc-850 dark:bg-zinc-950/95">
         <div className="flex items-center justify-between">
           <BrandLogo />
           <Link

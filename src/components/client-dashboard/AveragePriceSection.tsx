@@ -43,7 +43,7 @@ export async function AveragePriceSection() {
       {hasAnyData ? (
         <div
           role="list"
-          className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2"
+          className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0"
         >
           {QUOTE_CATEGORIES.map((cat) => {
             const summary = prices[cat];

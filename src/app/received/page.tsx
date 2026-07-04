@@ -26,8 +26,8 @@ export default function ReceivedPage(props: {
   searchParams: Promise<SearchParams>;
 }) {
   return (
-    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none">
-      <header className="sticky top-0 z-40 -mx-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:bg-zinc-950/90 dark:border-zinc-900">
+    <div className="min-h-screen w-full bg-[linear-gradient(180deg,#f4f9ff_0%,#ffffff_18%,#ffffff_100%)] px-5 pt-3 pb-28 dark:bg-none md:bg-transparent md:px-0 md:py-0 md:pb-12 md:min-h-0 animate-[fadeIn_0.3s_ease-out]">
+      <header className="md:hidden sticky top-0 z-40 -mx-5 border-b border-white/70 bg-[#f4f9ff]/90 px-5 py-3 backdrop-blur dark:bg-zinc-950/90 dark:border-zinc-900">
         <div className="flex items-center justify-between">
           <BrandLogo />
           <span className="rounded-full border border-[#d8e6ff] bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/80">
@@ -35,7 +35,7 @@ export default function ReceivedPage(props: {
           </span>
         </div>
       </header>
-      <div className="mt-4 mb-4 rounded-2xl border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-4 py-4 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950 flex justify-between items-center">
+      <div className="mt-4 mb-4 rounded-2xl border border-[#dbe8fb] bg-[linear-gradient(135deg,#ffffff_0%,#eef6ff_46%,#dcebff_100%)] px-4 py-4 shadow-[0_14px_34px_rgba(43,102,246,0.08)] dark:border-zinc-850 dark:bg-gradient-to-br dark:from-zinc-900 dark:to-zinc-950 flex justify-between items-center md:bg-transparent md:border-0 md:px-0 md:py-0 md:shadow-none md:mb-6 md:mt-2">
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#2563EB]/70 dark:text-zinc-400">
             Inbox
