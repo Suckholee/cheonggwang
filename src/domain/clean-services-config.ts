@@ -294,7 +294,6 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
       { key: "opt-parking-water", label: "주차장 물청소", type: "boolean" },
     ],
     fields: [
-      { key: "floors", label: "건물 층수", type: "number", placeholder: "예: 5" },
       { key: "period", label: "청소 주기", type: "select", options: ["주 1회", "주 2회", "주 3회", "주 4회", "주 5회 이상"] },
     ],
     guideText: "※ 추가공간 및 옵션선택 내용은 현장상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.",
@@ -381,7 +380,6 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
     fields: [
       { key: "waste-volume", label: "폐기물 양", type: "select", options: ["1톤", "2.5톤", "5톤"] },
       { key: "waste-type", label: "폐기물 종류", type: "select", options: ["목재", "콘크리트", "혼합 폐기물", "기타"] },
-      { key: "cars", label: "차량 대수", type: "number", placeholder: "예: 1" },
     ],
     guideText: "※ 추가공간 및 옵션선택 내용은 현장상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.",
   },
@@ -418,7 +416,6 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
       { key: "opt-spider-web", label: "거미줄 제거", type: "boolean" },
     ],
     fields: [
-      { key: "signboard-count", label: "간판 크기/개수", type: "number", placeholder: "예: 1" },
       { key: "height", label: "설치 높이", type: "select", options: ["1층", "2층 이상"] },
       { key: "signboard-type", label: "간판 종류", type: "select", options: ["플렉스 간판", "LED 채널 간판", "돌출 간판", "기타"] },
     ],
@@ -524,7 +521,7 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
     key: "aircon-cleaning",
     label: "에어컨청소",
     category: "specialist",
-    priceFormulaType: "fixed",
+    priceFormulaType: "count",
     unitPrice: 80000,
     extraSpaces: [],
     options: [
@@ -535,7 +532,6 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
     ],
     fields: [
       { key: "aircon-type", label: "형태", type: "select", options: ["벽걸이형", "스탠드형", "천장형 (1way)", "천장형 (2way)", "천장형 (4way)", "창문형"] },
-      { key: "count", label: "수량", type: "number", placeholder: "예: 1" },
     ],
     guideText: "※ 추가공간 및 옵션선택 내용은 현장상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.",
   },
@@ -600,7 +596,7 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
     key: "lodging-cleaning",
     label: "객실 / 펜션 / 고시텔 / 숙박업소 공용부",
     category: "lodging",
-    priceFormulaType: "fixed",
+    priceFormulaType: "count",
     unitPrice: 40000,
     extraSpaces: [
       { key: "space-terrace", label: "테라스" },
@@ -614,7 +610,6 @@ export const CLEAN_SERVICES_CONFIG: Record<string, SubServiceConfig> = {
       { key: "opt-trash-out", label: "퇴거 쓰레기 처리", type: "boolean" },
     ],
     fields: [
-      { key: "room-count", label: "객실 수", type: "number", placeholder: "예: 3" },
       { key: "room-type", label: "객실 타입", type: "select", options: ["원룸형", "투룸형", "복층형"] },
     ],
     guideText: "※ 추가공간 및 옵션선택 내용은 현장상황에 따라 변경될 수 있습니다. 최종 금액은 현장확인 후 확정됩니다.",
