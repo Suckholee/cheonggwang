@@ -62,7 +62,27 @@ export function ProviderSignupForm() {
 
     setSmsSending(true);
 
-    try {
+      if (process.env.NODE_ENV === "development") {
+        const username = getValues("username");
+        const password = getValues("password");
+        const syntheticEmail = usernameToSyntheticEmail(username);
+        
+        let user = clientAuth.currentUser;
+        if (user && user.email !== syntheticEmail) {
+          await clientAuth.signOut();
+          user = null;
+        }
+
+        if (!user) {
+          await createUserWithEmailAndPassword(clientAuth, syntheticEmail, password);
+        }
+
+        setSmsSent(true);
+        alert("[개발 모드] SMS 전송이 생략되었습니다. 인증번호에 아무 숫자나 6자리 입력 후 확인을 눌러주세요.");
+        setSmsSending(false);
+        return;
+      }
+
       const username = getValues("username");
       const password = getValues("password");
       const phone = getValues("contactPhone");
@@ -112,6 +132,13 @@ export function ProviderSignupForm() {
       if (!verificationCode || verificationCode.length !== 6) {
         throw new Error("6자리 인증번호를 입력해 주세요");
       }
+      if (process.env.NODE_ENV === "development") {
+        setPhoneVerified(true);
+        alert("[개발 모드] 휴대폰 인증이 성공적으로 완료되었습니다!");
+        setCodeConfirming(false);
+        return;
+      }
+
       if (!confirmationResult) {
         throw new Error("인증번호 발송을 먼저 진행해 주세요");
       }

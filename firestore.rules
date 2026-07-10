@@ -140,6 +140,20 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ─── cashbooks (v2.0 CleanMatch 피벗 · 금전출납부) ────────────
+    match /cashbooks/{cashbookId} {
+      // 본인(provider)의 내역만 읽고 쓰기 가능
+      allow read: if request.auth != null
+                  && resource.data.providerUid == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.providerUid == request.auth.uid;
+      allow update: if request.auth != null
+                    && resource.data.providerUid == request.auth.uid
+                    && request.resource.data.providerUid == request.auth.uid;
+      allow delete: if request.auth != null
+                    && resource.data.providerUid == request.auth.uid;
+    }
+
     // ─── providerResponses (청명 triage 상태) ─────────────
     // v1.1 quote-response. composite id = `${providerId}_${requestId}`.
     match /providerResponses/{docId} {

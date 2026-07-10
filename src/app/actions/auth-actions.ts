@@ -18,7 +18,7 @@ type ActionResult =
   | { ok: true }
   | { ok: false; code: string; message: string };
 
-export async function signInWithEmail(idToken: string): Promise<ActionResult> {
+export async function signInWithEmail(idToken: string, role?: "customer" | "provider"): Promise<ActionResult> {
   if (!idToken || typeof idToken !== "string") {
     return { ok: false, code: "INVALID_INPUT", message: "ID 토큰이 없습니다" };
   }
@@ -43,7 +43,8 @@ export async function signInWithEmail(idToken: string): Promise<ActionResult> {
         username: username ?? "",
         displayName:
           name ?? username ?? (email ? email.split("@")[0] : "사용자"),
-        isCheonggwangPartner: false,
+        isCheonggwangPartner: role === "provider",
+        role: role ?? "customer",
         contactPhone,
         createdAt: FieldValue.serverTimestamp(),
       });

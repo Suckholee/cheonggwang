@@ -33,6 +33,10 @@ export interface QuoteRequest {
   totalAmount?: number;
   optionsList?: Array<{ label: string; qty: number; price: number }>;
   
+  // v2.0 CleanMatch 피벗 관련 추가 필드 (단가 제거된 상태의 체크리스트)
+  extraSpacesList?: Array<{ id: string; label: string; type: "check" | "quantity" | "select"; value: boolean | number | string }>;
+  selectedOptionsList?: Array<{ id: string; label: string; type: "check" | "quantity" | "select"; value: boolean | number | string }>;
+
   // v1.7 견적기 맞춤화 관련 추가 필드
   quoteType?: "premium" | "regular" | "budget";
   frequency?: string;

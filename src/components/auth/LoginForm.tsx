@@ -64,6 +64,25 @@ export function LoginForm() {
         throw new Error("올바른 휴대폰 번호(010-XXXX-XXXX)를 입력해 주세요");
       }
 
+      if (process.env.NODE_ENV === "development") {
+        const syntheticEmail = resolveEmailForFirebase(username, "signup");
+        
+        let user = clientAuth.currentUser;
+        if (user && user.email !== syntheticEmail) {
+          await clientAuth.signOut();
+          user = null;
+        }
+
+        if (!user) {
+          await createUserWithEmailAndPassword(clientAuth, syntheticEmail, password);
+        }
+
+        setSmsSent(true);
+        alert("[개발 모드] SMS 전송이 생략되었습니다. 아무 인증번호나 입력해주세요.");
+        setSmsSending(false);
+        return;
+      }
+
       const syntheticEmail = resolveEmailForFirebase(username, "signup");
       const { toE164 } = await import("@/lib/format/phone");
       const e164Phone = toE164(phone);
@@ -110,6 +129,14 @@ export function LoginForm() {
       if (!verificationCode || verificationCode.length !== 6) {
         throw new Error("6자리 인증번호를 입력해 주세요");
       }
+      if (process.env.NODE_ENV === "development") {
+        setPhoneVerified(true);
+        setError(null);
+        alert("[개발 모드] 휴대폰 인증이 성공적으로 완료되었습니다!");
+        setCodeConfirming(false);
+        return;
+      }
+
       if (!confirmationResult) {
         throw new Error("인증번호 발송을 먼저 진행해 주세요");
       }
@@ -160,7 +187,9 @@ export function LoginForm() {
       }
 
       startTransition(async () => {
-        const result = await signInWithEmail(idToken);
+        // nextPath가 provider 관련 경로이면 provider 역할 부여
+        const role = nextPath.includes("partner") || nextPath.includes("provider") ? "provider" : "customer";
+        const result = await signInWithEmail(idToken, role);
         if (!result.ok) {
           setError(result.message);
           return;
