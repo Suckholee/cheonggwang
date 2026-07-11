@@ -40,31 +40,15 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  // Phone verification states
-  const [phone, setPhone] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [smsSent, setSmsSent] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<any>(null);
-  const [smsSending, setSmsSending] = useState(false);
-  const [codeConfirming, setCodeConfirming] = useState(false);
 
-  async function handleSendSms() {
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setError(null);
-    setSmsSending(true);
 
     try {
-      if (!username || !password) {
-        throw new Error("아이디와 비밀번호를 먼저 입력해 주세요");
-      }
-      if (password.length < 8) {
-        throw new Error("비밀번호는 8자 이상이어야 합니다");
-      }
-      if (!phone.match(/^[0-9]{2,4}-?[0-9]{3,4}-?[0-9]{4}$/)) {
-        throw new Error("올바른 휴대폰 번호(010-XXXX-XXXX)를 입력해 주세요");
-      }
-
-      if (process.env.NODE_ENV === "development") {
+      let idToken: string;
+      if (mode === "signup") {
         const syntheticEmail = resolveEmailForFirebase(username, "signup");
         
         let user = clientAuth.currentUser;
@@ -74,101 +58,10 @@ export function LoginForm() {
         }
 
         if (!user) {
-          await createUserWithEmailAndPassword(clientAuth, syntheticEmail, password);
+          const cred = await createUserWithEmailAndPassword(clientAuth, syntheticEmail, password);
+          user = cred.user;
         }
 
-        setSmsSent(true);
-        alert("[개발 모드] SMS 전송이 생략되었습니다. 아무 인증번호나 입력해주세요.");
-        setSmsSending(false);
-        return;
-      }
-
-      const syntheticEmail = resolveEmailForFirebase(username, "signup");
-      const { toE164 } = await import("@/lib/format/phone");
-      const e164Phone = toE164(phone);
-
-      const { RecaptchaVerifier, linkWithPhoneNumber } = await import("firebase/auth");
-      
-      let user = clientAuth.currentUser;
-      if (user && user.email !== syntheticEmail) {
-        await clientAuth.signOut();
-        user = null;
-      }
-
-      if (!user) {
-        const cred = await createUserWithEmailAndPassword(clientAuth, syntheticEmail, password);
-        user = cred.user;
-      }
-
-      let verifier = (window as any).recaptchaVerifier;
-      if (!verifier) {
-        verifier = new RecaptchaVerifier(clientAuth, "recaptcha-container", {
-          size: "invisible",
-        });
-        (window as any).recaptchaVerifier = verifier;
-      }
-
-      const confirmation = await linkWithPhoneNumber(user, e164Phone, verifier);
-      setConfirmationResult(confirmation);
-      setSmsSent(true);
-      setError(null);
-      alert("인증번호가 발송되었습니다. 문자를 확인해 주세요.");
-    } catch (err: any) {
-      console.error("[phone-auth] Send SMS error:", err);
-      setError(readableFirebaseAuthError(err.code) || err.message);
-    } finally {
-      setSmsSending(false);
-    }
-  }
-
-  async function handleVerifyCode() {
-    setError(null);
-    setCodeConfirming(true);
-
-    try {
-      if (!verificationCode || verificationCode.length !== 6) {
-        throw new Error("6자리 인증번호를 입력해 주세요");
-      }
-      if (process.env.NODE_ENV === "development") {
-        setPhoneVerified(true);
-        setError(null);
-        alert("[개발 모드] 휴대폰 인증이 성공적으로 완료되었습니다!");
-        setCodeConfirming(false);
-        return;
-      }
-
-      if (!confirmationResult) {
-        throw new Error("인증번호 발송을 먼저 진행해 주세요");
-      }
-
-      await confirmationResult.confirm(verificationCode);
-      setPhoneVerified(true);
-      setError(null);
-      alert("휴대폰 인증이 성공적으로 완료되었습니다!");
-    } catch (err: any) {
-      console.error("[phone-auth] Confirm code error:", err);
-      setError("인증번호가 일치하지 않거나 만료되었습니다. 다시 시도해 주세요.");
-    } finally {
-      setCodeConfirming(false);
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-
-    if (mode === "signup" && !phoneVerified) {
-      setError("휴대폰 인증을 먼저 완료해 주세요");
-      return;
-    }
-
-    try {
-      let idToken: string;
-      if (mode === "signup") {
-        const user = clientAuth.currentUser;
-        if (!user) {
-          throw new Error("가입 세션이 유효하지 않습니다. 다시 시도해 주세요.");
-        }
         idToken = await user.getIdToken();
       } else {
         let emailForFirebase: string;
@@ -207,7 +100,6 @@ export function LoginForm() {
       onSubmit={handleSubmit}
       className="flex w-full flex-col gap-4 px-0.5"
     >
-      <div id="recaptcha-container"></div>
 
       {nextPath.includes("/signup-partner") && mode === "signup" && (
         <div className="rounded-xl bg-blue-50 p-3 text-xs font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 animate-[fade-in_0.3s_ease-out]">
@@ -270,7 +162,6 @@ export function LoginForm() {
             <input
               type="text"
               required
-              disabled={mode === "signup" && phoneVerified}
               autoComplete="username"
               inputMode="text"
               placeholder={mode === "signup" ? "영문·숫자·_ (4-20자)" : "아이디 입력"}
@@ -298,7 +189,6 @@ export function LoginForm() {
               type="password"
               required
               minLength={6}
-              disabled={mode === "signup" && phoneVerified}
               placeholder={mode === "signup" ? "8자 이상 입력" : "비밀번호 입력"}
               autoComplete={
                 mode === "signup" ? "new-password" : "current-password"
@@ -310,78 +200,7 @@ export function LoginForm() {
           </div>
         </label>
 
-        {mode === "signup" && (
-          <>
-            <div className="flex flex-col gap-1.5">
-              <span className="ml-0.5 text-[12.5px] font-semibold text-zinc-650 dark:text-zinc-300">
-                휴대폰 번호
-              </span>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500">
-                    <Phone className="h-4 w-4" />
-                  </span>
-                  <input
-                    type="tel"
-                    required
-                    disabled={phoneVerified}
-                    placeholder="010-1234-5678"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-xl border border-zinc-200/80 bg-white pl-10 pr-4 py-3 text-[14px] outline-none transition-colors focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-[#5B8DF6] dark:focus:ring-[#5B8DF6] disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
-                  />
-                </div>
-                <button
-                  type="button"
-                  disabled={phoneVerified || smsSending}
-                  onClick={handleSendSms}
-                  className="shrink-0 rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-2.5 text-sm font-semibold text-zinc-700 transition-all hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-850 disabled:opacity-50"
-                >
-                  {smsSending ? "전송 중..." : smsSent ? "재전송" : "인증 요청"}
-                </button>
-              </div>
-            </div>
 
-            {smsSent && (
-              <div className="flex flex-col gap-1.5">
-                <span className="ml-0.5 text-[12.5px] font-semibold text-zinc-650 dark:text-zinc-300">
-                  인증번호 입력
-                </span>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500">
-                      <KeyRound className="h-4 w-4" />
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      disabled={phoneVerified}
-                      maxLength={6}
-                      placeholder="6자리 인증번호"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      className="w-full rounded-xl border border-zinc-200/80 bg-white pl-10 pr-4 py-3 text-[14px] outline-none transition-colors focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-[#5B8DF6] dark:focus:ring-[#5B8DF6] disabled:bg-zinc-50 dark:disabled:bg-zinc-950"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    disabled={phoneVerified || codeConfirming}
-                    onClick={handleVerifyCode}
-                    className="shrink-0 rounded-xl bg-indigo-650 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
-                  >
-                    {codeConfirming ? "확인 중..." : phoneVerified ? "인증 완료" : "인증 확인"}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {phoneVerified && (
-              <p className="ml-1 text-[13px] font-bold text-emerald-600 dark:text-emerald-400">
-                ✓ 휴대폰 인증이 완료되었습니다.
-              </p>
-            )}
-          </>
-        )}
       </div>
 
       {error && (
@@ -404,7 +223,7 @@ export function LoginForm() {
 
       <button
         type="submit"
-        disabled={pending || (mode === "signup" && !phoneVerified)}
+        disabled={pending}
         style={{
           backgroundColor: "#2563EB",
           boxShadow: "0 4px 12px rgba(37, 99, 235, 0.15)",
